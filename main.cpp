@@ -67,7 +67,7 @@ int main()
                   printf("%d, %5f m\n", i, distance);
 
                   logger << i;
-                  logger << (float)pingTimeMicros / 1000000 * SOUND_SPEED / 2;
+                  logger << (float)elapsed_time / 1000000 * SOUND_SPEED / 2;
                   logger.end_row();
                   gpioDelay(500);
             }
