@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/Users/c5pas/Desktop/raspberry/prove/delay/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/delay.dir/includes_CXX.rsp -g -Wall -pthread -o CMakeFiles\\delay.dir\\main.cpp.obj -c C:\\Users\\c5pas\\Desktop\\raspberry\\prove\\delay\\main.cpp",
+  "file": "C:/Users/c5pas/Desktop/raspberry/prove/delay/main.cpp",
+  "output": "CMakeFiles/delay.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/c5pas/Desktop/raspberry/prove/delay/build/csvlogger",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/csvlogger.dir/includes_CXX.rsp -g -o CMakeFiles\\csvlogger.dir\\CsvLogger.cpp.obj -c C:\\Users\\c5pas\\Desktop\\raspberry\\prove\\delay\\csvlogger\\CsvLogger.cpp",
+  "file": "C:/Users/c5pas/Desktop/raspberry/prove/delay/csvlogger/CsvLogger.cpp",
+  "output": "csvlogger/CMakeFiles/csvlogger.dir/CsvLogger.cpp.obj"
+}
+]
