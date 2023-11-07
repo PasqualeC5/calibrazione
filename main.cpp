@@ -8,143 +8,61 @@
 
 /* CONSTANTS */
 #define SOUND_SPEED 340
+#define MAX_SENSOR_DISTANCE 200 // Maximum sensor distance can be as high as 500cm, no reason to wait for ping longer than sound takes to travel this distance and back. Default=500
+#define US_ROUNDTRIP_CM 57      // Microseconds (uS) it takes sound to travel round-trip 1cm (2cm total), uses integer to save compiled code space. Default=57
+#define US_ROUNDTRIP_IN 146     // Microseconds (uS) it takes sound to travel round-trip 1 inch (2 inches total), uses integer to save compiled code space. Default=146
+#define ROUNDING_ENABLED false  // Set to "true" to enable distance rounding which also adds 64 bytes to binary size. Default=false // Set to "true" to enable support for the URM37 sensor in PWM mode. Default=false
+#define TRIGGER_WIDTH 12
+#define MAX_SENSOR_DELAY 5800 // Maximum uS it takes for sensor to start the ping. Default=5800
 
 int main()
 {
       using namespace std;
-
-      /*INITIALISE PIN*/
-      gpioInitialise();
-      // printf("GPIO INITIALISED\n");
-      gpioSetMode(18, PI_OUTPUT);
-      gpioSetMode(17, PI_INPUT);
-      int attachedEchoPin = 17;
-      int attachedTrigPin = 18;
-
-      /* INITIALISE CYCLE*/
+      const int attachedEchoPin = 17;
+      const int attachedTrigPin = 18;
       std::ifstream file_misure("misure_da_prendere.txt");
-      // FILE* fp = fopen("misure_da_prendere.txt", "r"); //standard delle misure da prendere
       float cm_distance;
       char name_file_to_create[20];
       int choice;
+      unsigned int _maxEchoTime = (unsigned int)MAX_SENSOR_DISTANCE * US_ROUNDTRIP_CM;
+      unsigned long _max_time;
+      unsigned long elapsed_time;
 
-      while (file_misure >> cm_distance) // read from file to cm_distance
+      gpioInitialise();
+      gpioSetMode(attachedTrigPin, PI_OUTPUT);
+      gpioSetMode(attachedEchoPin, PI_INPUT);
+
+      while (file_misure >> cm_distance)
       {
-            /*TAKE INPUT FROM USER*/
             printf("Next measure: %fcm\n\nType '1' to start, other to stop immediately : ", cm_distance);
             scanf("%d", &choice);
-
-            if (choice != 1) // stop
+            if (choice != 1)
+            {
+                  printf("Exiting program\n");
                   break;
-
-            /*FILE TO WRITE*/
-            // empty string
+            }
             sprintf(name_file_to_create, "prova%f.csv", cm_distance);
-            std::cout << "Nome file creato: " << name_file_to_create << "\n"; // write in string
-            CsvLogger logger(name_file_to_create);                    // create file which name is string (see Constructor)
-
-            // /* TAKE MEASURES */
-            // for (int i = 0; i < 1000; i++)
-            // {
-            //       /* GENERATE TRIG*/
-            //       gpioWrite(attachedTrigPin, 1);
-            //       gpioDelay(10);
-            //       gpioWrite(attachedTrigPin, 0);
-
-            //       /* READ TIME ECHO IS HIGH*/
-            //       int seconds;
-            //       int micros;
-
-            //       while (!gpioRead(attachedEchoPin))
-            //             std::cout << "Waiting for echo\n";         // wait til echo L -> H
-            //       gpioTime(PI_TIME_RELATIVE, &seconds, &micros); // take time
-
-            //       int currentMicros;
-            //       int currentSeconds;
-            //       while (gpioRead(attachedEchoPin))
-            //             std::cout << "Waiting for echo to go down\n";
-            //       // wait till echo H -> L
-            //       gpioTime(PI_TIME_RELATIVE, &currentSeconds, &currentMicros); // take time
-
-            //       /* COMPUTE DISTANCE */
-            //       int pingTimeMicros = currentMicros - micros;
-            //       float distance = (float)pingTimeMicros / 1000000 * SOUND_SPEED / 2;
-            //       printf("%d, %f\n", i, distance);
-
-            //       /* DELETE SPIKES*/
-            //       float max_value = ((float)cm_distance + 2) / 100,
-            //             min_value = ((float)cm_distance - 2) / 100;
-
-            //       if (distance < min_value || distance > max_value) // ho superato cm_dist +-2 -> spike
-            //       {
-            //             printf("Spike detected\n");
-            //             i--;
-            //             continue; // don't show output and don't write files
-            //       }
-
-            //       /* SHOW OUTPUT AND WRITE DATA ON FILE*/
-            //       printf("%d, %f\n", i, distance);
-
-            //       logger << i;
-            //       logger << (float)pingTimeMicros / 1000000 * SOUND_SPEED / 2;
-            //       logger.end_row();
-
-            //       /*ADD DELAY*/
-            //       // gpioDelay(200000);
-            // }
-
-            // logger.close();
+            CsvLogger logger(name_file_to_create);
+            // create file which name is string (see Constructor)
             for (int i = 0; i < 100; i++)
             {
-                  gpioWrite(attachedTrigPin, 1);
-                  // delay(1/1000);
-                 
-                  gpioDelay(15);
-                  gpioWrite(attachedTrigPin, 0);
-                
-                  // int elapsed = 0;
-                  // int start_time = 0;
-                  // int s = 0;
-                  // gpioTime(PI_TIME_RELATIVE, &s, &start_time);
-                  // start_time = s * 1000000 + start_time;
-                  // elapsed = 0;
-                  // while (!gpioRead(attachedEchoPin) && elapsed < 1000000 && elapsed >= 0)
-                  // {
-
-                  //       gpioTime(PI_TIME_RELATIVE, &s, &elapsed);
-                  //       elapsed = s * 1000000 + elapsed;
-                  //       elapsed = elapsed - start_time;
-                  // }
-                  // cout << "TIME ELAPSED: " << elapsed << "\n";
-                  // if (elapsed >= 1000000 || elapsed < 0)
-                  // {
-                  //       cout << "TIMED OUT]n";
-                  //       i--;
-                  //       continue;
-                  // }
-                  while(!gpioRead(attachedEchoPin));
-                  int seconds;
-                  int micros;
-                  gpioTime(PI_TIME_RELATIVE, &seconds, &micros);
-                  while (gpioRead(attachedEchoPin))   
+                  gpioTrigger(attachedTrigPin, 10, 1);
+                  if (gpioRead(attachedEchoPin))
                   {
-                  }
-                  int currentMicros;
-                  int currentSeconds;
-                  gpioTime(PI_TIME_RELATIVE, &currentSeconds, &currentMicros);
-                  int pingTimeSeconds = currentSeconds - seconds;
-                  int pingTimeMicros = currentMicros - micros;
-                  float distance = (float)pingTimeMicros / 1000000 * SOUND_SPEED / 2;
-                  /* DELETE SPIKES*/
-                  // float max_value = ((float)cm_distance + 5) / 100,
-                  //       min_value = ((float)cm_distance - 5) / 100;
-
-                  if (distance < 0.0 || distance > 1.0) // ho superato cm_dist +-2 -> spike
-                  {
-                        printf("Spike detected\n");
+                        // Previous ping hasn't finished, abort.
                         i--;
-                        continue; // don't show output and don't write files
+                        continue;
                   }
+                  _max_time = gpioTick() + _maxEchoTime + MAX_SENSOR_DELAY;
+                  while (!gpioRead(attachedEchoPin))
+                        if (gpioTick() > _max_time)
+                        {
+                              printf("Echo timed out\n");
+                              i--;
+                              continue;
+                        }
+                  elapsed_time = gpioTick() - _max_time - _maxEchoTime - MAX_SENSOR_DELAY;
+                  float distance = (float)elapsed_time / 1000000 * SOUND_SPEED / 2;
 
                   printf("%d, %5f m\n", i, distance);
 
@@ -152,13 +70,15 @@ int main()
                   logger << (float)pingTimeMicros / 1000000 * SOUND_SPEED / 2;
                   logger.end_row();
                   gpioDelay(500);
-                  // delay(0.2);
-                  // gpioDelay(200000);
             }
+
             logger.close();
       }
-
       gpioTerminate();
+}
+
+bool ping(float *distance)
+{
 }
 
 /* unused function

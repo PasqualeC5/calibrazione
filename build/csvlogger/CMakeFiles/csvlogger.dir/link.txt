@@ -1,2 +1,2 @@
-C:\msys64\ucrt64\bin\ar.exe qc libcsvlogger.a CMakeFiles/csvlogger.dir/CsvLogger.cpp.obj
-C:\msys64\ucrt64\bin\ranlib.exe libcsvlogger.a
+G:\msys2\ucrt64\bin\ar.exe qc libcsvlogger.a CMakeFiles/csvlogger.dir/CsvLogger.cpp.obj
+G:\msys2\ucrt64\bin\ranlib.exe libcsvlogger.a
