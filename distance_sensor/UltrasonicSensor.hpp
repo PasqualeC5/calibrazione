@@ -15,7 +15,6 @@
 
 class UltrasonicSensor : public DistanceSensor {
 private:
-    double distance;
     unsigned int MAX_SENSOR_DISTANCE_MM;
     unsigned user_gpio attachedTrigPin;
     unsigned user_gpio attachedEchoPin;

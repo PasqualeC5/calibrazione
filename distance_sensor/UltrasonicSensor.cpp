@@ -17,7 +17,7 @@ UltrasonicSensor::UltrasonicSensor(
 // Implementation of virtual method to get distance in meters
 float UltrasonicSensor::getDistanceInCentimeters() const
 {
-    return getDistanceInMeters * 100;
+    return getDistanceInMeters() * 100;
 }
 
 // Implementation of virtual method to get distance in centimeters
@@ -56,7 +56,7 @@ float UltrasonicSensor::getDistanceInMeters() const
 // Implementation of virtual method to get distance in millimeters
 float UltrasonicSensor::getDistanceInMillimeters() const
 {
-    return getDistanceInMeters * 1000;
+    return getDistanceInMeters() * 1000;
 }
 
 ~UltrasonicSensor(){

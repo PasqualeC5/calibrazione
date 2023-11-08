@@ -1,6 +1,6 @@
 #include "CsvLogger.hpp"
 #include <stdio.h>
-//#define LOGGING_DISABLED TRUE
+// #define LOGGING_DISABLED TRUE
 
 CsvLogger::CsvLogger(const std::string filename) : FILENAME(filename.c_str())
 {
@@ -12,15 +12,18 @@ CsvLogger::CsvLogger(const std::string filename) : FILENAME(filename.c_str())
         exit(1);
     }
     file.precision(5);
-    file << "index,distance\n";
-    file.flush();
-    
 }
 
 CsvLogger::~CsvLogger()
 {
     flush();
     file.close();
+}
+
+void CsvLogger::write(const std::string header)
+{
+    file << header;
+    file.flush();
 }
 
 void CsvLogger::flush()
@@ -31,7 +34,7 @@ void CsvLogger::flush()
 CsvLogger &CsvLogger::operator<<(const double new_val)
 {
 #ifndef LOGGING_DISABLED
-    //file << std::scientific << new_val << ',';
+    // file << std::scientific << new_val << ',';
     file << new_val << ',';
 #endif
     return *this;

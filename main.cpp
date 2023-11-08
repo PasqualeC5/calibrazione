@@ -3,6 +3,7 @@
 /*LIBRARIES*/
 #include <stdio.h>
 #include <time.h>
+#include <vector>
 #include "../csvlogger/CsvLogger.hpp"
 #include "../distance_sensor/DistanceSensor.hpp"
 #include "../distance_sensor/UltrasonicSensor.hpp"
@@ -20,15 +21,14 @@
 #define TRIG_PIN 22
 #define DELAY_MISURA_US 500
 
-void effettua_misure(float riferimento, int numeroMisure, CsvLogger &logger);
-
+void effettua_misure_cm(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure);
+void scrivi_database(vector<vector<float>> &misure_superfici, vector<string> &nomi_superficie, string name_file_to_createa);
 int main()
 {
       using namespace std;
       ifstream file_misure("input_files/misure_test.txt");
       ifstream file_superfici("input_files/superfici_test.txt");
       DistanceSensor sensoreUltrasuoni = UltrasonicSensor(ECHO_PIN, TRIG_PIN);
-      float cm_distance;
       char name_file_to_create[20];
       int choice;
 
@@ -46,38 +46,71 @@ int main()
 
       int misura_attuale = misura_minima;
 
-      char superficie[20];
+      char nome_superficie[20];
+      vector<vector<float>> misure_superfici;
+      vector<string> nomi_superfici;
+      vector<float> riferimento_misure;
 
+      while (file_superfici >> nome_superficie)
+      {
+            nomi_superfici.push_back(nome_superficie);
+            vector<float> misure_superfice;
+            misure_superfici.push_back(misure_superfice);
+            while (misura_attuale <= misura_massima)
+            {
+                  printf("Next measure: %fcm\n\nType '1' to start, other to stop immediately : ", cm_distance);
+                  scanf("%d", &choice);
+                  if (choice != 1)
+                  {
+                        printf("Exiting program\n");
+                        break;
+                  }
+                  effettua_misure_cm(sensoreUltrasuoni, misura_attuale, NUMERO_MISURE, misure_superfici.back());
+                  misura_attuale += passo_misura;
+                  logger.close();
+            }
+      }
+
+      misura_attuale = misura_minima;
       while (misura_attuale <= misura_massima)
       {
-            printf("Next measure: %fcm\n\nType '1' to start, other to stop immediately : ", cm_distance);
-            scanf("%d", &choice);
-            if (choice != 1)
-            {
-                  printf("Exiting program\n");
-                  break;
-            }
-            sprintf(name_file_to_create, "misura_%f.csv", misura_attuale);
-            CsvLogger logger(name_file_to_create, logger);
-
-            effettua_misure(sensoreUltrasuoni, misura_attuale, NUMERO_MISURE, logger);
+            sprintf(name_file_to_create, "misure/misura_%f.csv", misura_attuale);
+            scrivi_database(misure_superfici, nomi_superfici, name_file_to_create);
             misura_attuale += passo_misura;
-            logger.close();
       }
 }
-}
 
-void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misure, CsvLogger &logger)
+void effettua_misure_cm(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure)
 {
       // create file which name is string (see Constructor)
       float distance;
       for (int i = 0; i < numero_misure; i++)
       {
             distance = sensore.getDistanceInCentimeters();
+            if(distance < 0){
+                  i--;
+                  continue;
+            }
             // salvo i valori su file
-            logger << i;
-            logger << distance;
-            logger.end_row();
+            misure.push_back(distance);
             gpioDelay(DELAY_MISURA_US);
       }
+}
+
+void scrivi_database(vector<vector<float>> &misure_superfici, vector<string> &nomi_superficie, string name_file_to_create)
+{
+      CsvLogger database_misure(name_file_to_create);
+      for (int i = 0; i < nomi_superficie.size(); i++)
+      {
+            database_misure.write(nome_superfici[i] + i == nomi_superficie.size() - 1 ? "\n" : ",");
+      }
+
+      for (int j = 0; j < numero_misure; j++)
+      {
+            for (int i = 0; i < misure_superfici.size(); i++)
+            {
+                  database_misure << misure_superfici[i][j];
+            }
+      }
+      database_misure.close();
 }
