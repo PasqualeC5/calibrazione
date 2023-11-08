@@ -19,8 +19,12 @@
 int main()
 {
       using namespace std;
+<<<<<<< HEAD
       ifstream file_misure("input_files/misure_test.txt");
       ifstream file_superfici("input_files/superfici_test.txt");
+=======
+      std::ifstream file_misure("misure_da_prendere.txt");
+>>>>>>> c1fb12746bafded5183868284e88f0ac757bbdd8
       float cm_distance;
       char name_file_to_create[20];
       int choice;
@@ -35,6 +39,7 @@ int main()
 
       cout << "massimo tempo di attesa: " << _maxEchoTime << "us" << endl;
 
+<<<<<<< HEAD
       //lettura iniziale del file
       //assegno il range di misura
       float misura_minima; 
@@ -55,6 +60,9 @@ int main()
       }
 
       while (misura_attuale <= misura_massima)
+=======
+      while (file_misure >> cm_distance)
+>>>>>>> c1fb12746bafded5183868284e88f0ac757bbdd8
       {
             printf("Next measure: %fcm\n\nType '1' to start, other to stop immediately : ", cm_distance);
             scanf("%d", &choice);

@@ -1,0 +1,10 @@
+/home/pi/c_projects/calibrazione/CMakeFiles/rebuild_cache.dir
+/home/pi/c_projects/calibrazione/CMakeFiles/edit_cache.dir
+/home/pi/c_projects/calibrazione/CMakeFiles/package.dir
+/home/pi/c_projects/calibrazione/CMakeFiles/package_source.dir
+/home/pi/c_projects/calibrazione/CMakeFiles/calibra.dir
+/home/pi/c_projects/calibrazione/csvlogger/CMakeFiles/rebuild_cache.dir
+/home/pi/c_projects/calibrazione/csvlogger/CMakeFiles/edit_cache.dir
+/home/pi/c_projects/calibrazione/csvlogger/CMakeFiles/package_source.dir
+/home/pi/c_projects/calibrazione/csvlogger/CMakeFiles/package.dir
+/home/pi/c_projects/calibrazione/csvlogger/CMakeFiles/csvlogger.dir
