@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # read file of misure standard
 f = open("misure_da_prendere.txt", "r")
 stats = open("misure/stats.csv", "w")
-stats.write("index,media,devstd\n")
+stats.write("index,valore,media,devstd\n")
 measures_spoilt = f.readlines()  # newline to remove
 
 # Removing newline character from string
@@ -42,37 +42,36 @@ for x in measures:  # x is a std measure
 
     # Step 2: Read the CSV File
     df = pd.read_csv(file_path)  # Replace 'your_file.csv' with the actual file path
-    # #Step 4: Create Plots
-    # plt.figure(figsize=(10, 6))  # Optional: Set the figure size
-    # plt.plot(
-    #     df["index"].astype(int),
-    #     df["distance"].astype(float),
-    #     marker="o",
-    #     linestyle="-",
-    #     color="b",
-    # )
-    # plt.title("Misura a " + x + " cm")
-    # plt.xlabel("indice i")
-    # plt.ylabel("distanza cm")
-    # plt.grid(True)  # Optional: Add grid lines
+    #Step 4: Create Plots
+    plt.plot(
+        df["index"].astype(int),
+        df["distance"].astype(float),
+        marker="o",
+        linestyle="-",
+        color="b",
+    )
+    plt.title("Misura a " + str(float(x)/100)+ " m")
+    plt.xlabel("Indice misura")
+    plt.ylabel("Distanza misurata in m")
+    plt.tight_layout() 
+    plt.grid(True)  # Optional: Add grid lines
 
-    # # Step 5: Show or Save the Plot (Optional)
-    # plt.savefig("plots/output_plot_" + x + ".png")
-    # Calculate descriptive statistics for the 'distance' column
+    # Step 5: Show or Save the Plot (Optional)
+    plt.savefig("plots/output_plot_" + x + ".png")
     distance_stats = df["distance"].describe()
     mean_distance = distance_stats["mean"]
     median_distance = distance_stats["50%"]  # 50% corresponds to the median
     std_dev_distance = distance_stats["std"]
 
-    print(
-        distance_stats
-    )
+
+    # print(
+    #     distance_stats
+    # )
     
 
-    stats.write(str(float(x)/100.0) + "," + str(mean_distance) + "," + str(std_dev_distance)+ '\n')
+    stats.write(str(i) + "," + str(float(x)/100.0) + "," + str(mean_distance) + "," + str(std_dev_distance)+ '\n')
     i+=1
-    # Save the plot as PNG file
-    #plt.show()
+    plt.close()
 
     plt.hist(df["distance"], bins=20, color="skyblue", edgecolor="black")
     
@@ -80,20 +79,30 @@ for x in measures:  # x is a std measure
     # Add labels and title
     plt.xlabel("X-axis label")
     plt.ylabel("Y-axis label")
+    plt.tight_layout() 
     plt.title("Histogram of Data")
     plt.savefig("plots/output_plot_" + x + "_histogram.png")
+    plt.close()
     # plt.show()
 
 stats.close()
-plt.figure().clear()
 stats_df = pd.read_csv("misure/stats.csv")
 plt.figure(figsize=(10, 6))  # Optional: Set the figure size
+plt.plot(
+    stats_df["index"].astype(float),
+    stats_df["valore"].astype(float),
+    marker="o",
+    linestyle="-",
+    color="black",
+    label = "valore misurato",
+)
 plt.plot(
     stats_df["index"].astype(float),
     stats_df["media"].astype(float),
     marker="o",
     linestyle="-",
     color="b",
+    label = "media misure",
 )
 plt.plot(
     stats_df["index"].astype(float),
@@ -101,11 +110,16 @@ plt.plot(
     marker="o",
     linestyle="-",
     color="r",
+    label = "deviazione standard",
 )
-plt.xlabel("indice")
-plt.ylabel("stats")
+plt.xlabel("misura aspettata")
+plt.ylabel("media misurata")
+plt.legend()
 plt.grid(True)  # Optional: Add grid lines
 
 # Step 5: Show or Save the Plot (Optional)
 plt.savefig("plots/stats_plot.png")
+print(stats_df["devstd"].describe())
+print("La deviazione standard media: " + str(stats_df["devstd"].describe()["mean"]))
 plt.show()
+plt.close()
