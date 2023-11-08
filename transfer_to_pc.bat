@@ -7,6 +7,6 @@ if "%~1"=="" (
 )
 
 rem Transfer folder from Raspberry Pi to local machine
-scp -r pi@raspberrypi:/home/pi/c_projects/%1 ./
+scp -r pi@raspberrypi:/home/pi/c_projects/%1 ./raspberry/
 
 echo Folder %1 transferred from Raspberry Pi to local machine.
