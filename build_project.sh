@@ -1,30 +1,47 @@
 #!/bin/bash
 
-# Check if the user provided a folder name as input
-if [ $# -ne 1 ]; then
+# Check if the correct number of arguments is provided
+if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <folder_name>"
     exit 1
 fi
 
-# Get the folder name from command line argument
-folder_name=$1
+# Get the folder name from the command line argument
+folder_name="$1"
 
-# Create build directory
-build_dir="${folder_name}build"
-mkdir -p $build_dir
+# Define the build directory name
+build_dir="${folder_name}_build"
 
-# Navigate to the specified folder
-cd $folder_name || exit 1
+# Check if the specified folder exists
+if [ ! -d "$folder_name" ]; then
+    echo "Error: Folder '$folder_name' not found."
+    exit 1
+fi
 
-# Run CMake
-echo "Running CMake..."
-cmake -B "../$build_dir"
+# Create the build directory if it doesn't exist
+if [ ! -d "$build_dir" ]; then
+    mkdir "$build_dir"
+fi
 
-# Navigate back to the original directory
+# Change directory to the build directory
+cd "$build_dir" || exit 1
+
+# Run cmake to generate build files
+cmake "../$folder_name"
+
+# Check if cmake command was successful
+if [ $? -eq 0 ]; then
+    # Run make to build the project
+    make
+    # Check if make command was successful
+    if [ $? -eq 0 ]; then
+        echo "Build successful. Executable can be found in ./$build_dir"
+    else
+        echo "Error: Build failed."
+    fi
+else
+    echo "Error: CMake configuration failed."
+fi
+
+# Change back to the original directory
 cd ..
-
-# Build the project using make
-echo "Building the project..."
-make -C $build_dir
-
-echo "Build completed. Executable is located in: ./$build_dir"

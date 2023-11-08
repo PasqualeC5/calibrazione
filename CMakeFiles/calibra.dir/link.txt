@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/calibra.dir/main.cpp.o -o calibra  csvlogger/libcsvlogger.a -lpigpio -lrt 
