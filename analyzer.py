@@ -45,14 +45,14 @@ for x in measures:  # x is a std measure
     #Step 4: Create Plots
     plt.plot(
         df["index"].astype(int),
-        df["distance"].astype(float),
+        df["distance"].astype(float) * 100,
         marker="o",
         linestyle="-",
         color="b",
     )
-    plt.title("Misura a " + str(float(x)/100)+ " m")
+    plt.title("Misura a " + x + " cm")
     plt.xlabel("Indice misura")
-    plt.ylabel("Distanza misurata in m")
+    plt.ylabel("Distanza misurata in cm")
     plt.tight_layout() 
     plt.grid(True)  # Optional: Add grid lines
 
@@ -69,18 +69,18 @@ for x in measures:  # x is a std measure
     # )
     
 
-    stats.write(str(i) + "," + str(float(x)/100.0) + "," + str(mean_distance) + "," + str(std_dev_distance)+ '\n')
+    stats.write(str(i) + "," + x + "," + str(mean_distance * 100) + "," + str(std_dev_distance * 100)+ '\n')
     i+=1
     plt.close()
 
-    plt.hist(df["distance"], bins=20, color="skyblue", edgecolor="black")
+    plt.hist(df["distance"].astype(float) * 100, bins=20, color="skyblue", edgecolor="black",density= True)
     
 
     # Add labels and title
-    plt.xlabel("X-axis label")
-    plt.ylabel("Y-axis label")
+    plt.xlabel("Valore misura")
+    plt.ylabel("Probabilità")
+    plt.title("Distribuzione dei valori")
     plt.tight_layout() 
-    plt.title("Histogram of Data")
     plt.savefig("plots/output_plot_" + x + "_histogram.png")
     plt.close()
     # plt.show()
@@ -89,7 +89,7 @@ stats.close()
 stats_df = pd.read_csv("misure/stats.csv")
 plt.figure(figsize=(10, 6))  # Optional: Set the figure size
 plt.plot(
-    stats_df["index"].astype(float),
+    stats_df["valore"].astype(float),
     stats_df["valore"].astype(float),
     marker="o",
     linestyle="-",
@@ -97,7 +97,7 @@ plt.plot(
     label = "valore misurato",
 )
 plt.plot(
-    stats_df["index"].astype(float),
+    stats_df["valore"].astype(float),
     stats_df["media"].astype(float),
     marker="o",
     linestyle="-",
@@ -105,7 +105,7 @@ plt.plot(
     label = "media misure",
 )
 plt.plot(
-    stats_df["index"].astype(float),
+    stats_df["valore"].astype(float),
     stats_df["devstd"].astype(float),
     marker="o",
     linestyle="-",

@@ -7,30 +7,32 @@
 #include <pigpio.h>
 
 /* CONSTANTS */
-#define SOUND_SPEED 340
-#define MAX_SENSOR_DISTANCE 200 // Maximum sensor distance can be as high as 500cm, no reason to wait for ping longer than sound takes to travel this distance and back. Default=500
-#define US_ROUNDTRIP_CM 57      // Microseconds (uS) it takes sound to travel round-trip 1cm (2cm total), uses integer to save compiled code space. Default=57
-#define US_ROUNDTRIP_IN 146     // Microseconds (uS) it takes sound to travel round-trip 1 inch (2 inches total), uses integer to save compiled code space. Default=146
-#define ROUNDING_ENABLED false  // Set to "true" to enable distance rounding which also adds 64 bytes to binary size. Default=false // Set to "true" to enable support for the URM37 sensor in PWM mode. Default=false
+#define SOUND_SPEED_MS 343
+#define MAX_SENSOR_DISTANCE_CM 200 // Maximum sensor distance can be as high as 500cm, no reason to wait for ping longer than sound takes to travel this distance and back. Default=500
+#define US_ROUNDTRIP_CM 57         // Microseconds (uS) it takes sound to travel round-trip 1cm (2cm total), uses integer to save compiled code space. Default=57
+#define US_ROUNDTRIP_IN 146        // Microseconds (uS) it takes sound to travel round-trip 1 inch (2 inches total), uses integer to save compiled code space. Default=146
 #define TRIGGER_WIDTH 12
 #define MAX_SENSOR_DELAY 5800 // Maximum uS it takes for sensor to start the ping. Default=5800
-
+#define NUMERO_MISURE 1000
+#define attachedEchoPin 23
+#define attachedTrigPin 22
 int main()
 {
       using namespace std;
-      const int attachedEchoPin = 17;
-      const int attachedTrigPin = 18;
       std::ifstream file_misure("misure_da_prendere.txt");
       float cm_distance;
       char name_file_to_create[20];
       int choice;
-      unsigned int _maxEchoTime = (unsigned int)MAX_SENSOR_DISTANCE * US_ROUNDTRIP_CM;
+      unsigned int _maxEchoTime = (unsigned int)MAX_SENSOR_DISTANCE_CM * US_ROUNDTRIP_CM; // tempo massimo di attesa echo in micro-secondi us
       unsigned long _max_time;
+      unsigned int tempo = 0;
       unsigned long elapsed_time;
 
       gpioInitialise();
       gpioSetMode(attachedTrigPin, PI_OUTPUT);
       gpioSetMode(attachedEchoPin, PI_INPUT);
+
+      cout << "massimo tempo di attesa: " << _maxEchoTime << "us" << endl;
 
       while (file_misure >> cm_distance)
       {
@@ -44,30 +46,61 @@ int main()
             sprintf(name_file_to_create, "prova%f.csv", cm_distance);
             CsvLogger logger(name_file_to_create);
             // create file which name is string (see Constructor)
-            for (int i = 0; i < 100; i++)
+            gpioWrite(attachedTrigPin, 0);
+            for (int i = 0; i < NUMERO_MISURE; i++)
             {
-                  gpioTrigger(attachedTrigPin, 10, 1);
+                  // Invia un impulso di trigger di durata TRIGGER_WIDTH
+                  // cout << "Trigger: " << gpioTrigger(attachedTrigPin, TRIGGER_WIDTH, 1) << endl;
+
+                  gpioWrite(attachedTrigPin, 1);
+                  gpioDelay(30);
+                  gpioWrite(attachedTrigPin, 0);
+
+                  // Se il pin di echo ha un valore alto vuol dire che sto processando un trigger precendete
                   if (gpioRead(attachedEchoPin))
                   {
                         // Previous ping hasn't finished, abort.
                         i--;
+                        gpioDelay(500);
                         continue;
                   }
+                  // calcolo il massimo valore di attesa per l'ecbo
                   _max_time = gpioTick() + _maxEchoTime + MAX_SENSOR_DELAY;
-                  while (!gpioRead(attachedEchoPin))
-                        if (gpioTick() > _max_time)
-                        {
-                              printf("Echo timed out\n");
-                              i--;
-                              continue;
-                        }
-                  elapsed_time = gpioTick() - _max_time - _maxEchoTime - MAX_SENSOR_DELAY;
-                  float distance = (float)elapsed_time / 1000000 * SOUND_SPEED / 2;
 
+                  // attendo che il pin di echo si alzi
+                  while (!gpioRead(attachedEchoPin) && gpioTick() < _max_time)
+                  {
+                  }
+                  if (gpioTick() >= _max_time)
+                  {
+                        // se il tempo trascorso supera il valore massimo vado in time out
+                        printf("Echo timed out\n");
+                        cout << gpioTick() << endl;
+                        i--;
+                        continue;
+                  }
+                  tempo = gpioTick();
+                  while (gpioRead(attachedEchoPin))
+                  {
+                  }
+
+                  // calcolo il tempo trascorso tra trigger e ricezione di echo (ping time)
+                  elapsed_time = gpioTick() - tempo;
+                  // calcolo la distanza in base al tempo trascorso
+                  float distance = (float)elapsed_time / 1000000 * SOUND_SPEED_MS / 2;
+
+                  // spike detection
+                  if (distance < 0.0 || distance > 1.0) // ho superato cm_dist +-2 -> spike
+                  {
+                        printf("Spike detected\n");
+                        i--;
+                        continue; // don't show output and don't write files
+                  }
                   printf("%d, %5f m\n", i, distance);
 
+                  // salvo i valori su file
                   logger << i;
-                  logger << (float)elapsed_time / 1000000 * SOUND_SPEED / 2;
+                  logger << (float)elapsed_time / 1000000 * SOUND_SPEED_MS / 2;
                   logger.end_row();
                   gpioDelay(500);
             }
@@ -75,10 +108,6 @@ int main()
             logger.close();
       }
       gpioTerminate();
-}
-
-bool ping(float *distance)
-{
 }
 
 /* unused function
