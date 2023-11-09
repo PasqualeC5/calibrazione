@@ -1,28 +1,29 @@
+#include "DistanceSensor.hpp"
 #include "UltrasonicSensor.hpp"
 #include <stdint.h>
+#include <pigpio.h>
 
 // Constructor implementation
 UltrasonicSensor::UltrasonicSensor(
-    unsigned user_gpio echoPin,
-    unsigned user_gpio trigPin)
-    : attachedEchoPin(echoPin),
-      attachedTrigPin(trigPin)
+    uint8_t attachedTrigPin,
+    uint8_t attachedEchoPin)
+    : attachedTrigPin(attachedTrigPin),
+      attachedEchoPin(attachedEchoPin)
 {
-    unsigned int _maxEchoTime = (unsigned int)MAX_SENSOR_DISTANCE_CM * US_ROUNDTRIP_CM; // tempo massimo di attesa echo in micro-secondi us
-    gpioInitialise();
+    _maxEchoTime = (unsigned int)MAX_SENSOR_DISTANCE_CM * US_ROUNDTRIP_CM; // tempo massimo di attesa echo in micro-secondi us
     gpioSetMode(attachedTrigPin, PI_OUTPUT);
     gpioSetMode(attachedEchoPin, PI_INPUT);
 }
 
 // Implementation of virtual method to get distance in meters
-float UltrasonicSensor::getDistanceInCentimeters() const
+float UltrasonicSensor::getDistanceInCentimeters()
 {
     return getDistanceInMeters() * 100;
 }
 
 // Implementation of virtual method to get distance in centimeters
 // Returns -1 if the sensor timed out else it returns the correct distance
-float UltrasonicSensor::getDistanceInMeters() const
+float UltrasonicSensor::getDistanceInMeters()
 {
 
     gpioWrite(attachedTrigPin, 0);
@@ -54,12 +55,7 @@ float UltrasonicSensor::getDistanceInMeters() const
 }
 
 // Implementation of virtual method to get distance in millimeters
-float UltrasonicSensor::getDistanceInMillimeters() const
+float UltrasonicSensor::getDistanceInMillimeters()
 {
     return getDistanceInMeters() * 1000;
-}
-
-~UltrasonicSensor(){
-    gpioWrite(attachedTrigPin, 0);
-    gpioTerminate();
 }
