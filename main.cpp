@@ -6,15 +6,16 @@
 #include <vector>
 #include <string>
 #include "../csvlogger/CsvLogger.hpp"
-#include "../distance_sensor/DistanceSensor.hpp"
-#include "../distance_sensor/UltrasonicSensor.hpp"
+#include "../distance_sensor/include/DistanceSensor.hpp"
+#include "../distance_sensor/include/UltrasonicSensor.hpp"
+#include "../distance_sensor/include/InfraredSensor.hpp"
 #include <pigpio.h>
 
 /* CONSTANTS */
 #define NUMERO_MISURE 100
 #define ECHO_PIN 23
 #define TRIG_PIN 22
-#define DELAY_MISURA_US 50
+#define DELAY_MISURA_US 200
 
 using namespace std;
 
@@ -26,6 +27,7 @@ int main()
 
       ifstream file_misure("input_files/misure_test.txt");
       UltrasonicSensor sensoreUltrasuoni(TRIG_PIN, ECHO_PIN);
+      //InfraredSensor sensoreInfrarossi(1);
       int choice;
       // lettura iniziale del file
       // assegno il range di misura
