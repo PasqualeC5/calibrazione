@@ -38,7 +38,7 @@ def get_file_names(folder_path):
 
 def analyse_files(folder_path):
 
-    stats = open("misure/stats.csv", "w")
+    stats = open(folder_path+"/stats/stats.csv", "w")
     stats.write("index,valore,media,devstd\n")
     i = 0
 
@@ -70,6 +70,7 @@ def analyse_files(folder_path):
         # print("Last comma removed from each row. Output written to 'output_file.txt'")
 
         # Step 2: Read the CSV File
+        print("Analysing: " + file_path)
         df = pd.read_csv(file_path)  # Replace 'your_file.csv' with the actual file path
         #Step 4: Create Plots
         plt.plot(
@@ -88,7 +89,7 @@ def analyse_files(folder_path):
         plt.grid(True)  # Optional: Add grid lines
 
         # Step 5: Show or Save the Plot (Optional)
-        plt.savefig("plots/output_plot_" + x + ".png")
+        plt.savefig(folder_path +"/plots/plot_" + x + ".png")
         distance_stats = df["distance"].describe()
         mean_distance = distance_stats["mean"]
         median_distance = distance_stats["50%"]  # 50% corresponds to the median
@@ -113,12 +114,12 @@ def analyse_files(folder_path):
         plt.ylabel("Probabilità")
         plt.title("Distribuzione dei valori")
         plt.tight_layout() 
-        plt.savefig("plots/output_plot_" + x + "_histogram.png")
+        plt.savefig(folder_path + "/plots/histogram_" + x + ".png")
         plt.close()
         # plt.show()
 
     stats.close()
-    stats_df = pd.read_csv("misure/stats.csv")
+    stats_df = pd.read_csv(folder_path + "/stats/stats.csv")
     errors = abs(stats_df['media'].astype(float) - stats_df['valore'].astype(float))
 
     plt.figure(figsize=(10, 6))  # Optional: Set the figure size
