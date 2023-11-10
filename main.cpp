@@ -2,6 +2,7 @@
 
 /*LIBRARIES*/
 #include <stdio.h>
+#include <iostream>
 #include <time.h>
 #include <vector>
 #include <cstring>
@@ -13,7 +14,7 @@
 #include <pigpio.h>
 
 /* CONSTANTS */
-#define NUMERO_MISURE 100
+#define MISURE_PER_CICLO 100
 #define ECHO_PIN 23
 #define TRIG_PIN 22
 #define DELAY_MISURA_US 200
@@ -34,14 +35,22 @@ int main(int argc, char *argv[])
       if (argc < 2)
       {
             cerr << "Usage: " << argv[0] << " <sensor_type>" << endl;
+            cerr << "Usage: " << argv[0] << " <sensor_type> <surface>" << endl;
+            cerr << "Usage: " << argv[0] << " <sensor_type> <surface> <number_of_measures>" << endl;
             return 1;
       }
 
       // Convert the command line argument to lowercase for case-insensitive comparison
       string sensorType = argv[1];
       string surface = "";
+      unsigned int misure_per_ciclo = MISURE_PER_CICLO;
       if (argc > 2)
             surface = argv[2];
+      if (argc > 3)
+      {
+            misure_per_ciclo = stoi(argv[3]);
+      }
+
       // transform(sensorType.begin(), sensorType.end(), sensorType.begin(), ::tolower);
 
       DistanceSensor *sensore = nullptr;
@@ -92,10 +101,10 @@ int main(int argc, char *argv[])
                   break;
             }
 
-            effettua_misure(*sensore, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
+            effettua_misure(*sensore, misura_attuale, misure_per_ciclo, misure, DELAY_MISURA_US);
             // effettua_misure(sensoreUltrasuoni, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
 
-            nome_file = "misure/" + surface + "/" + sensorType + "_misura" + to_string((int)misura_attuale) + ".csv";
+            nome_file = "misure/" + sensorType + "/" + surface + "/misura" + to_string((int)misura_attuale) + ".csv";
             scrivi_database(misure, nome_file);
             misura_attuale += passo_misura;
       }

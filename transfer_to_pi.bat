@@ -1,12 +1,15 @@
 @echo off
+setlocal
 
-rem Check if folder name is provided as a command-line argument
-if "%~1"=="" (
-    echo Error: Please provide the folder name to transfer.
-    exit /b 1
-)
+rem Get the full path of the current directory
+set "currentDirectory=%CD%"
+
+echo Full Path: %currentDirectory%
+
+rem Extract the current directory name only
+for %%I in ("%currentDirectory%") do set "currentDirectoryName=%%~nI"
 
 rem Transfer folder to Raspberry Pi
-scp -r %1 pi@raspberrypi:/home/pi/c_projects/
+scp -r ../%currentDirectoryName% pi@raspberrypi:/home/pi/c_projects/
 
-echo Folder %1 transferred to Raspberry Pi.
+echo Folder %currentDirectoryName% transferred to Raspberry Pi.
