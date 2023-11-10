@@ -3,6 +3,9 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
+import numpy as np
+from scipy.stats import norm
+from sklearn.linear_model import LinearRegression
 
 marker_size = 2
 
@@ -85,17 +88,27 @@ def analyse_files(folder_path):
         plt.title(x)
         plt.xlabel("Indice misura")
         plt.ylabel("Distanza misurata in mm")
+        plt.ylim(0,200)
         plt.tight_layout() 
         plt.grid(True)  # Optional: Add grid lines
 
         # Step 5: Show or Save the Plot (Optional)
-        plt.savefig(folder_path +"/plots/plot_" + x + ".png")
+        
         distance_stats = df["distance"].describe()
+        min_value = distance_stats["min"]
+        max_value = distance_stats["max"]
         mean_distance = distance_stats["mean"]
         median_distance = distance_stats["50%"]  # 50% corresponds to the median
         std_dev_distance = distance_stats["std"]
+        tag_text = f'Mean: {mean_distance:.2f}\nStd Dev: {std_dev_distance:.2f}\nMin: {min_value:.2f}\nMax: {max_value:.2f}'
 
-
+        plt.annotate(tag_text,
+             xy=(1, 1), xycoords='axes fraction',
+             xytext=(-10, -10), textcoords='offset points',
+             ha='right', va='top',
+             bbox=dict(boxstyle='round,pad=0.3', edgecolor='black', facecolor='white'),
+             fontsize=10)
+        plt.savefig(folder_path +"/plots/plot_" + x + ".png")
         # print(
         #     distance_stats
         # )
@@ -105,12 +118,23 @@ def analyse_files(folder_path):
         stats.write(str(i) + "," + str(misura) + "," + str(mean_distance) + "," + str(std_dev_distance)+ '\n')
         i+=1
         plt.close()
-
-        plt.hist(df["distance"].astype(float), bins=20, color="skyblue", edgecolor="black",density= True)
         
+        x_values = np.linspace(0, 255, 5000)
+
+        # Calculate the corresponding y values for the Gaussian distribution
+        y_values = norm.pdf(x_values, misura, 2)
+        y_values_m = norm.pdf(x_values, mean_distance, std_dev_distance)
+
+
+        plt.hist(df["distance"].astype(float), bins=20, color="skyblue", edgecolor="black",density= True, stacked = True)
+        plt.plot(x_values, y_values, 'r-', label='Desired distribution')
+        plt.plot(x_values, y_values_m, 'b-', label='Measured distribution')
+        plt.legend()
+
+        plt.xlim(min_value,max(misura,max_value) + 6)
 
         # Add labels and title
-        plt.xlabel("Valore misura")
+        plt.xlabel("Valore misura mm")
         plt.ylabel("Probabilità")
         plt.title("Distribuzione dei valori")
         plt.tight_layout() 
@@ -121,8 +145,20 @@ def analyse_files(folder_path):
     stats.close()
     stats_df = pd.read_csv(folder_path + "/stats/stats.csv")
     errors = abs(stats_df['media'].astype(float) - stats_df['valore'].astype(float))
-
+    
+    model = LinearRegression()
+    model.fit(X=stats_df["valore"].values.reshape(-1,1),y= stats_df["media"].values,)
+    slope = model.coef_[0]
+    intercept = model.intercept_
+    predicted_values = model.predict(stats_df["valore"].values.reshape(-1,1))
+    
+    
+    
     plt.figure(figsize=(10, 6))  # Optional: Set the figure size
+    equation = f'Y = {slope:.2f}X + {intercept:.2f}'
+    plt.text(0.5, 0.9, equation, ha='center', va='center', transform=plt.gca().transAxes, fontsize=10, bbox=dict(facecolor='white', alpha=0.5))
+
+    plt.plot(stats_df["valore"], predicted_values, color='yellow', label='Linear Regression Curve')
     plt.plot(
         stats_df["valore"].astype(float),
         stats_df["valore"].astype(float),
