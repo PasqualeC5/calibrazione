@@ -1,6 +1,28 @@
 #ifndef INFRAREDSENSOR_HPP
 #define INFRAREDSENSOR_HPP
+
+#include <stdio.h>
+#include <string>
+#include <vector>
+
+#include <stdio.h>
+#include <string.h>
+
+
+#include <termios.h> // Contains POSIX terminal control definitions
+
+// Linux headers
+#include <fcntl.h>  // Contains file controls like O_RDWR
+#include <errno.h>  // Error integer and strerror() function
+#include <unistd.h> // write(), read(), close()
+#include <cstdint>
+#include <serial/serial.h>
+
+// Private headers
+
 /* Sensor_t Structure definition */
+
+using namespace std;
 typedef struct
 {
     uint8_t SensorID;
@@ -54,11 +76,12 @@ private:
     void select_sensor(vector<Sensor_t> sensorList, bool SerialPortSpecified);
 
 public:
-    InfraredSensor();
+    InfraredSensor(int argc);
     // Implementation of virtual methods to get distance in meters, centimeters, and millimeters
     float getDistanceInMeters() override;
     float getDistanceInCentimeters() override;
     float getDistanceInMillimeters() override;
+    vector<uint8_t> getDistanceInMillimetersVector();
 };
 
 #endif /* INFRAREDSENSOR_HPP */

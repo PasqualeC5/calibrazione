@@ -1,11 +1,13 @@
 
 #include "DistanceSensor.hpp"
 #include "InfraredSensor.hpp"
-#include <pigpio.h>
-#include <vector>
 #include <string>
+#include <algorithm>
+#include <string.h>
+#include <vector>
+#include <cstdint>
 #include <iostream>
-#include "../serial/serial.h"
+#include <serial/serial.h>
 
 using std::cerr;
 using std::cout;
@@ -13,10 +15,14 @@ using std::endl;
 using std::exception;
 using std::string;
 using std::vector;
+
+using namespace std;
 // Constructor implementation
-InfraredSensor::InfraredSensor(int argc, char *argv[])
+InfraredSensor::InfraredSensor(int argc)
 {
+
     char enable_all[] = "utlr";
+    char *argv[] = {"test", "/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"};
     char *to_enable;
     /* Sensor Initialization */
     if (argc == 1U)
@@ -58,7 +64,6 @@ InfraredSensor::InfraredSensor(int argc, char *argv[])
         size_t bytes_wrote = _SensorSerial->write(to_enable);
         string topicName_raw = "ProximityData" + _SensorList.at(_SelectedSensorID).SerialPort + "_" + _SensorList.at(_SelectedSensorID).SensorName;
         replace(topicName_raw.begin(), topicName_raw.end(), '/', '_');
-        sensor_data_pub_raw = n.advertise<read_sensor::proximity_sensor_data>(topicName_raw, 1);
         rate = 50U;
     }
     else
@@ -71,8 +76,12 @@ float InfraredSensor::getDistanceInCentimeters()
 {
     return getDistanceInMeters() / 10;
 }
-
 float InfraredSensor::getDistanceInMillimeters()
+{
+    return getDistanceInMillimetersVector()[0];
+}
+
+vector<uint8_t> InfraredSensor::getDistanceInMillimetersVector()
 {
     /* Temporary variable for RAW Sensor data */
     vector<uint8_t> dataRaw;
@@ -85,8 +94,6 @@ float InfraredSensor::getDistanceInMillimeters()
         /* Request sensor data */
         size_t bytes_wrote = _SensorSerial->write("a");
 
-        /* Read sensor data */
-        proximity_sensor_data_msg.proximity_sensor_data.clear();
         _SensorSerial->read(dataRaw, _SensorList.at(_SelectedSensorID).NumSensingElements);
 
         /* Fill data buffer and ROS msg */
@@ -94,16 +101,12 @@ float InfraredSensor::getDistanceInMillimeters()
         {
             // printf("dimensione dataRaw = %d\n", dataRaw.size()); // DEBUG
             _SensorList.at(_SelectedSensorID).LastSensorReadingsRAW.push_back(dataRaw.at(k));
-            proximity_sensor_data_msg.proximity_sensor_data.push_back((float)dataRaw.at(k));
-
             /* Print sensor data values on the screen */
-            printf("Data %d: %d mm\r\n", k + 1, dataRaw.at(k));
+            // printf("Data %d: %d mm\r\n", k + 1, dataRaw.at(k));
         }
+        return dataRaw;
     }
-    else
-    {
-        ;
-    }
+    return dataRaw;
 }
 
 // Implementation of virtual method to get distance in millimeters
@@ -157,13 +160,13 @@ void InfraredSensor::init_sensor(void)
     /* No Serial port found. Exit with error. */
     if (!serialPortNum)
     {
-        printf(BOLDRED "Error: " RESET "no Compatible Serial Ports found in the System. Please, make sure a ttyUSB* or a ttyACM* device is connected.\r\n");
+        printf("Error: no Compatible Serial Ports found in the System. Please, make sure a ttyUSB* or a ttyACM* device is connected.\r\n");
         exit(-1);
     }
     /* Serial Port found. Print the ports. */
     else
     {
-        printf(BOLDGREEN "Compatible Serial Ports found on the System: " RESET "%d\r\nChecking for compatible Sensor Devices...\r\n", serialPortNum);
+        printf("Compatible Serial Ports found on the System: %d\r\nChecking for compatible Sensor Devices...\r\n", serialPortNum);
 
         /* List the Device Ports */
         uint8_t sensorID = 0U;
@@ -186,7 +189,7 @@ void InfraredSensor::init_sensor(void)
                     if (0U == sensorID)
                     {
                         printf("\r\nDevice List:\r\n");
-                        printf(BLUE "### PortID [#] - Port Name ## Sensor Name ###\r\n" RESET);
+                        printf("### PortID [#] - Port Name ## Sensor Name ###\r\n");
                     }
                     else
                     {
@@ -276,7 +279,7 @@ void InfraredSensor::init_sensor(string SerialPortName)
     }
     catch (std::exception &e)
     {
-        printf(BOLDRED "Error: " RESET "cannot open the specified Serial Port. Port syntax: /dev/ttyUSB* or /dev/ttyACM*.\r\n");
+        printf("Error: cannot open the specified Serial Port. Port syntax: /dev/ttyUSB* or /dev/ttyACM*.\r\n");
         exit(-1);
     }
 
@@ -306,7 +309,7 @@ void InfraredSensor::select_sensor(vector<Sensor_t> sensorList, bool SerialPortS
     {
         if (255U == _SelectedSensorID)
         {
-            printf(BOLDRED "\r\nNo sensors are available on the detected Serial Ports.\r\n" RESET);
+            printf("\r\nNo sensors are available on the detected Serial Ports.\r\n");
             exit(-1);
         }
         else
@@ -322,11 +325,11 @@ void InfraredSensor::select_sensor(vector<Sensor_t> sensorList, bool SerialPortS
                 }
                 else
                 {
-                    printf(RED "A wrong PortID has been selected.\r\n" RESET);
+                    printf("A wrong PortID has been selected.\r\n");
                 }
             }
 
-            printf(GREEN "Selected Sensor: %d\r\n" RESET, _SelectedSensorID);
+            printf("Selected Sensor: %d\r\n", _SelectedSensorID);
 
             /* Open Serial Port */
             _SensorSerial = new serial::Serial(_SensorList.at(_SelectedSensorID).SerialPort, 1000000U, serial::Timeout::simpleTimeout(1000U));
@@ -363,11 +366,11 @@ void InfraredSensor::select_sensor(vector<Sensor_t> sensorList, bool SerialPortS
 
             if (_SensorList.at(_SelectedSensorID).NumSensingElements > 0U)
             {
-                printf(GREEN "Number of the Sensor Sensing Elements: %d\r\n" RESET, _SensorList.at(_SelectedSensorID).NumSensingElements);
+                printf("Number of the Sensor Sensing Elements: %d\r\n", _SensorList.at(_SelectedSensorID).NumSensingElements);
             }
             else
             {
-                printf(RED "No Sensing Elements available on the selected Sensor." RESET);
+                printf("No Sensing Elements available on the selected Sensor.");
                 exit(-1);
             }
         }
@@ -376,12 +379,12 @@ void InfraredSensor::select_sensor(vector<Sensor_t> sensorList, bool SerialPortS
     {
         if (255U == _SelectedSensorID)
         {
-            printf(BOLDRED "\r\nNo sensors are available on the specified Serial Port.\r\n" RESET);
+            printf("\r\nNo sensors are available on the specified Serial Port.\r\n");
             exit(-1);
         }
         else
         {
-            printf(BOLDGREEN "Serial Port %s is used for the current sensor.\r\n" RESET, _SensorList.at(_SelectedSensorID).SerialPort.c_str());
+            printf("Serial Port %s is used for the current sensor.\r\n", _SensorList.at(_SelectedSensorID).SerialPort.c_str());
 
             /* Open Serial Port */
             _SensorSerial = new serial::Serial(_SensorList.at(_SelectedSensorID).SerialPort, 1000000U, serial::Timeout::simpleTimeout(1000U));
@@ -418,11 +421,11 @@ void InfraredSensor::select_sensor(vector<Sensor_t> sensorList, bool SerialPortS
 
             if (_SensorList.at(_SelectedSensorID).NumSensingElements > 0U)
             {
-                printf(GREEN "Number of the Sensor Sensing Elements: %d\r\n" RESET, _SensorList.at(_SelectedSensorID).NumSensingElements);
+                printf("Number of the Sensor Sensing Elements: %d\r\n", _SensorList.at(_SelectedSensorID).NumSensingElements);
             }
             else
             {
-                printf(RED "No Sensing Elements available on the selected Sensor." RESET);
+                printf("No Sensing Elements available on the selected Sensor.");
                 exit(-1);
             }
         }

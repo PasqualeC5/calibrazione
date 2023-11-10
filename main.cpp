@@ -19,15 +19,16 @@
 
 using namespace std;
 
-void effettua_misure_cm(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure);
+void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure, unsigned int delay_us);
 void scrivi_database(vector<float> misure, string name_file_to_create);
-int main()
+int main(int argc, char *argv[])
 {
       gpioInitialise();
 
       ifstream file_misure("input_files/misure_test.txt");
       UltrasonicSensor sensoreUltrasuoni(TRIG_PIN, ECHO_PIN);
-      //InfraredSensor sensoreInfrarossi(1);
+      InfraredSensor sensoreInfrarossi(1U);
+
       int choice;
       // lettura iniziale del file
       // assegno il range di misura
@@ -49,7 +50,7 @@ int main()
       while (misura_attuale <= misura_massima)
       {
             misure.clear();
-            cout << "Next measure: " << misura_attuale << " cm\n\nType '1' to start, other to stop immediately : ";
+            cout << "Next measure: " << misura_attuale << " mm\n\nType '1' to start, other to stop immediately : ";
             scanf("%d", &choice);
             if (choice != 1)
             {
@@ -57,21 +58,22 @@ int main()
                   break;
             }
 
-            effettua_misure_cm(sensoreUltrasuoni, misura_attuale, NUMERO_MISURE, misure);
+            effettua_misure(sensoreInfrarossi, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
+            // effettua_misure(sensoreUltrasuoni, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
+
             nome_file = "misure/misura" + to_string(misura_attuale) + ".csv";
-            scrivi_database(misure,nome_file);
+            scrivi_database(misure, nome_file);
             misura_attuale += passo_misura;
       }
-
 }
 
-void effettua_misure_cm(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure)
+void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure, unsigned int delay_us)
 {
       // create file which name is string (see Constructor)
       float distance;
       for (int i = 0; i < numero_misure; i++)
       {
-            distance = sensore.getDistanceInCentimeters();
+            distance = sensore.getDistanceInMillimeters();
             if (distance < 0)
             {
                   i--;
@@ -79,7 +81,7 @@ void effettua_misure_cm(DistanceSensor &sensore, float riferimento, int numero_m
             }
             // salvo i valori su file
             misure.push_back(distance);
-            gpioDelay(DELAY_MISURA_US);
+            gpioDelay(delay_us);
       }
 }
 
@@ -88,8 +90,9 @@ void scrivi_database(vector<float> misure, string name_file_to_create)
       CsvLogger database_misure(name_file_to_create);
       database_misure.write("index,distance\n");
       float misura;
-      for(unsigned int i = 0; i < misure.size();i++){
-            cout<< misure[i]<<endl;
+      for (unsigned int i = 0; i < misure.size(); i++)
+      {
+            cout << misure[i] << endl;
             database_misure << i;
             misura = misure[i];
             database_misure << misura;
