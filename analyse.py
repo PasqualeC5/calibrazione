@@ -169,7 +169,7 @@ def analyse_files(folder_path):
     plt.grid(True)  # Optional: Add grid lines
 
     # Step 5: Show or Save the Plot (Optional)
-    plt.savefig("plots/stats_plot.png")
+    plt.savefig(folder_path+"/plots/stats_plot.png")
     print(stats_df["devstd"].describe())
     print("La deviazione standard media in mm: " + str(stats_df["devstd"].describe()["mean"]))
     plt.show()
