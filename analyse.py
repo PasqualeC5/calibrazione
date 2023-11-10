@@ -122,7 +122,8 @@ def analyse_files(folder_path):
         x_values = np.linspace(0, 255, 5000)
 
         # Calculate the corresponding y values for the Gaussian distribution
-        y_values = norm.pdf(x_values, misura, 2)
+        desired_tollerance = 5
+        y_values = norm.pdf(x_values, misura, desired_tollerance/3)
         y_values_m = norm.pdf(x_values, mean_distance, std_dev_distance)
 
 
@@ -131,7 +132,7 @@ def analyse_files(folder_path):
         plt.plot(x_values, y_values_m, 'b-', label='Measured distribution')
         plt.legend()
 
-        plt.xlim(min_value,max(misura,max_value) + 6)
+        plt.xlim(min_value,max(misura,max_value) + desired_tollerance)
 
         # Add labels and title
         plt.xlabel("Valore misura mm")
@@ -156,9 +157,16 @@ def analyse_files(folder_path):
     
     plt.figure(figsize=(10, 6))  # Optional: Set the figure size
     equation = f'Y = {slope:.2f}X + {intercept:.2f}'
-    plt.text(0.5, 0.9, equation, ha='center', va='center', transform=plt.gca().transAxes, fontsize=10, bbox=dict(facecolor='white', alpha=0.5))
+    plt.text(0.8, 0.9, equation, ha='center', va='center', transform=plt.gca().transAxes, fontsize=10, bbox=dict(facecolor='white', alpha=0.5))
 
-    plt.plot(stats_df["valore"], predicted_values, color='yellow', label='Linear Regression Curve')
+    plt.plot(
+        stats_df["valore"], 
+        predicted_values,
+        color='brown',
+        label='Linear Regression Curve',
+        linestyle="-",
+        linewidth=2,
+             )
     plt.plot(
         stats_df["valore"].astype(float),
         stats_df["valore"].astype(float),
