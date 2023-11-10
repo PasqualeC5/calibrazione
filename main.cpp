@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <vector>
+#include <cstring>
 #include <string>
 #include "../csvlogger/CsvLogger.hpp"
 #include "../distance_sensor/include/DistanceSensor.hpp"
@@ -16,6 +17,8 @@
 #define ECHO_PIN 23
 #define TRIG_PIN 22
 #define DELAY_MISURA_US 200
+#define AUTO 2U
+#define USER_INPUT 1U
 
 using namespace std;
 
@@ -26,8 +29,39 @@ int main(int argc, char *argv[])
       gpioInitialise();
 
       ifstream file_misure("input_files/misure_test.txt");
-      UltrasonicSensor sensoreUltrasuoni(TRIG_PIN, ECHO_PIN);
-      InfraredSensor sensoreInfrarossi(1U);
+
+      // Check if the correct number of command line arguments is provided
+      if (argc < 2)
+      {
+            cerr << "Usage: " << argv[0] << " <sensor_type>" << endl;
+            return 1;
+      }
+
+      // Convert the command line argument to lowercase for case-insensitive comparison
+      string sensorType = argv[1];
+      string surface = "";
+      if (argc > 2)
+            surface = argv[2];
+      // transform(sensorType.begin(), sensorType.end(), sensorType.begin(), ::tolower);
+
+      DistanceSensor *sensore = nullptr;
+
+      if (sensorType == "ultrasonic")
+      {
+            sensore = new UltrasonicSensor(TRIG_PIN, ECHO_PIN);
+      }
+      else if (sensorType == "infrared")
+      {
+            sensore = new InfraredSensor(AUTO);
+      }
+      else
+      {
+            cerr << "Invalid sensor type. Supported types: ultrasonic, infrared" << endl;
+            return 1;
+      }
+
+      // UltrasonicSensor sensoreUltrasuoni(TRIG_PIN, ECHO_PIN);
+      // InfraredSensor sensoreInfrarossi(1U);
 
       int choice;
       // lettura iniziale del file
@@ -58,10 +92,10 @@ int main(int argc, char *argv[])
                   break;
             }
 
-            effettua_misure(sensoreInfrarossi, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
+            effettua_misure(*sensore, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
             // effettua_misure(sensoreUltrasuoni, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
 
-            nome_file = "misure/misura" + to_string(misura_attuale) + ".csv";
+            nome_file = "misure/" + surface + "/" + sensorType + "_misura" + to_string((int)misura_attuale) + ".csv";
             scrivi_database(misure, nome_file);
             misura_attuale += passo_misura;
       }
@@ -92,7 +126,7 @@ void scrivi_database(vector<float> misure, string name_file_to_create)
       float misura;
       for (unsigned int i = 0; i < misure.size(); i++)
       {
-            cout << misure[i] << endl;
+            // cout << misure[i] << endl;
             database_misure << i;
             misura = misure[i];
             database_misure << misura;
