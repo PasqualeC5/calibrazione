@@ -12,6 +12,7 @@
 #include "../distance_sensor/include/UltrasonicSensor.hpp"
 #include "../distance_sensor/include/InfraredSensor.hpp"
 #include <pigpio.h>
+#include "../meca500_ethercat_cpp/Robot.hpp"
 
 /* CONSTANTS */
 #define MISURE_PER_CICLO 100
@@ -43,15 +44,27 @@ int main(int argc, char *argv[])
       // Convert the command line argument to lowercase for case-insensitive comparison
       string sensorType = argv[1];
       string surface = "";
+      bool use_robot = false;
       unsigned int misure_per_ciclo = MISURE_PER_CICLO;
+      Robot *robot = nullptr;
       if (argc > 2)
             surface = argv[2];
       if (argc > 3)
       {
             misure_per_ciclo = stoi(argv[3]);
       }
-
-      // transform(sensorType.begin(), sensorType.end(), sensorType.begin(), ::tolower);
+      if (argc > 4 && argv[4] == "r")
+      {
+            use_robot = true;
+            robot = new Robot(0, 5000, "eth0", 0.0, 100);
+            robot->reset_error();
+            // robot.main();
+            robot->set_conf(1, 1, -1);
+            robot->move_pose(0, -240, 190, 90, 0, 0);
+            robot->print_pose();
+            while (!robot->movement_ended())
+                  ;
+      }
 
       DistanceSensor *sensore = nullptr;
 
@@ -68,9 +81,11 @@ int main(int argc, char *argv[])
             cerr << "Invalid sensor type. Supported types: ultrasonic, infrared" << endl;
             return 1;
       }
-
-      // UltrasonicSensor sensoreUltrasuoni(TRIG_PIN, ECHO_PIN);
-      // InfraredSensor sensoreInfrarossi(1U);
+      float offset = 0;
+      if (use_robot)
+      {
+            offset = sensore->getDistanceInMillimeters();
+      }
 
       int choice;
       // lettura iniziale del file
@@ -93,18 +108,34 @@ int main(int argc, char *argv[])
       while (misura_attuale <= misura_massima)
       {
             misure.clear();
-            cout << "Next measure: " << misura_attuale << " mm\n\nType '1' to start, other to stop immediately : ";
-            scanf("%d", &choice);
-            if (choice != 1)
+            if (!use_robot)
             {
-                  printf("Exiting program\n");
-                  break;
+                  cout << "Next measure: " << misura_attuale << " mm\n\nType '1' to start, other to stop immediately : ";
+                  scanf("%d", &choice);
+                  if (choice != 1)
+                  {
+                        printf("Exiting program\n");
+                        break;
+                  }
+            }
+            else
+            {
+                  cout << "Next measure: " << misura_attuale << " mm";
+                  cout << "Moving robot to position..." << endl;
+                  robot->move_pose(misura_attuale, -240, 190, 90, 0, 0);
+                  while (!robot->movement_ended())
+                        ;
+                  cout << "Robot in position" << endl;
+                  cout << "Measuring" << endl;
             }
 
             effettua_misure(*sensore, misura_attuale, misure_per_ciclo, misure, DELAY_MISURA_US);
-            // effettua_misure(sensoreUltrasuoni, misura_attuale, NUMERO_MISURE, misure, DELAY_MISURA_US);
 
             nome_file = "misure/" + sensorType + "/" + surface + "/misura" + to_string((int)misura_attuale) + ".csv";
+            for (auto misura : misure)
+            {
+                  misura = misura - offset;
+            }
             scrivi_database(misure, nome_file);
             misura_attuale += passo_misura;
       }
