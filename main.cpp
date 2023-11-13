@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
             {
                   cout << "Next measure: " << misura_attuale << " mm\n";
                   cout << "Moving robot to position..." << endl;
-                  robot->move_lin(misura_attuale, -240, 190, 90, 0, 0);
+                  robot->move_lin_rel_trf(misura_attuale, -240, 190, 90, 0, 0);
                   printf("waiting for robot to finish moving");
                   while (!robot->movement_ended())
                   {
