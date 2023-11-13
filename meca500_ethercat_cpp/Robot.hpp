@@ -58,6 +58,9 @@ public:
     void move_joints_vel(float* w);
     void set_conf(short c1, short c2, short c3);
     void move_pose(double x, double y, double z, double alpha, double beta, double gamma);
+    void move_lin(double x, double y, double z, double alpha, double beta, double gamma);
+    void move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma);
+    void move_lin_rel_wrf(double x, double y, double z, double alpha, double beta, double gamma);
     void print_pose();
 };
 

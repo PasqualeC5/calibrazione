@@ -13,7 +13,7 @@
 Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds,
              char *network_interface_in,
              float blending_percentage,
-             float cart_accel_limit ) : POS_LIMIT(pos_limit),
+             float cart_accel_limit) : POS_LIMIT(pos_limit),
                                        master(network_interface_in, FALSE, EC_TIMEOUT_TO_SAFE_OP),
                                        meca500(1, &master),
                                        controller(&meca500, 0.5),
@@ -59,7 +59,7 @@ Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds,
         cout << "error set cart acceleration\n";
     }
 
-    if (meca500.setJoinAcc(150.0) != 0) //setting joints acc to max
+    if (meca500.setJoinAcc(150.0) != 0) // setting joints acc to max
     {
         cout << "error set joints acceleration\n";
     }
@@ -108,25 +108,28 @@ double Robot::get_position() // Returning Horizontal position of the Robot
 {
     float pose[6];
     meca500.getPose(pose);
-    return pose[0]*1e-3; // Checking if is the right return
+    return pose[0] * 1e-3; // Checking if is the right return
 }
 
-void Robot::get_pose(float* x) // Returning Horizontal position of the Robot
+void Robot::get_pose(float *x) // Returning Horizontal position of the Robot
 {
     meca500.getPose(x);
-    for(int i=0;i<3;i++) {
-        x[i]*=1e-3;
+    for (int i = 0; i < 3; i++)
+    {
+        x[i] *= 1e-3;
     }
-    for(int i=3;i<6;i++) {
-        x[i] = x[i]*M_PI/180.0;
+    for (int i = 3; i < 6; i++)
+    {
+        x[i] = x[i] * M_PI / 180.0;
     }
 }
 
-void Robot::get_joints(float* joints) // Returning Horizontal position of the Robot
+void Robot::get_joints(float *joints) // Returning Horizontal position of the Robot
 {
     meca500.getJoints(joints);
-    for(int i=0;i<6;i++) {
-        joints[i] = (joints[i]*M_PI)/180.0;
+    for (int i = 0; i < 6; i++)
+    {
+        joints[i] = (joints[i] * M_PI) / 180.0;
     }
 }
 
@@ -143,10 +146,12 @@ void Robot::print_pose()
 void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -1 to 1
 {
     float vel[6] = {0, 0, 0, 0, 0, 0};
-    if(velocity > 0 && get_position()>POS_LIMIT) {
+    if (velocity > 0 && get_position() > POS_LIMIT)
+    {
         velocity = 0;
     }
-    if(velocity < 0 && get_position()<-POS_LIMIT) {
+    if (velocity < 0 && get_position() < -POS_LIMIT)
+    {
         velocity = 0;
     }
 
@@ -156,26 +161,29 @@ void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -
 
 void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from -1 to 1
 {
-    
+
     float joints[6];
     float joints_vel[6];
     float pose[6];
-    if(velocity > 0 && get_position()>POS_LIMIT) {
+    if (velocity > 0 && get_position() > POS_LIMIT)
+    {
         velocity = 0;
     }
-    if(velocity < 0 && get_position()<-POS_LIMIT) {
+    if (velocity < 0 && get_position() < -POS_LIMIT)
+    {
         velocity = 0;
     }
     get_pose(pose);
     get_joints(joints);
-    get_joints_vel_with_jacobian(velocity,joints,joints_vel,pose);
+    get_joints_vel_with_jacobian(velocity, joints, joints_vel, pose);
     move_joints_vel(joints_vel);
 }
 
 void Robot::move_joints_vel(float *w)
 {
-    for(int i=0;i<6;i++) {
-        w[i] = (w[i]*180.0)/M_PI;
+    for (int i = 0; i < 6; i++)
+    {
+        w[i] = (w[i] * 180.0) / M_PI;
     }
     meca500.moveJointsVel(w);
 }
@@ -198,12 +206,34 @@ void Robot::move_pose(double x, double y, double z, double alpha, double beta, d
     }
 }
 
-double Robot::get_velocity() {
+void Robot::move_lin(double x, double y, double z, double alpha, double beta, double gamma)
+{
+    float pose[] = {(float)x, (float)y, (float)z, (float)alpha, (float)beta, (float)gamma};
+
+    meca500.moveLin(pose);
+}
+
+void Robot::move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma)
+{
+    float pose[] = {(float)x, (float)y, (float)z, (float)alpha, (float)beta, (float)gamma};
+
+    meac500.moveLinRelTRF(pose);
+}
+
+void Robot::move_lin_rel_wrf(double x, double y, double z, double alpha, double beta, double gamma)
+{
+    float pose[] = {(float)x, (float)y, (float)z, (float)alpha, (float)beta, (float)gamma};
+
+    meca500.moveLinRelWRF(pose);
+}
+
+double Robot::get_velocity()
+{
     double pos = get_position();
-    double T = TARGET_CYCLE_TIME_MICROSECONDS*1e-6;
+    double T = TARGET_CYCLE_TIME_MICROSECONDS * 1e-6;
     double tau = costante_tempo_filtro;
-    double vel = -(T-2*tau)/(T+2*tau)*last_vel + 2/(T+2*tau)*pos - 2/(T+2*tau)*last_pos;
-    //vel = (pos-last_pos)/T;
+    double vel = -(T - 2 * tau) / (T + 2 * tau) * last_vel + 2 / (T + 2 * tau) * pos - 2 / (T + 2 * tau) * last_pos;
+    // vel = (pos-last_pos)/T;
     last_pos = pos;
     last_vel = vel;
     return vel;

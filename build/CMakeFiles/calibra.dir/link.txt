@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\calibra.dir/objects.a
+G:\msys2\ucrt64\bin\ar.exe qc CMakeFiles\calibra.dir/objects.a @CMakeFiles\calibra.dir\objects1.rsp
+G:\msys2\ucrt64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\calibra.dir/objects.a -Wl,--no-whole-archive -o calibra.exe -Wl,--out-implib,libcalibra.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\calibra.dir\linkLibs.rsp

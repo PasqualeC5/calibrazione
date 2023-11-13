@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
       if (argc > 4 && argv[4] == "r")
       {
             use_robot = true;
-            robot = new Robot(0, 5000, "eth0", 0.0, 100);
+            robot = new Robot(200, 5000, "eth0", 0.0, 10);
             robot->reset_error();
             // robot.main();
             robot->set_conf(1, 1, -1);
@@ -120,9 +120,16 @@ int main(int argc, char *argv[])
             }
             else
             {
-                  cout << "Next measure: " << misura_attuale << " mm";
+                  cout << "Next measure: " << misura_attuale << " mm\n";
                   cout << "Moving robot to position..." << endl;
-                  robot->move_pose(misura_attuale, -240, 190, 90, 0, 0);
+                  robot->move_lin(misura_attuale, -240, 190, 90, 0, 0);
+                  printf("waiting for robot to finish moving");
+                  while (!robot->movement_ended())
+                  {
+                        printf(".");
+                        usleep(1e+6);
+                  }
+                  printf("\n");
                   while (!robot->movement_ended())
                         ;
                   cout << "Robot in position" << endl;
@@ -139,6 +146,11 @@ int main(int argc, char *argv[])
             scrivi_database(misure, nome_file);
             misura_attuale += passo_misura;
       }
+      if (use_robot)
+      {
+            robot->deactivate();
+      }
+      return 0;
 }
 
 void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure, unsigned int delay_us)
