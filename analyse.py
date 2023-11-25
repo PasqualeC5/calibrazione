@@ -1,11 +1,11 @@
-import os
-import sys
-import pandas as pd
-import matplotlib.pyplot as plt
-import re
-import numpy as np
-from scipy.stats import norm
-from sklearn.linear_model import LinearRegression
+import os                                                     #interation with operating system
+import sys                                                    #interation with operating system
+import pandas as pd                                           #draw graph
+import matplotlib.pyplot as plt                               #draw graph
+import re                                                     #support for working with regular expression (string)
+import numpy as np                                            #support for working with multidimension variables (array)
+from scipy.stats import norm                                  #probability and statistic
+from sklearn.linear_model import LinearRegression             #for best fit
 
 marker_size = 2
 
