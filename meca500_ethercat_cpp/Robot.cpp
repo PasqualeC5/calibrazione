@@ -217,7 +217,7 @@ void Robot::move_lin_rel_trf(double x, double y, double z, double alpha, double 
 {
     float pose[] = {(float)x, (float)y, (float)z, (float)alpha, (float)beta, (float)gamma};
 
-    meac500.moveLinRelTRF(pose);
+    meca500.moveLinRelTRF(pose);
 }
 
 void Robot::move_lin_rel_wrf(double x, double y, double z, double alpha, double beta, double gamma)

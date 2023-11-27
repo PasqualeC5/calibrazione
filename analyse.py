@@ -248,7 +248,7 @@ def analyse_files(folder_path):
         print(stats_df["devstd"].describe())
         print("La deviazione standard media in mm: " +
             str(stats_df["devstd"].describe()["mean"]))
-        plt.show()
+        #plt.show()
         plt.close()
 
     
@@ -265,7 +265,7 @@ def analyse_files(folder_path):
     medium_slope = medium_slope / len(surface_slopes)
     medium_intercept = medium_intercept / len(surface_intercept)
 
-    print("best fit media: " + medium_slope + "x + " + medium_intercept)
+    print("best fit media: " + str(medium_slope) + "x + " + str(medium_intercept))
 
     
 

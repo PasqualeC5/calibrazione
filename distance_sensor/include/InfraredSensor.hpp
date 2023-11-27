@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <serial/serial.h>
 
+
 // Private headers
 
 /* Sensor_t Structure and Line Structure definition */
@@ -37,6 +38,7 @@ typedef struct
 {
     float m;
     float q;
+    Line(m, q):m(m),q(q);
 } Line;
 
 class InfraredSensor : public DistanceSensor
@@ -102,7 +104,7 @@ class InfraredSensor : public DistanceSensor
 
     public:
     /*CONSTRUCTOR*/
-    InfraredSensor(int argc);
+    InfraredSensor(int argc, Line calibration_line);
 
     /*PUBLIC METHODS*/
     // Implementation of virtual methods to get distance in meters, centimeters, and millimeters (with calibration)

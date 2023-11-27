@@ -62,8 +62,6 @@ int main(int argc, char *argv[])
             robot->set_conf(1, 1, -1);
             robot->move_pose(0, -240, 190, 90, 0, 0);
             robot->print_pose();
-            while (!robot->movement_ended())
-                  ;
       }
 
       DistanceSensor *sensore = nullptr;
@@ -74,7 +72,7 @@ int main(int argc, char *argv[])
       }
       else if (sensorType == "infrared")
       {
-            sensore = new InfraredSensor(AUTO);
+            sensore = new InfraredSensor(1U, Line(0.9838294117647063,-3.314615686274564));
       }
       else
       {
@@ -120,23 +118,25 @@ int main(int argc, char *argv[])
             }
             else
             {
-                  cout << "Next measure: " << misura_attuale << " mm\n";
-                  cout << "Moving robot to position..." << endl;
-                  robot->move_lin_rel_trf(misura_attuale, -240, 190, 90, 0, 0);
-                  printf("waiting for robot to finish moving");
-                  while (!robot->movement_ended())
-                  {
-                        printf(".");
-                        usleep(1e+6);
-                  }
-                  printf("\n");
-                  while (!robot->movement_ended())
-                        ;
-                  cout << "Robot in position" << endl;
-                  cout << "Measuring" << endl;
+                  // cout << "Next measure: " << misura_attuale << " mm\n";
+                  // cout << "Moving robot to position..." << endl;
+                  // robot->move_lin_rel_trf(misura_attuale, -240, 190, 90, 0, 0);
+                  // printf("waiting for robot to finish moving");
+                  // while (!robot->movement_ended())
+                  // {
+                  //       printf(".");
+                  //       usleep(1e+6);
+                  // }
+                  // printf("\n");
+                  // while (!robot->movement_ended())
+                  //       ;
+                  // cout << "Robot in position" << endl;
+                  // cout << "Measuring" << endl;
             }
 
             effettua_misure(*sensore, misura_attuale, misure_per_ciclo, misure, DELAY_MISURA_US);
+            for(float misura : misure)
+                  cout << misura << endl;
 
             nome_file = "misure/" + sensorType + "/" + surface + "/misura" + to_string((int)misura_attuale) + ".csv";
             for (auto misura : misure)
