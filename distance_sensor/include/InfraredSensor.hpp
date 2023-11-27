@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #include <termios.h> // Contains POSIX terminal control definitions
 
 // Linux headers
@@ -17,7 +16,6 @@
 #include <unistd.h> // write(), read(), close()
 #include <cstdint>
 #include <serial/serial.h>
-
 
 // Private headers
 
@@ -34,75 +32,69 @@ typedef struct
     std::vector<float> Offset;
 } Sensor_t;
 
-typedef struct
-{
-    float m;
-    float q;
-    Line(m, q):m(m),q(q);
-} Line;
+
 
 class InfraredSensor : public DistanceSensor
 {
 
-    private:
+private:
     /*PRIVATE ATTRIBUTES*/
-        vector<string> _DeviceName;
-        vector<Sensor_t> _SensorList;
-        uint8_t _SelectedSensorID;
-        serial::Serial *_SensorSerial;
-        uint16_t _TactileOffsetNumSamples;
-        bool calibration = false;
-        Line calibrationLine;
+    vector<string> _DeviceName;
+    vector<Sensor_t> _SensorList;
+    uint8_t _SelectedSensorID;
+    serial::Serial *_SensorSerial;
+    uint16_t _TactileOffsetNumSamples;
+    bool calibration = false;
+    Line calibrationLine;
 
     /*PRIVATE METHODS*/
-        /**
-         * This function return the calibrated measure based on the spoilt measure to calibrate ad the calibration line
-        */
-        float calibrate(float spoiltMeasure);
+    /**
+     * This function return the calibrated measure based on the spoilt measure to calibrate ad the calibration line
+     */
+    float calibrate(float spoiltMeasure);
 
-        /**
-         * This function return vector of measures. This vector has size = #sensors
-         * 
-         * IMPORTANT: These measures are indipendent from calibration, which is implemented in getDistanceMillimeters
-         */
-        vector<uint8_t> getDistanceInMillimetersVector();  
+    /**
+     * This function return vector of measures. This vector has size = #sensors
+     *
+     * IMPORTANT: These measures are indipendent from calibration, which is implemented in getDistanceMillimeters
+     */
+    vector<uint8_t> getDistanceInMillimetersVector();
 
-        /**
-         * @Brief This routine enumerates all Serial Ports of the PC.
-         * The output variables are:
-         * @li DeviceName: a vector with the device name.
-         * Returns the number of the found devices.
-         * IMPORTANT: Only the ttyUSB* and ttyACM* devices will be enumerated.
-         */
-        uint8_t enumerate_ports(vector<string> &deviceName);
+    /**
+     * @Brief This routine enumerates all Serial Ports of the PC.
+     * The output variables are:
+     * @li DeviceName: a vector with the device name.
+     * Returns the number of the found devices.
+     * IMPORTANT: Only the ttyUSB* and ttyACM* devices will be enumerated.
+     */
+    uint8_t enumerate_ports(vector<string> &deviceName);
 
-        /**
-         * @Brief This routine inizializes the sensors attached to the Serial Ports.
-         * It enumerates all the serial ports and if a compatible port is available checks
-         * the presence of a Tactile or Proximity sensor reading the sensor ID.
-         */
-        void init_sensor(void);
+    /**
+     * @Brief This routine inizializes the sensors attached to the Serial Ports.
+     * It enumerates all the serial ports and if a compatible port is available checks
+     * the presence of a Tactile or Proximity sensor reading the sensor ID.
+     */
+    void init_sensor(void);
 
-        /**
-         * @Brief This routine inizializes the sensors attached to the Serial Port
-         * passed as input argument.
-         * It checks the presence of a Tactile or Proximity sensor reading the sensor ID.
-         */
-        void init_sensor(string SerialPortName);
+    /**
+     * @Brief This routine inizializes the sensors attached to the Serial Port
+     * passed as input argument.
+     * It checks the presence of a Tactile or Proximity sensor reading the sensor ID.
+     */
+    void init_sensor(string SerialPortName);
 
-        /**
-         * @Brief This routine allows to the user to select the sensor to use.
-         * If the input parameter 'SerialPortSpecified' is TRUE then the routine
-         * simply configures the sensor data structure for the sensor attached to
-         * the Serial Port specified by the user at the node instantiation.
-         * If the input parameter 'SerialPortSpecified' is TRUE then the routine allows
-         * to choose a sensor between the sensors listed in _SensorList.
-         * If _SelectedSensorID == 255U then no sensor is available.
-         */
-        void select_sensor(vector<Sensor_t> sensorList, bool SerialPortSpecified);
+    /**
+     * @Brief This routine allows to the user to select the sensor to use.
+     * If the input parameter 'SerialPortSpecified' is TRUE then the routine
+     * simply configures the sensor data structure for the sensor attached to
+     * the Serial Port specified by the user at the node instantiation.
+     * If the input parameter 'SerialPortSpecified' is TRUE then the routine allows
+     * to choose a sensor between the sensors listed in _SensorList.
+     * If _SelectedSensorID == 255U then no sensor is available.
+     */
+    void select_sensor(vector<Sensor_t> sensorList, bool SerialPortSpecified);
 
-
-    public:
+public:
     /*CONSTRUCTOR*/
     InfraredSensor(int argc, Line calibration_line);
 
@@ -112,7 +104,6 @@ class InfraredSensor : public DistanceSensor
     float getDistanceInCentimeters() override;
     float getDistanceInMillimeters() override;
     void useCalibrationCurve(bool use) override;
-    
 };
 
 #endif /* INFRAREDSENSOR_HPP */

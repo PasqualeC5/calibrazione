@@ -15,14 +15,6 @@
 #define MAX_SENSOR_DELAY 5800 // Maximum uS it takes for sensor to start the ping. Default=5800
 
 
-/*STUCTS*/
-typedef struct
-{
-    float m;
-    float q;
-} Line;
-
-
 class UltrasonicSensor : public DistanceSensor {
     
     private:

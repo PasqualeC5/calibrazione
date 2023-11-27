@@ -1,7 +1,12 @@
 #ifndef DISTANCESENSOR_HPP
 #define DISTANCESENSOR_HPP
-
-class DistanceSensor {
+typedef struct
+{
+    float m;
+    float q;
+} Line(m, q) : m(m), q(q);
+class DistanceSensor
+{
 public:
     virtual ~DistanceSensor() {}
 
@@ -16,7 +21,6 @@ public:
 
     // Virtual method to use calibration
     virtual void useCalibrationCurve(bool use) = 0;
-
 };
 
 #endif // DISTANCESENSOR_HPP
