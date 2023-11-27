@@ -24,6 +24,10 @@
 
 using namespace std;
 
+//Calibration parameters (best fit)
+float m = 0.9838294117647063;
+float q = -3.314615686274564;
+
 void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure, unsigned int delay_us);
 void scrivi_database(vector<float> misure, string name_file_to_create);
 int main(int argc, char *argv[])
@@ -72,7 +76,7 @@ int main(int argc, char *argv[])
       }
       else if (sensorType == "infrared")
       {
-            sensore = new InfraredSensor(1U, Line(0.9838294117647063,-3.314615686274564));
+            sensore = new InfraredSensor(1U, Line(m, q));
       }
       else
       {
@@ -135,7 +139,7 @@ int main(int argc, char *argv[])
             }
 
             effettua_misure(*sensore, misura_attuale, misure_per_ciclo, misure, DELAY_MISURA_US);
-            for(float misura : misure)
+            for (float misura : misure)
                   cout << misura << endl;
 
             nome_file = "misure/" + sensorType + "/" + surface + "/misura" + to_string((int)misura_attuale) + ".csv";
