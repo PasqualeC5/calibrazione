@@ -54,7 +54,10 @@ using namespace std;
             init_sensor(argv[1]);
             select_sensor(_SensorList, true);
             to_enable = argv[2];
-        }
+        }   
+
+
+        
       
         /* Set Publisher and Rate for P--- Sensors */
         uint16_t rate = 0U;
