@@ -13,6 +13,10 @@ public:
 
     // Virtual method to get distance in millimeters
     virtual float getDistanceInMillimeters() = 0;
+
+    // Virtual method to use calibration
+    virtual void useCalibrationCurve(bool use) = 0;
+
 };
 
 #endif // DISTANCESENSOR_HPP

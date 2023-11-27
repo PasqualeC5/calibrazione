@@ -1,0 +1,10 @@
+infrared:
+
+-traslucida
+-opaca
+
+ultrasonic:
+
+-liscia
+-ruvida
+-irregolare
