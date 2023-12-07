@@ -4,7 +4,8 @@ struct Line
 {
     float m;
     float q;
-}
+};
+
 class DistanceSensor
 {
 public:
