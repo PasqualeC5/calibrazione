@@ -1,10 +1,10 @@
 #ifndef DISTANCESENSOR_HPP
 #define DISTANCESENSOR_HPP
-typedef struct
+struct Line
 {
     float m;
     float q;
-} Line(m, q) : m(m), q(q);
+}
 class DistanceSensor
 {
 public:
