@@ -90,7 +90,7 @@ using namespace std;
         if(calibration)
             return calibrate(getDistanceInMillimetersVector()[0]);
         else
-            return getDistanceInMillimetersVector()[0]
+            return getDistanceInMillimetersVector()[0];
     }
     
     void InfraredSensor::useCalibrationCurve(bool use){
