@@ -24,7 +24,7 @@
 
 using namespace std;
 
-//Calibration parameters (best fit)
+// Calibration parameters (best fit)
 float m = 0.9838294117647063;
 float q = -3.314615686274564;
 
@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
       gpioInitialise();
 
       ifstream file_misure("input_files/misure_test.txt");
+      //--nomeparametro valoreparametro
 
       // Check if the correct number of command line arguments is provided
       if (argc < 2)
@@ -42,8 +43,11 @@ int main(int argc, char *argv[])
             cerr << "Usage: " << argv[0] << " <sensor_type>" << endl;
             cerr << "Usage: " << argv[0] << " <sensor_type> <surface>" << endl;
             cerr << "Usage: " << argv[0] << " <sensor_type> <surface> <number_of_measures>" << endl;
+            cerr << "Usage: " << argv[0] << " <sensor_type> <surface> <number_of_measures> <r for using robot>" << endl;
             return 1;
       }
+
+      // argc = 2 parameters passed
 
       // Convert the command line argument to lowercase for case-insensitive comparison
       string sensorType = argv[1];
@@ -57,6 +61,7 @@ int main(int argc, char *argv[])
       {
             misure_per_ciclo = stoi(argv[3]);
       }
+      int posizione_iniziale_x = 30;
       if (argc > 4 && argv[4] == "r")
       {
             use_robot = true;
@@ -64,7 +69,7 @@ int main(int argc, char *argv[])
             robot->reset_error();
             // robot.main();
             robot->set_conf(1, 1, -1);
-            robot->move_pose(0, -240, 190, 90, 0, 0);
+            robot->move_pose(posizione_iniziale_x, -170, 120, 90, 0, 0);
             robot->print_pose();
       }
 
@@ -76,7 +81,7 @@ int main(int argc, char *argv[])
       }
       else if (sensorType == "infrared")
       {
-            sensore = new InfraredSensor(1U, Line(m, q));
+            sensore = new InfraredSensor(1U);
       }
       else
       {
@@ -107,6 +112,12 @@ int main(int argc, char *argv[])
       vector<float> misure;
       string nome_file;
 
+      if (use_robot)
+      {
+            cout << "Mettere l'ostacolo in posizione" << endl;
+            pause();
+      }
+
       while (misura_attuale <= misura_massima)
       {
             misure.clear();
@@ -122,20 +133,12 @@ int main(int argc, char *argv[])
             }
             else
             {
-                  // cout << "Next measure: " << misura_attuale << " mm\n";
-                  // cout << "Moving robot to position..." << endl;
-                  // robot->move_lin_rel_trf(misura_attuale, -240, 190, 90, 0, 0);
-                  // printf("waiting for robot to finish moving");
-                  // while (!robot->movement_ended())
-                  // {
-                  //       printf(".");
-                  //       usleep(1e+6);
-                  // }
-                  // printf("\n");
-                  // while (!robot->movement_ended())
-                  //       ;
-                  // cout << "Robot in position" << endl;
-                  // cout << "Measuring" << endl;
+                  cout << "Next measure: " << misura_attuale << " mm\n";
+                  cout << "Moving robot to position..." << endl;
+                  robot->move_pose(posizione_iniziale_x + misura_attuale, -170, 120, 90, 0, 0);
+                  printf("waiting for robot to finish moving");
+                  cout << "Robot in position" << endl;
+                  cout << "Measuring" << endl;
             }
 
             effettua_misure(*sensore, misura_attuale, misure_per_ciclo, misure, DELAY_MISURA_US);

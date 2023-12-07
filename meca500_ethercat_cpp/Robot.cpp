@@ -159,6 +159,22 @@ void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -
     meca500.moveLinVelTRF(vel);
 }
 
+void Robot::move_lin_vel_wrf(double velocity) // input is in m/s, ranging from -1 to 1
+{
+    float vel[6] = {0, 0, 0, 0, 0, 0};
+    if (velocity > 0 && get_position() > POS_LIMIT)
+    {
+        velocity = 0;
+    }
+    if (velocity < 0 && get_position() < -POS_LIMIT)
+    {
+        velocity = 0;
+    }
+
+    vel[0] = (float)velocity * 1e+3;
+    meca500.moveLinVelWRF(vel);
+}
+
 void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from -1 to 1
 {
 

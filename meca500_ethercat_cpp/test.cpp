@@ -5,12 +5,12 @@ int main(int argc, char *argv[]) {
     robot.reset_error();
     //robot.main();
     robot.set_conf(1,1,-1);
-    robot.move_pose(0,-240,190,90,0,0);
+    robot.move_pose(130, -170, 120, 90, 0, 0);
     robot.print_pose();
     while(true) {
-        static float speed = 500;
+        static float speed = 10e-3;
         speed *= -1;
-        robot.move_lin_vel_trf(speed);
-        usleep(0.1e+6);
+        robot.move_lin_vel_wrf(speed);
+        usleep(1e+6);
     }
 }

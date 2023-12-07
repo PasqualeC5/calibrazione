@@ -22,7 +22,7 @@ using namespace std;
     /*CONSTRUCTOR*/
     InfraredSensor::InfraredSensor(int argc)
     {
-
+        //calibrationLine = calibration_line;
         char enable_all[] = "utlr";
         char *argv[] = {"test", "/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"};
         char *to_enable;

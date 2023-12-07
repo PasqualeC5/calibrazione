@@ -96,7 +96,7 @@ private:
 
 public:
     /*CONSTRUCTOR*/
-    InfraredSensor(int argc, Line calibration_line);
+    InfraredSensor(int argc);
 
     /*PUBLIC METHODS*/
     // Implementation of virtual methods to get distance in meters, centimeters, and millimeters (with calibration)
