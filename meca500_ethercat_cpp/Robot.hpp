@@ -13,8 +13,7 @@
 #include <fstream>
 #include <cmath>
 
-void get_joints_vel_with_jacobian(double velocity,float* joints,float* joints_vel);
-
+void get_joints_vel_with_jacobian(double velocity, float *joints, float *joints_vel);
 
 class Robot
 {
@@ -31,7 +30,8 @@ private:
     double last_vel = 0;
 
     double costante_tempo_filtro = 10e-3;
-    const double POS_LIMIT;
+    const double POS_LIMIT_INF;
+    const double POS_LIMIT_SUP;
 
     int activateRob, deactivateRob, homeRob;
     const uint32_t TARGET_CYCLE_TIME_MICROSECONDS;
@@ -41,22 +41,23 @@ private:
     bool movement_ended();
 
 public:
-    Robot(double pos_limit,
+    Robot(double pos_limit_inf,
+          double pos_limit_sup,
           uint32_t target_cycle_time_microseconds,
           char *network_interface_in,
           float blending_percentage,
           float cart_accel_limit);
     ~Robot();
-    void get_joints(float* joints);
+    void get_joints(float *joints);
     void deactivate();
     void reset_error();
     double get_position();
-    void get_pose(float* x);
+    void get_pose(float *x);
     double get_velocity();
     void move_lin_vel_wrf(double velocity);
     void move_lin_vel_trf(double velocity);
     void move_lin_vel_trf_x(double velocity);
-    void move_joints_vel(float* w);
+    void move_joints_vel(float *w);
     void set_conf(short c1, short c2, short c3);
     void move_pose(double x, double y, double z, double alpha, double beta, double gamma);
     void move_lin(double x, double y, double z, double alpha, double beta, double gamma);
