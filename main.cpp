@@ -91,11 +91,6 @@ int main(int argc, char *argv[])
             cerr << "Invalid sensor type. Supported types: ultrasonic, infrared" << endl;
             return 1;
       }
-      float offset = 0;
-      // if (use_robot)
-      // {
-      //       offset = sensore->getDistanceInMillimeters();
-      // }
 
       int choice;
       // lettura iniziale del file
@@ -149,10 +144,7 @@ int main(int argc, char *argv[])
                   cout << misura << endl;
 
             nome_file = "misure/" + sensorType + "/" + surface + "/" + (misura_attuale < 100 ? "0" : "") + to_string((int)misura_attuale) + "mm.csv";
-            for (auto misura : misure)
-            {
-                  misura = misura - offset;
-            }
+
             scrivi_database(misure, nome_file);
             misura_attuale += passo_misura;
       }
