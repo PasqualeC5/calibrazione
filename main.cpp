@@ -29,7 +29,7 @@ using namespace std;
 float m = 0.9838294117647063;
 float q = -3.314615686274564;
 
-void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure, unsigned int delay_us);
+void effettua_misure(DistanceSensor &sensore, int numero_misure, vector<float> &misure, unsigned int delay_us);
 void scrivi_database(vector<float> misure, string name_file_to_create);
 int main(int argc, char *argv[])
 {
