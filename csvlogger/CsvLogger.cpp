@@ -1,7 +1,5 @@
 #include "CsvLogger.hpp"
 #include <stdio.h>
-#include <iostream>
-#include <fstream>
 
 // #define LOGGING_DISABLED TRUE
 
