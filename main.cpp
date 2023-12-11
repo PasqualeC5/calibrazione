@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
       int posizione_iniziale_x = 200;
       if (argc > 4 && argv[4] == "r")
       {
+
             use_robot = true;
             robot = new Robot(40, 240, 5000, "eth0", 0.0, 10);
             robot->reset_error();
@@ -178,9 +179,10 @@ void scrivi_database(vector<float> misure, string name_file_to_create)
       CsvLogger database_misure(name_file_to_create);
       database_misure.write("index,distance\n");
       float misura;
+      cout << "misure database" << endl;
       for (unsigned int i = 0; i < misure.size(); i++)
       {
-            // cout << misure[i] << endl;
+            cout << misure[i] << endl;
             database_misure << i;
             misura = misure[i];
             database_misure << misura;
