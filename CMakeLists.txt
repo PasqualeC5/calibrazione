@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.0.0)
 project(calibrazione VERSION 0.1.0 LANGUAGES C CXX)
 
 add_executable(calibra main.cpp)
-add_executable(prova prova.cpp)
 add_subdirectory(csvlogger)
 add_subdirectory(distance_sensor)
 add_subdirectory(meca500_ethercat_cpp)
