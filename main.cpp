@@ -21,6 +21,7 @@
 #define DELAY_MISURA_US 200
 #define AUTO 2U
 #define USER_INPUT 1U
+#define PIN_OFFSET 8
 
 using namespace std;
 
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
       {
             misure_per_ciclo = stoi(argv[3]);
       }
-      int posizione_iniziale_x = 220;
+      int posizione_iniziale_x = 200;
       if (argc > 4 && argv[4] == "r")
       {
             use_robot = true;
@@ -70,6 +71,8 @@ int main(int argc, char *argv[])
             // robot.main();
             robot->set_conf(1, 1, -1);
             robot->move_pose(posizione_iniziale_x, -170, 120, 90, 90, 0);
+
+            // robot->move_pose(posizione_iniziale_x - 8, -170, 120, 90, 90, 0);
             robot->print_pose();
       }
 
@@ -105,7 +108,7 @@ int main(int argc, char *argv[])
       file_misure >> misura_massima;
       file_misure >> numero_misure;
 
-      float passo_misura = (misura_massima - misura_minima) / numero_misure;
+      float passo_misura = (misura_massima - misura_minima) / (numero_misure - 1);
 
       float misura_attuale = misura_minima;
 
@@ -135,16 +138,16 @@ int main(int argc, char *argv[])
             {
                   cout << "Next measure: " << misura_attuale << " mm\n";
                   cout << "Moving robot to position..." << endl;
-                  robot->move_pose(posizione_iniziale_x - misura_attuale, -170, 120, 90, 90, 0);
+                  robot->move_pose(posizione_iniziale_x - misura_attuale + PIN_OFFSET, -170, 120, 90, 90, 0);
                   cout << "waiting for robot to finish moving";
                   cout << "Robot in position" << endl;
                   cout << "Measuring" << endl;
             }
 
-            effettua_misure(*sensore, misura_attuale, misure_per_ciclo, misure, DELAY_MISURA_US);
+            effettua_misure(*sensore, misure_per_ciclo, misure, DELAY_MISURA_US);
             for (float misura : misure)
                   cout << misura << endl;
-            
+
             nome_file = "misure/" + sensorType + "/" + surface + "/" + (misura_attuale < 100 ? "0" : "") + to_string((int)misura_attuale) + "mm.csv";
             for (auto misura : misure)
             {
@@ -160,7 +163,7 @@ int main(int argc, char *argv[])
       return 0;
 }
 
-void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misure, vector<float> &misure, unsigned int delay_us)
+void effettua_misure(DistanceSensor &sensore, int numero_misure, vector<float> &misure, unsigned int delay_us)
 {
       // create file which name is string (see Constructor)
       float distance;
