@@ -11,16 +11,17 @@ CsvLogger::CsvLogger(const std::string filename) : FILENAME(filename.c_str())
     std::ofstream file;
 
     // Check if the path exists
-    // struct stat info;
-    // if (stat(filename.c_str(), &info) != 0) {
-    //     // Create the necessary folders
-    //     int status = mkdir(filename.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    //     if (status != 0) {
-    //         std::cerr << "Error creating directories" << std::endl;
-    //         exit(1);
-    //     }
-    // }
-
+    struct stat info;
+    if (stat(filename.c_str(), &info) != 0)
+    {
+        // Create the necessary folders
+        int status = mkdir(filename.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (status != 0)
+        {
+            std::cerr << "Error creating directories" << std::endl;
+            exit(1);
+        }
+    }
 
     file.open(filename);
     if (!file.is_open())
