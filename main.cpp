@@ -32,7 +32,7 @@ void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misu
 void scrivi_database(vector<float> misure, string name_file_to_create);
 int main(int argc, char *argv[])
 {
-      // gpioInitialise();
+      gpioInitialise();
 
       ifstream file_misure("input_files/misure_test.txt");
       //--nomeparametro valoreparametro
