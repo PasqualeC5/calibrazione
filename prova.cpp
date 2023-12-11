@@ -1,5 +1,4 @@
-#include "Robot.hpp"
-
+#include "../meca500_ethercat_cpp/Robot.hpp"
 int main(int argc, char *argv[])
 {
     Robot robot(-30, 200, 5000, "eth0", 0.0, 100);
