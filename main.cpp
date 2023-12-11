@@ -13,6 +13,7 @@
 #include "../distance_sensor/include/InfraredSensor.hpp"
 #include <pigpio.h>
 #include "../meca500_ethercat_cpp/Robot.hpp"
+#include <string.h>
 
 /* CONSTANTS */
 #define MISURE_PER_CICLO 100
@@ -63,7 +64,8 @@ int main(int argc, char *argv[])
             misure_per_ciclo = stoi(argv[3]);
       }
       int posizione_iniziale_x = 200;
-      if (argc > 4 && argv[4] == "r")
+
+      if (argc > 4 && strcmp(argv[4], "r") == 0)
       {
 
             use_robot = true;
