@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
       if (argc > 4 && argv[4] == "r")
       {
             use_robot = true;
-            robot = new Robot(200, 5000, "eth0", 0.0, 10);
+            robot = new Robot(40, 240, 5000, "eth0", 0.0, 10);
             robot->reset_error();
             // robot.main();
             robot->set_conf(1, 1, -1);
