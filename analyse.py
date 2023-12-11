@@ -1,13 +1,13 @@
-#PURPOSE: this script analyse data-sensor
+# PURPOSE: this script analyse data-sensor
 
-import os                                                     #interation with operating system
-import sys                                                    #interation with operating system
-import pandas as pd                                           #draw graph
-import matplotlib.pyplot as plt                               #draw graph
-import re                                                     #support for working with regular expression (string)
-import numpy as np                                            #support for working with multidimension variables (array)
-from scipy.stats import norm                                  #probability and statistic
-from sklearn.linear_model import LinearRegression             #for best fit
+import os  # interation with operating system
+import sys  # interation with operating system
+import pandas as pd  # draw graph
+import matplotlib.pyplot as plt  # draw graph
+import re  # support for working with regular expression (string)
+import numpy as np  # support for working with multidimension variables (array)
+from scipy.stats import norm  # probability and statistic
+from sklearn.linear_model import LinearRegression  # for best fit
 
 marker_size = 2
 
@@ -44,30 +44,26 @@ def get_file_names(folder_path):
 
 def analyse_files(folder_path):
 
-    surface_type = []
+    contents = os.listdir(folder_path)
 
-    #differencing surfaces -> see misure/surfaceINFO.txt
-    if(folder_path == "misure/infrared") :            #using infrared sensor
-        surface_type = ["opaca", "traslucida"]
-    else : #if folder_path=="misure/ultrasonic"       #using ultrasonic senso
-        surface_type = ["irregolare", "liscio", "ruvido"]
+    # Filter out only directories
+    surface_type = [item for item in contents if os.path.isdir(
+        os.path.join(folder_path, item))]
 
-    #array to fill with datas of best fit
-    surface_slopes =  []
+    # array to fill with datas of best fit
+    surface_slopes = []
     surface_intercept = []
-
 
     for s in surface_type:
         sub_folder_path = folder_path + "/" + s
 
-        #initializing stats file
+        # initializing stats file
         stats = open(sub_folder_path+"/stats/stats.csv", "w")
         stats.write("index,valore,media,devstd\n")
         i = 0
 
-
         for x in get_file_names(sub_folder_path):  # x is a std measure
-            file_path = sub_folder_path +  "/" + x
+            file_path = sub_folder_path + "/" + x
             # STEP 1: REMOVE COMMA
             # Open the input file in read mode
 
@@ -122,15 +118,16 @@ def analyse_files(folder_path):
             # 50% corresponds to the median
             median_distance = distance_stats["50%"]
             std_dev_distance = distance_stats["std"]
-            tag_text = f'Mean: {mean_distance:.2f}\nStd Dev: {std_dev_distance:.2f}\nMin: {min_value:.2f}\nMax: {max_value:.2f}'
+            tag_text = f'Mean: {mean_distance:.2f}\nStd Dev: {
+                std_dev_distance:.2f}\nMin: {min_value:.2f}\nMax: {max_value:.2f}'
 
             plt.annotate(tag_text,
-                        xy=(1, 1), xycoords='axes fraction',
-                        xytext=(-10, -10), textcoords='offset points',
-                        ha='right', va='top',
-                        bbox=dict(boxstyle='round,pad=0.3',
-                                edgecolor='black', facecolor='white'),
-                        fontsize=10)
+                         xy=(1, 1), xycoords='axes fraction',
+                         xytext=(-10, -10), textcoords='offset points',
+                         ha='right', va='top',
+                         bbox=dict(boxstyle='round,pad=0.3',
+                                   edgecolor='black', facecolor='white'),
+                         fontsize=10)
             plt.savefig(sub_folder_path + "/plots/plot_" + x + ".png")
             # print(
             #     distance_stats
@@ -151,7 +148,7 @@ def analyse_files(folder_path):
             y_values_m = norm.pdf(x_values, mean_distance, std_dev_distance)
 
             plt.hist(df["distance"].astype(float), bins=20, color="skyblue",
-                    edgecolor="black", density=True, stacked=True)
+                     edgecolor="black", density=True, stacked=True)
             plt.plot(x_values, y_values, 'r-', label='Desired distribution')
             plt.plot(x_values, y_values_m, 'b-', label='Measured distribution')
             plt.legend()
@@ -170,20 +167,19 @@ def analyse_files(folder_path):
         stats.close()
         stats_df = pd.read_csv(sub_folder_path + "/stats/stats.csv")
         errors = abs(stats_df['media'].astype(float) -
-                    stats_df['valore'].astype(float))
+                     stats_df['valore'].astype(float))
 
-        #best fit
+        # best fit
         model = LinearRegression()
         model.fit(X=stats_df["valore"].values.reshape(-1, 1),
-                y=stats_df["media"].values,)
+                  y=stats_df["media"].values,)
         slope = model.coef_[0]
         intercept = model.intercept_
-        predicted_values = model.predict(stats_df["valore"].values.reshape(-1, 1))
-
+        predicted_values = model.predict(
+            stats_df["valore"].values.reshape(-1, 1))
 
         surface_slopes.append(slope)
         surface_intercept.append(intercept)
-
 
         plt.figure(figsize=(10, 6))  # Optional: Set the figure size
         equation = f'Y = {slope:.2f}X + {intercept:.2f}'
@@ -247,17 +243,16 @@ def analyse_files(folder_path):
         plt.savefig(sub_folder_path+"/plots/stats_plot.png")
         print(stats_df["devstd"].describe())
         print("La deviazione standard media in mm: " +
-            str(stats_df["devstd"].describe()["mean"]))
-        #plt.show()
+              str(stats_df["devstd"].describe()["mean"]))
+        # plt.show()
         plt.close()
 
-    
-    #medium best fit
-    medium_slope=0
-    medium_intercept=0
+    # medium best fit
+    medium_slope = 0
+    medium_intercept = 0
 
     for value in surface_slopes:
-        medium_slope +=value
+        medium_slope += value
 
     for value in surface_intercept:
         medium_intercept += value
@@ -265,9 +260,9 @@ def analyse_files(folder_path):
     medium_slope = medium_slope / len(surface_slopes)
     medium_intercept = medium_intercept / len(surface_intercept)
 
-    print("best fit media: " + str(medium_slope) + "x + " + str(medium_intercept))
+    print("best fit media: " + str(medium_slope) +
+          "x + " + str(medium_intercept))
 
-    
 
 def main():
     # Check if a folder path is provided as a command-line argument

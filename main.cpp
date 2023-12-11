@@ -32,7 +32,7 @@ void effettua_misure(DistanceSensor &sensore, float riferimento, int numero_misu
 void scrivi_database(vector<float> misure, string name_file_to_create);
 int main(int argc, char *argv[])
 {
-      gpioInitialise();
+      // gpioInitialise();
 
       ifstream file_misure("input_files/misure_test.txt");
       //--nomeparametro valoreparametro
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
       {
             misure_per_ciclo = stoi(argv[3]);
       }
-      int posizione_iniziale_x = 30;
+      int posizione_iniziale_x = 220;
       if (argc > 4 && argv[4] == "r")
       {
             use_robot = true;
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
             robot->reset_error();
             // robot.main();
             robot->set_conf(1, 1, -1);
-            robot->move_pose(posizione_iniziale_x, -170, 120, 90, 0, 0);
+            robot->move_pose(posizione_iniziale_x, -170, 120, 90, 90, 0);
             robot->print_pose();
       }
 
@@ -89,10 +89,10 @@ int main(int argc, char *argv[])
             return 1;
       }
       float offset = 0;
-      if (use_robot)
-      {
-            offset = sensore->getDistanceInMillimeters();
-      }
+      // if (use_robot)
+      // {
+      //       offset = sensore->getDistanceInMillimeters();
+      // }
 
       int choice;
       // lettura iniziale del file
@@ -124,10 +124,10 @@ int main(int argc, char *argv[])
             if (!use_robot)
             {
                   cout << "Next measure: " << misura_attuale << " mm\n\nType '1' to start, other to stop immediately : ";
-                  scanf("%d", &choice);
+                  cin >> choice;
                   if (choice != 1)
                   {
-                        printf("Exiting program\n");
+                        cout << "Exiting program\n";
                         break;
                   }
             }
@@ -135,8 +135,8 @@ int main(int argc, char *argv[])
             {
                   cout << "Next measure: " << misura_attuale << " mm\n";
                   cout << "Moving robot to position..." << endl;
-                  robot->move_pose(posizione_iniziale_x + misura_attuale, -170, 120, 90, 0, 0);
-                  printf("waiting for robot to finish moving");
+                  robot->move_pose(posizione_iniziale_x - misura_attuale, -170, 120, 90, 90, 0);
+                  cout << "waiting for robot to finish moving";
                   cout << "Robot in position" << endl;
                   cout << "Measuring" << endl;
             }
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
             for (float misura : misure)
                   cout << misura << endl;
 
-            nome_file = "misure/" + sensorType + "/" + surface + "/misura" + to_string((int)misura_attuale) + ".csv";
+            nome_file = "misure/" + sensorType + "/" + surface + "/" + misura_attuale < 100 ? "0" : "" + to_string((int)misura_attuale) + "mm.csv";
             for (auto misura : misure)
             {
                   misura = misura - offset;
