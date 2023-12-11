@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include <filesystem>
-
-namespace fs = std::filesystem;
+#include <sys/stat.h>
 
 // #define LOGGING_DISABLED TRUE
 
@@ -13,19 +11,16 @@ CsvLogger::CsvLogger(const std::string filename) : FILENAME(filename.c_str())
     std::ofstream file;
 
     // Check if the path exists
-    if (!fs::exists(fs::path(filename).parent_path()))
-    {
+    struct stat info;
+    if (stat(filename.c_str(), &info) != 0) {
         // Create the necessary folders
-        try
-        {
-            fs::create_directories(fs::path(filename).parent_path());
-        }
-        catch (const fs::filesystem_error &e)
-        {
-            std::cerr << "Error creating directories: " << e.what() << std::endl;
+        int status = mkdir(filename.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (status != 0) {
+            std::cerr << "Error creating directories" << std::endl;
             exit(1);
         }
     }
+
 
     file.open(filename);
     if (!file.is_open())
