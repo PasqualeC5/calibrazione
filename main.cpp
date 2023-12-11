@@ -144,8 +144,8 @@ int main(int argc, char *argv[])
             effettua_misure(*sensore, misura_attuale, misure_per_ciclo, misure, DELAY_MISURA_US);
             for (float misura : misure)
                   cout << misura << endl;
-
-            nome_file = "misure/" + sensorType + "/" + surface + "/" + misura_attuale < 100 ? "0" : "" + to_string((int)misura_attuale) + "mm.csv";
+            
+            nome_file = "misure/" + sensorType + "/" + surface + "/" + (misura_attuale < 100 ? "0" : "") + to_string((int)misura_attuale) + "mm.csv";
             for (auto misura : misure)
             {
                   misura = misura - offset;
