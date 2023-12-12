@@ -7,6 +7,8 @@
 
 CsvLogger::CsvLogger(const std::string filename) : FILENAME(filename.c_str())
 {
+    createDirectories(filename);
+    
     file.open(filename);
     if (!file.is_open())
     {
