@@ -59,7 +59,7 @@ def analyse_files(folder_path):
 
         # initializing stats file
         stats = open(sub_folder_path+"/stats/stats.csv", "w")
-        stats.write("index,valore,media,devstd\n")
+        stats.write("valore,media,devstd\n")
         i = 0
 
         for x in get_file_names(sub_folder_path):  # x is a std measure
@@ -94,7 +94,6 @@ def analyse_files(folder_path):
             df = pd.read_csv(file_path)
             # Step 4: Create Plots
             plt.plot(
-                df["index"].astype(int),
                 df["distance"].astype(float),
                 marker="o",
                 linestyle="-",
