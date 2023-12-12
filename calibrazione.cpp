@@ -35,9 +35,9 @@ using namespace std;
 map<string, string> parseCommandLine(int argc, char *argv[]); // function to parse the appropriate command line arguments
 int setupOptions(map<string, string> options);                // function to setup the program based on the command line arguments
 int setupMeasurementsParameters();                            // function to setup the measurements parameters
-
-// CALCULATIONS
-map<float, float> calculateProbabilityDistribution(const vector<float> &numbers);
+void displayUsage()                                           // function to display usage message from help command
+                                                              // CALCULATIONS
+    map<float, float> calculateProbabilityDistribution(const vector<float> &numbers);
 float calculateWeightedAverage(const vector<float> &numbers, const map<float, float> &probabilityDistribution);
 
 // MEASUREMENTS
@@ -181,7 +181,7 @@ void write_measurements_to_csv(vector<float> measurments, string file_path)
         measurements_logger.end_row();
     }
 
-    database_misure.close();
+    measurements_logger.close();
 }
 void movePose(float robot_position[6])
 {
@@ -225,7 +225,7 @@ int setupOptions(map<string, string> options)
             if (value == INFRARED_SENSOR_VALUE)
                 sensor = new InfraredSensor(InfraredSensor::ENABLE_FIRST);
             else if (value == ULTRASONIC_SENSOR_VALUE)
-                sensor = sensore = new UltrasonicSensor(TRIG_PIN, ECHO_PIN);
+                sensor = new UltrasonicSensor(TRIG_PIN, ECHO_PIN);
             else
             {
                 cerr << "Invalid sensor type. Supported types: ultrasonic, infrared" << endl;
