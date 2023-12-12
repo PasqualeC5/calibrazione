@@ -98,6 +98,10 @@ public:
     /*CONSTRUCTOR*/
     InfraredSensor(int argc);
 
+    static const int USER_INPUT = 1U;
+    static const int ENABLE_ALL = 2U;
+    static const int ENABLE_FIRST = 3U;
+
     /*PUBLIC METHODS*/
     // Implementation of virtual methods to get distance in meters, centimeters, and millimeters (with calibration)
     float getDistanceInMeters() override;

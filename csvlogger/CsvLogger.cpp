@@ -1,5 +1,8 @@
 #include "CsvLogger.hpp"
 #include <stdio.h>
+#include <iostream>
+#include <filesystem>
+#include <cstdio>
 
 // #define LOGGING_DISABLED TRUE
 
@@ -13,6 +16,23 @@ CsvLogger::CsvLogger(const std::string filename) : FILENAME(filename.c_str())
     }
     file.precision(5);
 }
+
+// Function to create directories in the given path
+void CsvLogger::createDirectories(const std::string& path)
+{
+    namespace fs = std::filesystem;
+
+    fs::path dirPath = fs::path(path).parent_path();
+    if (!fs::exists(dirPath))
+    {
+        if (!fs::create_directories(dirPath))
+        {
+            std::cerr << "Error creating directories. Exiting..." << std::endl;
+            exit(1);
+        }
+    }
+}
+
 
 CsvLogger::~CsvLogger()
 {

@@ -9,6 +9,7 @@ class CsvLogger
 private:
     const char *FILENAME;
     std::ofstream file;
+    void createDirectories(const std::string& path);
 
 public:
     CsvLogger(const std::string filename);

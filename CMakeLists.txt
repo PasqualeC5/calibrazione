@@ -5,13 +5,19 @@ add_executable(calibra main.cpp)
 add_subdirectory(csvlogger)
 add_subdirectory(distance_sensor)
 add_subdirectory(meca500_ethercat_cpp)
-
+add_executable(calibrazione prova.cpp)
 
 target_link_libraries(calibra PRIVATE csvlogger)
-target_link_libraries(calibra  PRIVATE distance_sensor)
+target_link_libraries(calibra PRIVATE distance_sensor)
 target_compile_options(calibra PRIVATE -Wall -pthread)
 target_link_libraries(calibra PRIVATE pigpio rt)
 target_link_libraries(calibra PRIVATE meca500_driver)
+
+target_link_libraries(calibrazione PRIVATE csvlogger)
+target_link_libraries(calibrazione PRIVATE distance_sensor)
+target_compile_options(calibrazione PRIVATE -Wall -pthread)
+target_link_libraries(calibrazione PRIVATE pigpio rt)
+target_link_libraries(calibrazione PRIVATE meca500_driver)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

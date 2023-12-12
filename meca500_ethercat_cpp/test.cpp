@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     {
         robot.move_lin_vel_trf(velocity);
         usleep(3e+6);
-        robot.move_pose(-velocity);
+        robot.move_lin_vel_trf(-velocity);
         usleep(3e+6);
     }
 }

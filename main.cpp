@@ -11,7 +11,6 @@
 #include "../distance_sensor/include/DistanceSensor.hpp"
 #include "../distance_sensor/include/UltrasonicSensor.hpp"
 #include "../distance_sensor/include/InfraredSensor.hpp"
-#include <pigpio.h>
 #include "../meca500_ethercat_cpp/Robot.hpp"
 #include <string.h>
 
@@ -34,8 +33,6 @@ void effettua_misure(DistanceSensor &sensore, int numero_misure, vector<float> &
 void scrivi_database(vector<float> misure, string name_file_to_create);
 int main(int argc, char *argv[])
 {
-      gpioInitialise();
-
       ifstream file_misure("input_files/misure_test.txt");
       //--nomeparametro valoreparametro
 
@@ -116,7 +113,7 @@ int main(int argc, char *argv[])
       if (use_robot)
       {
             cout << "Mettere l'ostacolo in posizione" << endl;
-            pause();
+            scanf();
       }
 
       while (misura_attuale <= misura_massima)
