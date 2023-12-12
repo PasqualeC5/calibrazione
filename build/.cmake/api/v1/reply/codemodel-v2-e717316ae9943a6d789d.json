@@ -1,0 +1,379 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						4
+					]
+				},
+				{
+					"build" : "csvlogger",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "csvlogger",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "distance_sensor",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "distance_sensor",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "meca500_ethercat_cpp",
+					"childIndexes" : 
+					[
+						4,
+						5,
+						6,
+						7,
+						8
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "meca500_ethercat_cpp",
+					"targetIndexes" : 
+					[
+						5,
+						6,
+						7
+					]
+				},
+				{
+					"build" : "meca500_ethercat_cpp/sun_etherCAT/sun_ethercat_master",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 3,
+					"source" : "meca500_ethercat_cpp/sun_etherCAT/sun_ethercat_master",
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"build" : "meca500_ethercat_cpp/sun_etherCAT/SOEM",
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 4,
+					"source" : "meca500_ethercat_cpp/sun_etherCAT/SOEM",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "meca500_ethercat_cpp/sun_etherCAT/sun_scheduling",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 5,
+					"source" : "meca500_ethercat_cpp/sun_etherCAT/sun_scheduling",
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"build" : "meca500_ethercat_cpp/sun_etherCAT/sun_slave",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 6,
+					"source" : "meca500_ethercat_cpp/sun_etherCAT/sun_slave",
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"build" : "meca500_ethercat_cpp/sun_etherCAT/sun_controller",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 7,
+					"source" : "meca500_ethercat_cpp/sun_etherCAT/sun_controller",
+					"targetIndexes" : 
+					[
+						9
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "calibrazione",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "distance_sensor",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						3,
+						4,
+						5,
+						6,
+						7
+					],
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "meca500_driver",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5,
+						6,
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "sun_ethercat_master",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "SOEM",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "sun_scheduling",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						7
+					],
+					"name" : "sun_slave",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						8
+					],
+					"name" : "sun_controller",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						9
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "calibra::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-calibra-Debug-0960c6ba5a1a45ec92aa.json",
+					"name" : "calibra",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "calibrazione::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-calibrazione-Debug-b7474f8f3beea87e3540.json",
+					"name" : "calibrazione",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "csvlogger::@1a3c8416fef3c47e6937",
+					"jsonFile" : "target-csvlogger-Debug-82278f02927a653f9158.json",
+					"name" : "csvlogger",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "distance_sensor::@d91abfe00298575ef264",
+					"jsonFile" : "target-distance_sensor-Debug-3e227f0328c55a9bc7d7.json",
+					"name" : "distance_sensor",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "loggertest::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-loggertest-Debug-8ce219eedbc5bba5da24.json",
+					"name" : "loggertest",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "matrix-test::@b7a2028e9684a8b66634",
+					"jsonFile" : "target-matrix-test-Debug-f81f9b907d966f4dbe16.json",
+					"name" : "matrix-test",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "meca500_driver::@b7a2028e9684a8b66634",
+					"jsonFile" : "target-meca500_driver-Debug-c9efdc7a84d7c91e5c8f.json",
+					"name" : "meca500_driver",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "robot-test::@b7a2028e9684a8b66634",
+					"jsonFile" : "target-robot-test-Debug-e4227ccfffd487b61f96.json",
+					"name" : "robot-test",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "soem::@4917ea832fac821e5f5e",
+					"jsonFile" : "target-soem-Debug-18bc8985973a1748d662.json",
+					"name" : "soem",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "sun_controller::@5ef33cc96a584b488e0c",
+					"jsonFile" : "target-sun_controller-Debug-61eb93c8a579b381cbdd.json",
+					"name" : "sun_controller",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "sun_ethercat_master::@2085fa3529aaccc6eb24",
+					"jsonFile" : "target-sun_ethercat_master-Debug-3a8b9317952f6aff5f5b.json",
+					"name" : "sun_ethercat_master",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "sun_scheduling::@5c9da8718bafa3247075",
+					"jsonFile" : "target-sun_scheduling-Debug-0c7a24eff41866788764.json",
+					"name" : "sun_scheduling",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "sun_slave::@51a2b3c8632b2fad8715",
+					"jsonFile" : "target-sun_slave-Debug-5ed2c84e42c9c503aea2.json",
+					"name" : "sun_slave",
+					"projectIndex" : 6
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/pi/Desktop/c_projects/calibrazione/build",
+		"source" : "/home/pi/Desktop/c_projects/calibrazione"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 1
+	}
+}
