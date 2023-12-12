@@ -14,34 +14,33 @@
 #include <string.h>
 #include <map>
 
-
-#define SENSOR_COMMAND "sensor" //REQUIRED sensor specifier command [--sensor] 
-#define INFRARED_SENSOR_VALUE "infrared" // infrared sensor specifier [--sensor=infrared]
-#define ULTRASONIC_SENSOR_VALUE "ultrasonic"// ultrasonic sensor specifier [--sensor=ultrasonic]
-#define SURFACE_TYPE_COMMAND "surface"//surface specifier [--surface="surface_name"]
-#define NUMBER_OF_MEASUREMENTS_COMMAND "measurements"// number of measurements per cycle [--measurements=number_of_measurements]
-#define USE_ROBOT_COMMAND "userobot" // command flag to use meca500 robot [--userobot]
-#define MEASURE_DELAY_US_COMMAND "delay"// delay between measurements in micro seconds [--delay=microseconds]
+#define SENSOR_COMMAND "sensor"                       // REQUIRED sensor specifier command [--sensor]
+#define INFRARED_SENSOR_VALUE "infrared"              // infrared sensor specifier [--sensor=infrared]
+#define ULTRASONIC_SENSOR_VALUE "ultrasonic"          // ultrasonic sensor specifier [--sensor=ultrasonic]
+#define SURFACE_TYPE_COMMAND "surface"                // surface specifier [--surface="surface_name"]
+#define NUMBER_OF_MEASUREMENTS_COMMAND "measurements" // number of measurements per cycle [--measurements=number_of_measurements]
+#define USE_ROBOT_COMMAND "userobot"                  // command flag to use meca500 robot [--userobot]
+#define MEASURE_DELAY_US_COMMAND "delay"              // delay between measurements in micro seconds [--delay=microseconds]
 
 /* CONSTANTS */
 #define MEASURES_PER_CYCLE 100 // default number of measurements per cycle
-#define ECHO_PIN 23 // default ECHO GPIO PIN for the ultrasonic sensor
-#define TRIG_PIN 22 // default TRIG GPIO PIN for the ultrasonic sensor
-#define MEASURE_DELAY_US 200 // default delay between measurements in micro seconds
+#define ECHO_PIN 23            // default ECHO GPIO PIN for the ultrasonic sensor
+#define TRIG_PIN 22            // default TRIG GPIO PIN for the ultrasonic sensor
+#define MEASURE_DELAY_US 200   // default delay between measurements in micro seconds
 
 using namespace std;
 
 /********HELPER FUNCTIONS********/
-//SETUP
+// SETUP
 map<string, string> parseCommandLine(int argc, char *argv[]); // function to parse the appropriate command line arguments
-int setupOptions(map<string, string> options);// function to setup the program based on the command line arguments
-int setupMeasurementsParameters();// function to setup the measurements parameters
+int setupOptions(map<string, string> options);                // function to setup the program based on the command line arguments
+int setupMeasurementsParameters();                            // function to setup the measurements parameters
 
-//CALCULATIONS
+// CALCULATIONS
 map<float, float> calculateProbabilityDistribution(const vector<float> &numbers);
 float calculateWeightedAverage(const vector<float> &numbers, const map<float, float> &probabilityDistribution);
 
-//MEASUREMENTS
+// MEASUREMENTS
 void make_measurements(DistanceSensor &sensor, int number_of_measurements, vector<float> &measurements, unsigned int delay_us);
 void write_measurements_to_csv(vector<float> measurments, string file_path);
 /********************************/
@@ -49,7 +48,7 @@ void write_measurements_to_csv(vector<float> measurments, string file_path);
 // GLOBAL VARIABLES
 DistanceSensor *sensor = nullptr;                      // Sensor to use for measuring
 Robot *robot = nullptr;                                // Robot object to handle meca500 communication
-int number_of_measurements = MEASUREMENTS_PER_CYCLE;       // Number of measurements per cycle
+int number_of_measurements = MEASUREMENTS_PER_CYCLE;   // Number of measurements per cycle
 bool use_robot = false;                                // Flag to enable meca500 usage
 float robot_position[6] = {140, -170, 120, 90, 90, 0}; // Robot starting position
 string surface_name = "";                              // surface name for saving measurements
@@ -261,8 +260,15 @@ int setupOptions(map<string, string> options)
         }
         else if (command == MEASURE_DELAY_US)
         {
+            int int_value = stoi(value);
+            if (int_value < 0)
+            {
+                cerr << "Invalid number of measures value" << endl;
+                cerr << "Program will now exit..." << endl;
+                return 1;
+            }
             cout << "Measurement delay in us used: " << value << "\n";
-            measurement_delay = value;
+            measurement_delay = int_value;
         }
         else
         {
