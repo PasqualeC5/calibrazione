@@ -22,6 +22,9 @@ target_compile_options(calibrazione PRIVATE -Wall -pthread)
 target_link_libraries(calibrazione PRIVATE pigpio rt)
 target_link_libraries(calibrazione PRIVATE meca500_driver)
 
+target_compile_features(calibrazione PRIVATE cxx_std_17)
+target_compile_features(loggertest PRIVATE cxx_std_17)
+
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
