@@ -35,9 +35,10 @@ using namespace std;
 map<string, string> parseCommandLine(int argc, char *argv[]); // function to parse the appropriate command line arguments
 int setupOptions(map<string, string> options);                // function to setup the program based on the command line arguments
 int setupMeasurementsParameters();                            // function to setup the measurements parameters
-void displayUsage()                                           // function to display usage message from help command
-                                                              // CALCULATIONS
-    map<float, float> calculateProbabilityDistribution(const vector<float> &numbers);
+void displayUsage();                                          // function to display usage message from help command
+
+// CALCULATIONS
+map<float, float> calculateProbabilityDistribution(const vector<float> &numbers);
 float calculateWeightedAverage(const vector<float> &numbers, const map<float, float> &probabilityDistribution);
 
 // MEASUREMENTS
