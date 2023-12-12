@@ -258,7 +258,7 @@ int setupOptions(map<string, string> options)
             cout << "Surface used: " << value << "\n";
             surface_name = value;
         }
-        else if (command == MEASURE_DELAY_US)
+        else if (command == MEASURE_DELAY_US_COMMAND)
         {
             int int_value = stoi(value);
             if (int_value < 0)
