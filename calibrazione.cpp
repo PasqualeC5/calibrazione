@@ -44,6 +44,10 @@ float calculateWeightedAverage(const vector<float> &numbers, const map<float, fl
 // MEASUREMENTS
 void make_measurements(DistanceSensor &sensor, int number_of_measurements, vector<float> &measurements, unsigned int delay_us);
 void write_measurements_to_csv(vector<float> measurments, string file_path);
+
+// ROBOT MOVEMENT
+void movePose(float robot_position[6]);
+
 /********************************/
 
 // GLOBAL VARIABLES
