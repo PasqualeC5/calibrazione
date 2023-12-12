@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
         {
             cout << "Moving robot to position..." << endl;
             robot_position[0] = robot_position[0] - current_measurement + robot_position_offset;
-            movePose(robot);
+            movePose(robot_position);
         }
         else
         {
