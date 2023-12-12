@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
       if (use_robot)
       {
             cout << "Mettere l'ostacolo in posizione" << endl;
-            scanf();
+            fscanf();
       }
 
       while (misura_attuale <= misura_massima)
