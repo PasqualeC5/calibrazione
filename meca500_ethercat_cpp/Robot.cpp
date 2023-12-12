@@ -144,21 +144,21 @@ void Robot::print_pose()
     }
 }
 
-// void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -1 to 1
-// {
-//     float vel[6] = {0, 0, 0, 0, 0, 0};
-//     if (velocity > 0 && get_position() > POS_LIMIT)
-//     {
-//         velocity = 0;
-//     }
-//     if (velocity < 0 && get_position() < -POS_LIMIT)
-//     {
-//         velocity = 0;
-//     }
+void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -1 to 1
+{
+    float vel[6] = {0, 0, 0, 0, 0, 0};
+    if (velocity > 0 && get_position() > POS_LIMIT)
+    {
+        velocity = 0;
+    }
+    if (velocity < 0 && get_position() < -POS_LIMIT)
+    {
+        velocity = 0;
+    }
 
-//     vel[0] = (float)velocity * 1e+3;
-//     meca500.moveLinVelTRF(vel);
-// }
+    vel[0] = (float)velocity * 1e+3;
+    meca500.moveLinVelTRF(vel);
+}
 
 void Robot::move_lin_vel_wrf(double velocity) // input is in m/s, ranging from -1 to 1
 {
@@ -176,25 +176,25 @@ void Robot::move_lin_vel_wrf(double velocity) // input is in m/s, ranging from -
     meca500.moveLinVelWRF(vel);
 }
 
-// void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from -1 to 1
-// {
+void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from -1 to 1
+{
 
-//     float joints[6];
-//     float joints_vel[6];
-//     float pose[6];
-//     if (velocity > 0 && get_position() > POS_LIMIT)
-//     {
-//         velocity = 0;
-//     }
-//     if (velocity < 0 && get_position() < -POS_LIMIT)
-//     {
-//         velocity = 0;
-//     }
-//     get_pose(pose);
-//     get_joints(joints);
-//     get_joints_vel_with_jacobian(velocity, joints, joints_vel, pose);
-//     move_joints_vel(joints_vel);
-// }
+    float joints[6];
+    float joints_vel[6];
+    float pose[6];
+    if (velocity > 0 && get_position() > POS_LIMIT)
+    {
+        velocity = 0;
+    }
+    if (velocity < 0 && get_position() < -POS_LIMIT)
+    {
+        velocity = 0;
+    }
+    get_pose(pose);
+    get_joints(joints);
+    get_joints_vel_with_jacobian(velocity, joints, joints_vel, pose);
+    move_joints_vel(joints_vel);
+}
 
 void Robot::move_joints_vel(float *w)
 {
