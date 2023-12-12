@@ -24,9 +24,9 @@
 
 /* CONSTANTS */
 #define MEASUREMENTS_PER_CYCLE 100 // default number of measurements per cycle
-#define ECHO_PIN 23            // default ECHO GPIO PIN for the ultrasonic sensor
-#define TRIG_PIN 22            // default TRIG GPIO PIN for the ultrasonic sensor
-#define MEASURE_DELAY_US 200   // default delay between measurements in micro seconds
+#define ECHO_PIN 23                // default ECHO GPIO PIN for the ultrasonic sensor
+#define TRIG_PIN 22                // default TRIG GPIO PIN for the ultrasonic sensor
+#define MEASURE_DELAY_US 200       // default delay between measurements in micro seconds
 
 using namespace std;
 
@@ -106,10 +106,11 @@ int main(int argc, char *argv[])
                  << "Press any button to continue..." << endl;
             char c = getchar();
         }
-        cout << "Measuring distance...";
+        cout << "Measuring distance..." << endl;
         make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
-        cout << "Writing measurements to csv file";
+        cout << "Writing measurements to csv file" << endl;
         write_measurements_to_csv(measurements, file_path + csv_file_name);
+        current_measurement += step_size;
     }
     return 0;
 }
