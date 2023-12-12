@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
         char c = getchar();
         measurements.clear();
         cout << "Measuring robot position offset" << endl;
-        make_measurements(*sensor, 200, measurements, 0.02e+6);
+        make_measurements(*sensor, MEASURES_PER_CYCLE, measurements, 0.02e+6);
         cout << "Calculating robot position offset" << endl;
         map<float, float> probabilityDistribution = calculateProbabilityDistribution(measurements);
         robot_position_offset = calculateWeightedAverage(measurements, probabilityDistribution);
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
             char c = getchar();
         }
         cout << "Measuring distance...";
-        make_measurements(*sensor, measurements, number_of_measurements, measurement_delay);
+        make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
         cout << "Writing measurements to csv file";
         write_measurements_to_csv(measurements, file_path + csv_file_name);
     }
