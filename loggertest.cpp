@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 using namespace std;
+void write_measurements_to_csv(vector<float> measurments, string file_path);
+
 int main(int argc, char const *argv[])
 {
     if (argc < 2)
