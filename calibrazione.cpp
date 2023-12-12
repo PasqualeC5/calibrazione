@@ -23,7 +23,7 @@
 #define MEASURE_DELAY_US_COMMAND "delay"              // delay between measurements in micro seconds [--delay=microseconds]
 
 /* CONSTANTS */
-#define MEASURES_PER_CYCLE 100 // default number of measurements per cycle
+#define MEASUREMENTS_PER_CYCLE 100 // default number of measurements per cycle
 #define ECHO_PIN 23            // default ECHO GPIO PIN for the ultrasonic sensor
 #define TRIG_PIN 22            // default TRIG GPIO PIN for the ultrasonic sensor
 #define MEASURE_DELAY_US 200   // default delay between measurements in micro seconds
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         char c = getchar();
         measurements.clear();
         cout << "Measuring robot position offset" << endl;
-        make_measurements(*sensor, MEASURES_PER_CYCLE, measurements, 0.02e+6);
+        make_measurements(*sensor, MEASUREMENTS_PER_CYCLE, measurements, 0.02e+6);
         cout << "Calculating robot position offset" << endl;
         map<float, float> probabilityDistribution = calculateProbabilityDistribution(measurements);
         robot_position_offset = calculateWeightedAverage(measurements, probabilityDistribution);
