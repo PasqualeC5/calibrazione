@@ -5,7 +5,7 @@ add_executable(calibra main.cpp)
 add_subdirectory(csvlogger)
 add_subdirectory(distance_sensor)
 add_subdirectory(meca500_ethercat_cpp)
-add_executable(calibrazione prova.cpp)
+add_executable(calibrazione calibrazione.cpp)
 
 target_link_libraries(calibra PRIVATE csvlogger)
 target_link_libraries(calibra PRIVATE distance_sensor)
