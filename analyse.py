@@ -12,6 +12,27 @@ from sklearn.linear_model import LinearRegression  # for best fit
 marker_size = 2
 
 
+def remove_trailing_commas(file_path):
+    # Open the input file in read mode
+    with open(file_path, "r") as input_file:
+        # Read lines from the input file
+        lines = input_file.readlines()
+
+    # Open the output file in write mode
+    with open(file_path, "w") as output_file:
+        # Iterate through each line and remove the last comma if it exists
+        for line in lines:
+            # Remove trailing whitespace and check if the last character is a comma
+            if line.rstrip().endswith(","):
+                # Remove the last comma and write the updated line to the output file
+                # Remove last character (comma) and add newline
+                updated_line = line.rstrip()[:-1] + "\n"
+                output_file.write(updated_line)
+            else:
+                # If there is no trailing comma, write the line as it is to the output file
+                output_file.write(line)
+
+
 def extract_number_from_string(input_string):
     # Define a regular expression pattern to match numbers
     pattern = r'\d+'
@@ -47,75 +68,53 @@ def analyse_files(folder_path):
     contents = os.listdir(folder_path)
 
     # Filter out only directories
-    surface_type = [item for item in contents if os.path.isdir(
+    surface_folders = [item for item in contents if os.path.isdir(
         os.path.join(folder_path, item))]
 
     # array to fill with datas of best fit
     surface_slopes = []
     surface_intercept = []
 
-    for s in surface_type:
-        sub_folder_path = folder_path + "/" + s
+    for surface_name in surface_folders:
+        sub_folder_path = folder_path + "/" + surface_name
 
         # initializing stats file
         stats = open(sub_folder_path+"/stats/stats.csv", "w")
         stats.write("valore,media,devstd\n")
         i = 0
 
-        for x in get_file_names(sub_folder_path):  # x is a std measure
-            file_path = sub_folder_path + "/" + x
-            # STEP 1: REMOVE COMMA
-            # Open the input file in read mode
+        for measurements_csv_file_name in get_file_names(sub_folder_path):
 
-            with open(file_path, "r") as input_file:
-                # Read lines from the input file
-                lines = input_file.readlines()
+            measurements_csv_file_path = sub_folder_path + "/" + measurements_csv_file_name
 
-            # Open the output file in write mode
-            with open(file_path, "w") as output_file:
-                # Iterate through each line and remove the last comma if it exists
-                for line in lines:
-                    # Remove trailing whitespace and check if the last character is a comma
-                    if line.rstrip().endswith(","):
-                        # Remove the last comma and write the updated line to the output file
-                        updated_line = (
-                            line.rstrip()[:-1] + "\n"
-                        )  # Remove last character (comma) and add newline
-                        output_file.write(updated_line)
-                    else:
-                        # If there is no trailing comma, write the line as it is to the output file
-                        output_file.write(line)
-
-            # print("Last comma removed from each row. Output written to 'output_file.txt'")
+            # STEP 1: REMOVE TRAILING COMMAS
+            remove_trailing_commas(file_path=measurements_csv_file_path)
 
             # Step 2: Read the CSV File
-            print("Analysing: " + file_path)
-            # Replace 'your_file.csv' with the actual file path
-            df = pd.read_csv(file_path)
-            # Step 4: Create Plots
+            print("Analysing: " + measurements_csv_file_path)
+            measurements_data_frame = pd.read_csv(measurements_csv_file_path)
+
+            # Step 3: Create Plots
             plt.plot(
-                df["distance"].astype(float),
+                range(len(measurements_data_frame["distance"])),
+                measurements_data_frame["distance"].astype(float),
                 marker="o",
                 linestyle="-",
                 linewidth=0.5,
                 markersize=marker_size,
                 color="b",
             )
-            plt.title(x)
+            plt.title(measurements_csv_file_name)
             plt.xlabel("Indice misura")
             plt.ylabel("Distanza misurata in mm")
-            plt.ylim(0, 200)
+            plt.ylim(0, 255)
             plt.tight_layout()
-            plt.grid(True)  # Optional: Add grid lines
+            plt.grid(True)
 
-            # Step 5: Show or Save the Plot (Optional)
-
-            distance_stats = df["distance"].describe()
+            distance_stats = measurements_data_frame["distance"].describe()
             min_value = distance_stats["min"]
             max_value = distance_stats["max"]
             mean_distance = distance_stats["mean"]
-            # 50% corresponds to the median
-            median_distance = distance_stats["50%"]
             std_dev_distance = distance_stats["std"]
             tag_text = f'Mean: {mean_distance:.2f}\nStd Dev: {
                 std_dev_distance:.2f}\nMin: {min_value:.2f}\nMax: {max_value:.2f}'
@@ -127,12 +126,10 @@ def analyse_files(folder_path):
                          bbox=dict(boxstyle='round,pad=0.3',
                                    edgecolor='black', facecolor='white'),
                          fontsize=10)
-            plt.savefig(sub_folder_path + "/plots/plot_" + x + ".png")
-            # print(
-            #     distance_stats
-            # )
+            plt.savefig(sub_folder_path + "/plots/plot_" +
+                        measurements_csv_file_name + ".png")
 
-            misura = extract_number_from_string(x)
+            misura = extract_number_from_string(measurements_csv_file_name)
 
             stats.write(str(i) + "," + str(misura) + "," +
                         str(mean_distance) + "," + str(std_dev_distance) + '\n')
@@ -146,7 +143,7 @@ def analyse_files(folder_path):
             y_values = norm.pdf(x_values, misura, desired_tollerance/3)
             y_values_m = norm.pdf(x_values, mean_distance, std_dev_distance)
 
-            plt.hist(df["distance"].astype(float), bins=20, color="skyblue",
+            plt.hist(measurements_data_frame["distance"].astype(float), bins=20, color="skyblue",
                      edgecolor="black", density=True, stacked=True)
             plt.plot(x_values, y_values, 'r-', label='Desired distribution')
             plt.plot(x_values, y_values_m, 'b-', label='Measured distribution')
@@ -159,7 +156,8 @@ def analyse_files(folder_path):
             plt.ylabel("Probabilità")
             plt.title("Distribuzione dei valori")
             plt.tight_layout()
-            plt.savefig(sub_folder_path + "/plots/histogram_" + x + ".png")
+            plt.savefig(sub_folder_path + "/plots/histogram_" +
+                        measurements_csv_file_name + ".png")
             plt.close()
             # plt.show()
 

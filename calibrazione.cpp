@@ -58,7 +58,7 @@ bool use_robot = false;                                // Flag to enable meca500
 float robot_position[6] = {140, -170, 120, 90, 90, 0}; // Robot starting position
 string surface_name = "";                              // surface name for saving measurements
 long measurement_delay = MEASURE_DELAY_US;
-float min_measurement, max_measurement, step_size, current_measurement, robot_position_offset;
+float min_measurement, max_measurement, step_size, current_measurement, robot_position_offset = 0;
 string sensor_type;
 
 int main(int argc, char *argv[])
@@ -78,13 +78,20 @@ int main(int argc, char *argv[])
         cout << "Please position the obstacle in front of the sensor" << endl
              << "Press any button to continue..." << endl;
         char c = getchar();
-        measurements.clear();
-        cout << "Measuring robot position offset" << endl;
-        make_measurements(*sensor, MEASUREMENTS_PER_CYCLE, measurements, 0.02e+6);
-        cout << "Calculating robot position offset" << endl;
-        map<float, float> probabilityDistribution = calculateProbabilityDistribution(measurements);
-        robot_position_offset = calculateWeightedAverage(measurements, probabilityDistribution);
-        cout << "Robot position offset: " << robot_position_offset << endl;
+        // measurements.clear();
+        // cout << "Measuring robot position offset" << endl;
+        // make_measurements(*sensor, MEASUREMENTS_PER_CYCLE, measurements, 0.02e+6);
+        // cout << "Calculating robot position offset" << endl;
+        // map<float, float> probabilityDistribution = calculateProbabilityDistribution(measurements);
+        // robot_position_offset = calculateWeightedAverage(measurements, probabilityDistribution);
+        // float average = 0;
+        // for (float measurement : measurements)
+        // {
+        //     average += measurement;
+        // }
+        // average /= measurements.size();
+        // cout << "Robot weighted average position offset: " << robot_position_offset << endl;
+        // cout << "Robot average position offset: " << average << endl;
     }
 
     while (current_measurement <= max_measurement)
