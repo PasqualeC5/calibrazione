@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
     string file_path = "measurements/" + sensor_type + "/" + surface_name + "/";
     string csv_file_name;
 
+    cout << "Setup complete\n Starting measurements\n\n";
     if (use_robot)
     {
         cout << "Please position the obstacle in front of the sensor" << endl
@@ -231,6 +232,8 @@ void setupRobot()
 int setupOptions(map<string, string> options)
 {
     // Handle each option
+    cout << "\nSetting up options\n\n";
+    string option_message = "";
     for (const auto &option : options)
     {
         string command = option.first;
@@ -244,7 +247,7 @@ int setupOptions(map<string, string> options)
         }
         else if (command == SENSOR_COMMAND)
         {
-            cout << "Sensor used: " << value << "\n";
+            option_message << "Sensor used: " << value << "\n";
             if (value == INFRARED_SENSOR_VALUE)
                 sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
             else if (value == ULTRASONIC_SENSOR_VALUE)
@@ -263,22 +266,22 @@ int setupOptions(map<string, string> options)
             int int_value = stoi(value);
             if (int_value < 0)
             {
-                cerr << "Invalid number of measures value" << endl;
+                cerr << "Invalid number of measurements value" << endl;
                 cerr << "Program will now exit..." << endl;
                 return 1;
             }
-            cout << "Number of measures per cycle: " << value << "\n";
+            option_message << "Number of measurements per cycle: " << value << "\n";
             number_of_measurements = int_value;
         }
         else if (command == USE_ROBOT_COMMAND)
         {
-            cout << "Using Meca500 robot\n"
-                 << "Initialising robot EtherCAT interface\n";
+            option_message << "Using Meca500 robot\n"
+                           << "Initialising robot EtherCAT interface\n";
             setupRobot();
         }
         else if (command == SURFACE_TYPE_COMMAND)
         {
-            cout << "Surface used: " << value << "\n";
+            option_message << "Surface used: " << value << "\n";
             surface_name = value;
         }
         else if (command == MEASURE_DELAY_US_COMMAND)
@@ -290,7 +293,7 @@ int setupOptions(map<string, string> options)
                 cerr << "Program will now exit..." << endl;
                 return 1;
             }
-            cout << "Measurement delay in us used: " << value << "\n";
+            option_message << "Measurement delay in us used: " << value << "\n";
             measurement_delay = int_value;
         }
         else if (command == CONFIG_FROM_FILE_COMMAND)
@@ -299,7 +302,7 @@ int setupOptions(map<string, string> options)
         }
         else
         {
-            cout << "Unknown option: " << command << "\n";
+            option_message << "Unknown option: " << command << "\n";
         }
     }
     if (sensor == nullptr)
@@ -310,6 +313,7 @@ int setupOptions(map<string, string> options)
              << "Program will now exit..." << endl;
         return 1;
     }
+    cout << option_message << endl;
     return 0;
 }
 
@@ -380,4 +384,4 @@ void displayUsage()
          << endl
          << setw(optionWidth) << "Example usage:" << endl
          << "  ./calibrazione --" << SENSOR_COMMAND << "=infrared --" << SURFACE_TYPE_COMMAND << "=wood --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --" << USE_ROBOT_COMMAND << " --" << MEASURE_DELAY_US_COMMAND << "=100000" << endl;
-} 
+}
