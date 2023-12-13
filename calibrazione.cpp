@@ -58,7 +58,7 @@ bool use_robot = false;                                // Flag to enable meca500
 float robot_position[6] = {140, -170, 120, 90, 90, 0}; // Robot starting position
 string surface_name = "";                              // surface name for saving measurements
 long measurement_delay = MEASURE_DELAY_US;
-float min_measurement, max_measurement, step_size, current_measurement, robot_position_offset = 0;
+float min_measurement, max_measurement, step_size, current_measurement, robot_position_offset = 8;
 string sensor_type;
 
 int main(int argc, char *argv[])
