@@ -4,6 +4,7 @@
 #include <pigpio.h>
 #include <unistd.h>
 #include <iostream>
+#include <sstream>
 #include <time.h>
 #include <vector>
 #include <cstring>
@@ -233,7 +234,8 @@ int setupOptions(map<string, string> options)
 {
     // Handle each option
     cout << "\nSetting up options\n\n";
-    string option_message = "";
+    stringstream option_message = "";
+
     for (const auto &option : options)
     {
         string command = option.first;
@@ -313,7 +315,7 @@ int setupOptions(map<string, string> options)
              << "Program will now exit..." << endl;
         return 1;
     }
-    cout << option_message << endl;
+    cout << option_message.str() << endl;
     return 0;
 }
 
