@@ -234,7 +234,7 @@ int setupOptions(map<string, string> options)
 {
     // Handle each option
     cout << "\nSetting up options\n\n";
-    stringstream option_message = "";
+    stringstream option_message;
 
     for (const auto &option : options)
     {
