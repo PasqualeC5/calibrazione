@@ -15,6 +15,8 @@
 #include <string.h>
 #include <map>
 
+#define HELP_COMMAND "help"
+#define CONFIG_FROM_FILE_COMMAND "config"
 #define SENSOR_COMMAND "sensor"                       // REQUIRED sensor specifier command [--sensor]
 #define INFRARED_SENSOR_VALUE "infrared"              // infrared sensor specifier [--sensor=infrared]
 #define ULTRASONIC_SENSOR_VALUE "ultrasonic"          // ultrasonic sensor specifier [--sensor=ultrasonic]
@@ -34,6 +36,7 @@ using namespace std;
 /********HELPER FUNCTIONS********/
 // SETUP
 map<string, string> parseCommandLine(int argc, char *argv[]); // function to parse the appropriate command line arguments
+map<string, string> parseConfigFile(string config_file_path); // function to parse config file parameters
 int setupOptions(map<string, string> options);                // function to setup the program based on the command line arguments
 int setupMeasurementsParameters();                            // function to setup the measurements parameters
 void displayUsage();                                          // function to display usage message from help command
@@ -61,10 +64,11 @@ string surface_name = "";                              // surface name for savin
 long measurement_delay = MEASURE_DELAY_US;
 float min_measurement, max_measurement, step_size, current_measurement, robot_position_offset = 8;
 string sensor_type;
+string config_file_path = "";
+bool use_config_file = false;
 
 int main(int argc, char *argv[])
 {
-    gpioInitialise();
     // setup from command line arguments
     // if return value is != 0 there was an error
     if (setupOptions(parseCommandLine(argc, argv)) != 0)
@@ -81,7 +85,7 @@ int main(int argc, char *argv[])
              << "Press any button to continue..." << endl;
         char c = getchar();
         c = getchar();
-        
+
         // measurements.clear();
         // cout << "Measuring robot position offset" << endl;
         // make_measurements(*sensor, MEASUREMENTS_PER_CYCLE, measurements, 0.02e+6);
@@ -108,7 +112,7 @@ int main(int argc, char *argv[])
         if (use_robot)
         {
             cout << "Moving robot to position..." << endl;
-            robot_position[0] = robot_position[0] - step_size ;
+            robot_position[0] = robot_position[0] - step_size;
             movePose(robot_position);
         }
         else
@@ -116,7 +120,7 @@ int main(int argc, char *argv[])
             cout << "Please position the obstacle in front of the sensor" << endl
                  << "Press any button to continue..." << endl;
             char c = getchar();
-            c = getchar(); //hack to fix infrared sensor user input
+            c = getchar(); // hack to fix infrared sensor user input
         }
         cout << "Measuring distance..." << endl;
         make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
@@ -186,7 +190,7 @@ void make_measurements(DistanceSensor &sensor, int number_of_measurements, vecto
     {
         distance = sensor.getDistanceInMillimeters();
         measurements.push_back(distance);
-        gpioDelay(delay_us);
+        usleep(delay_us);
     }
 }
 void write_measurements_to_csv(vector<float> measurments, string file_path)
@@ -288,6 +292,10 @@ int setupOptions(map<string, string> options)
             cout << "Measurement delay in us used: " << value << "\n";
             measurement_delay = int_value;
         }
+        else if (command == CONFIG_FROM_FILE_COMMAND)
+        {
+            return setupOptions(parseCommandLine);
+        }
         else
         {
             cout << "Unknown option: " << command << "\n";
@@ -328,16 +336,53 @@ map<string, string> parseCommandLine(int argc, char *argv[])
 
     return options;
 }
+map<string, string> parseConfigFile(string config_file_path)
+{
+    map<string, string> options;
+    ifstream config_file(config_file_path);
+    if (!config_file.is_open())
+    {
+        cerr << "Error opening config file!" << endl;
+        cerr << "Program will now exit..." << endl;
+        return 1; // Return an error code
+    }
+    string config_row;
+
+    while (getline(config_file, config_row))
+    {
+        if (config_row.substr(0, 2) == "--")
+        {
+
+            // Found an option
+            size_t pos = config_row.find('=');
+            string command;
+            if (pos != string::npos)
+                command = config_row.substr(0, pos);
+            else
+                command = config_row.substr(0);
+            string value = (pos != string::npos) ? config_row.substr(pos + 1) : "";
+
+            options[command] = value;
+        }
+    }
+
+    return options;
+}
 void displayUsage()
 {
-    cout << "Usage: ./myprogram [OPTIONS]\n"
+    cout << "Usage: ./calibrazione [OPTIONS]\n"
          << "Options:\n"
-         << "  --help               Display this help message\n"
-         << "  --sensor=TYPE        Specify sensor type (e.g., infrared, ultrasonic)\n"
-         << "  --surface=TYPE       Specify surface type for measurements\n"
-         << "  --measures=COUNT     Specify the number of measurements to take\n"
-         << "  --userobot           Use robot for measurements\n"
-         << "  --delay=VALUE        Specify the delay in microseconds between measurements\n\n"
+         << "  --" << HELP_COMMAND << "\tDisplay this help message\n"
+         << "  --" << SENSOR_COMMAND << "=TYPE\tSpecify sensor type (e.g., infrared, ultrasonic)\n"
+         << "  --" << SURFACE_TYPE_COMMAND << "=TYPE\tSpecify surface type for measurements\n"
+         << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=COUNT\tSpecify the number of measurements to take\n"
+         << "  --" << USE_ROBOT_COMMAND << "\t Use robot for measurements\n"
+         << "  --" << MEASURE_DELAY_US_COMMAND << "=DELAY_VALUE_US\tSpecify the delay in microseconds between measurements\n\n"
          << "Example Usage:\n"
-         << "  ./myprogram --sensor=infrared --surface=wood --measures=10 --userobot --delay=100000\n";
+         << "  ./calibrazione --"
+         << SENSOR_COMMAND << "=infrared --"
+         << SURFACE_TYPE_COMMAND << "=wood --"
+         << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --"
+         << USE_ROBOT_COMMAND << " --"
+         << MEASURE_DELAY_US_COMMAND << "=100000\n";
 }
