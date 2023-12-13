@@ -344,7 +344,7 @@ map<string, string> parseConfigFile(string config_file_path)
     {
         cerr << "Error opening config file!" << endl;
         cerr << "Program will now exit..." << endl;
-        return 1; // Return an error code
+        exit(1); // Return an error code
     }
     string config_row;
 
