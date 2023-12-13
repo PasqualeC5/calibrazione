@@ -352,20 +352,15 @@ map<string, string> parseConfigFile(string config_file_path)
     while (getline(config_file, config_row))
     {
         cout << config_row << endl;
-        if (config_row.substr(0, 2) == "--")
-        {
-
-            // Found an option
-            size_t pos = config_row.find('=');
-            string command;
-            if (pos != string::npos)
-                command = config_row.substr(0, pos);
-            else
-                command = config_row.substr(0);
-            string value = (pos != string::npos) ? config_row.substr(pos + 1) : "";
-            cout << command << "\t" << value << endl;
-            options[command] = value;
-        }
+        size_t pos = config_row.find('=');
+        string command;
+        if (pos != string::npos)
+            command = config_row.substr(0, pos);
+        else
+            command = config_row.substr(0);
+        string value = (pos != string::npos) ? config_row.substr(pos + 1) : "";
+        cout << command << "\t" << value << endl;
+        options[command] = value;
     }
 
     return options;
