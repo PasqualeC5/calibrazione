@@ -351,6 +351,7 @@ map<string, string> parseConfigFile(string config_file_path)
 
     while (getline(config_file, config_row))
     {
+        cout << config_row << endl;
         if (config_row.substr(0, 2) == "--")
         {
 
