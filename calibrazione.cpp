@@ -234,6 +234,7 @@ int setupOptions(map<string, string> options)
     {
         string command = option.first;
         string value = option.second;
+        cout << command << "\t" << value << endl;
 
         // You can assign any behavior based on the option
         if (command == "help")
@@ -386,5 +387,4 @@ void displayUsage()
          << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --"
          << USE_ROBOT_COMMAND << " --"
          << MEASURE_DELAY_US_COMMAND << "=100000\n";
-         
 }
