@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
         cout << "Please position the obstacle in front of the sensor" << endl
              << "Press any button to continue..." << endl;
         char c = getchar();
+        c = getchar();
         
         // measurements.clear();
         // cout << "Measuring robot position offset" << endl;
