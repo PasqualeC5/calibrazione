@@ -232,8 +232,7 @@ void setupRobot()
 
 int setupOptions(map<string, string> options)
 {
-    // Handle each option
-    cout << "\nSetting up options\n\n";
+    // Handle each options
     stringstream option_message;
 
     for (const auto &option : options)
