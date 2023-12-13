@@ -424,15 +424,6 @@ vector<float> parseStringToVector(string input)
         if (ss.peek() == ',')
             ss.ignore();
     }
-    cout << ss.peek() << endl;
-
-    if (ss.peek() == '}')
-        ss >> discard; // Discard the closing curly brace
-    else
-    {
-        cerr << "Error: Input string does not end with a closing curly brace.\n";
-        result.clear(); // Clear the result in case of an error
-    }
 
     return result;
 }
