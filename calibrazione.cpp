@@ -54,7 +54,7 @@ void make_measurements(DistanceSensor &sensor, int number_of_measurements, vecto
 void write_measurements_to_csv(vector<float> measurments, string file_path);
 
 // ROBOT MOVEMENT
-void movePose(vector robot_position);
+void movePose(vector<float> robot_position);
 
 /********************************/
 
