@@ -373,16 +373,18 @@ void displayUsage()
     cout << "Usage: ./calibrazione [OPTIONS]\n"
          << "Options:\n"
          << "  --" << HELP_COMMAND << "\tDisplay this help message\n"
+         << "  --" << CONFIG_FROM_FILE_COMMAND << "=config_file_path\tParse options from text file\n"
          << "  --" << SENSOR_COMMAND << "=TYPE\tSpecify sensor type (e.g., infrared, ultrasonic)\n"
          << "  --" << SURFACE_TYPE_COMMAND << "=TYPE\tSpecify surface type for measurements\n"
          << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=COUNT\tSpecify the number of measurements to take\n"
          << "  --" << USE_ROBOT_COMMAND << "\t Use robot for measurements\n"
          << "  --" << MEASURE_DELAY_US_COMMAND << "=DELAY_VALUE_US\tSpecify the delay in microseconds between measurements\n\n"
-         << "Example Usage:\n"
+         << "Example usage:\n"
          << "  ./calibrazione --"
          << SENSOR_COMMAND << "=infrared --"
          << SURFACE_TYPE_COMMAND << "=wood --"
          << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --"
          << USE_ROBOT_COMMAND << " --"
          << MEASURE_DELAY_US_COMMAND << "=100000\n";
+         
 }
