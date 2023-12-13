@@ -294,7 +294,7 @@ int setupOptions(map<string, string> options)
         }
         else if (command == CONFIG_FROM_FILE_COMMAND)
         {
-            return setupOptions(parseCommandLine);
+            return setupOptions(parseConfigFile(value));
         }
         else
         {
