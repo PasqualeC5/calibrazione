@@ -1,5 +1,6 @@
 /*LIBRARIES*/
 #include <stdio.h>
+#include <iomanip>
 #include <pigpio.h>
 #include <unistd.h>
 #include <iostream>
@@ -294,7 +295,7 @@ int setupOptions(map<string, string> options)
         }
         else if (command == CONFIG_FROM_FILE_COMMAND)
         {
-            return setupOptions(parseConfigFile(value));
+            setupOptions(parseConfigFile(value));
         }
         else
         {
@@ -364,20 +365,19 @@ map<string, string> parseConfigFile(string config_file_path)
 }
 void displayUsage()
 {
-    cout << "Usage: ./calibrazione [OPTIONS]\n"
-         << "Options:\n"
-         << "  --" << HELP_COMMAND << "\tDisplay this help message\n"
-         << "  --" << CONFIG_FROM_FILE_COMMAND << "=config_file_path\tParse options from text file\n"
-         << "  --" << SENSOR_COMMAND << "=TYPE\tSpecify sensor type (e.g., infrared, ultrasonic)\n"
-         << "  --" << SURFACE_TYPE_COMMAND << "=TYPE\tSpecify surface type for measurements\n"
-         << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=COUNT\tSpecify the number of measurements to take\n"
-         << "  --" << USE_ROBOT_COMMAND << "\t Use robot for measurements\n"
-         << "  --" << MEASURE_DELAY_US_COMMAND << "=DELAY_VALUE_US\tSpecify the delay in microseconds between measurements\n\n"
-         << "Example usage:\n"
-         << "  ./calibrazione --"
-         << SENSOR_COMMAND << "=infrared --"
-         << SURFACE_TYPE_COMMAND << "=wood --"
-         << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --"
-         << USE_ROBOT_COMMAND << " --"
-         << MEASURE_DELAY_US_COMMAND << "=100000\n";
+    const int optionWidth = 10;
+    const int descriptionWidth = 60;
+
+    cout << left << setw(optionWidth) << "Usage: ./calibrazione [OPTIONS]" << endl
+         << setw(optionWidth) << "Options:" << endl
+         << setw(optionWidth) << "  --" + HELP_COMMAND << setw(descriptionWidth) << "Display this help message" << endl
+         << setw(optionWidth) << "  --" + CONFIG_FROM_FILE_COMMAND + "=config_file_path" << setw(descriptionWidth) << "Parse options from text file" << endl
+         << setw(optionWidth) << "  --" + SENSOR_COMMAND + "=TYPE" << setw(descriptionWidth) << "Specify sensor type (e.g., infrared, ultrasonic)" << endl
+         << setw(optionWidth) << "  --" + SURFACE_TYPE_COMMAND + "=TYPE" << setw(descriptionWidth) << "Specify surface type for measurements" << endl
+         << setw(optionWidth) << "  --" + NUMBER_OF_MEASUREMENTS_COMMAND + "=COUNT" << setw(descriptionWidth) << "Specify the number of measurements to take" << endl
+         << setw(optionWidth) << "  --" + USE_ROBOT_COMMAND << setw(descriptionWidth) << "Use robot for measurements" << endl
+         << setw(optionWidth) << "  --" + MEASURE_DELAY_US_COMMAND + "=DELAY_VALUE_US" << setw(descriptionWidth) << "Specify the delay in microseconds between measurements" << endl
+         << endl
+         << setw(optionWidth) << "Example usage:" << endl
+         << "  ./calibrazione --" + SENSOR_COMMAND + "=infrared --" + SURFACE_TYPE_COMMAND + "=wood --" + NUMBER_OF_MEASUREMENTS_COMMAND + "=10 --" + USE_ROBOT_COMMAND + " --" + MEASURE_DELAY_US_COMMAND + "=100000" << endl;
 }
