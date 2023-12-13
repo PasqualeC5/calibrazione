@@ -379,5 +379,5 @@ void displayUsage()
          << setw(optionWidth) << "  --" << MEASURE_DELAY_US_COMMAND << "=DELAY_VALUE_US" << setw(descriptionWidth) << "Specify the delay in microseconds between measurements" << endl
          << endl
          << setw(optionWidth) << "Example usage:" << endl
-         << "  ./calibrazione --" << SENSOR_COMMAND << "=infrared --" << SURFACE_TYPE_COMMAND << "=wood --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --" << USE_ROBOT_COMMAND + " --" << MEASURE_DELAY_US_COMMAND << "=100000" << endl;
+         << "  ./calibrazione --" << SENSOR_COMMAND << "=infrared --" << SURFACE_TYPE_COMMAND << "=wood --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --" << USE_ROBOT_COMMAND << " --" << MEASURE_DELAY_US_COMMAND << "=100000" << endl;
 }
