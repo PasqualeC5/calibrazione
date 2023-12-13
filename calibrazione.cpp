@@ -409,6 +409,7 @@ vector<float> parseStringToVector(const string &input)
     float value;
     while (ss >> value)
     {
+        cout << value << endl;
         result.push_back(value);
 
         // Check for comma and discard if present
