@@ -363,7 +363,7 @@ map<string, string> parseConfigFile(string config_file_path)
             else
                 command = config_row.substr(0);
             string value = (pos != string::npos) ? config_row.substr(pos + 1) : "";
-
+            cout << command << "\t" << value << endl;
             options[command] = value;
         }
     }
