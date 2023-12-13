@@ -234,7 +234,6 @@ int setupOptions(map<string, string> options)
     {
         string command = option.first;
         string value = option.second;
-        cout << command << "\t" << value << endl;
 
         // You can assign any behavior based on the option
         if (command == "help")
@@ -351,7 +350,6 @@ map<string, string> parseConfigFile(string config_file_path)
 
     while (getline(config_file, config_row))
     {
-        cout << config_row << endl;
         size_t pos = config_row.find('=');
         string command;
         if (pos != string::npos)
@@ -359,7 +357,6 @@ map<string, string> parseConfigFile(string config_file_path)
         else
             command = config_row.substr(0);
         string value = (pos != string::npos) ? config_row.substr(pos + 1) : "";
-        cout << command << "\t" << value << endl;
         options[command] = value;
     }
 
