@@ -16,9 +16,9 @@
 #include "../meca500_ethercat_cpp/Robot.hpp"
 #include <string.h>
 #include <map>
-
-#define HELP_COMMAND "help"
-#define CONFIG_FROM_FILE_COMMAND "config"
+// COMMAND LINE COMMANDS
+#define HELP_COMMAND "help"                           // help command for displaying option usage
+#define CONFIG_FROM_FILE_COMMAND "config"             // config option for parsing options from given text file
 #define SENSOR_COMMAND "sensor"                       // REQUIRED sensor specifier command [--sensor]
 #define INFRARED_SENSOR_VALUE "infrared"              // infrared sensor specifier [--sensor=infrared]
 #define ULTRASONIC_SENSOR_VALUE "ultrasonic"          // ultrasonic sensor specifier [--sensor=ultrasonic]
@@ -26,6 +26,7 @@
 #define NUMBER_OF_MEASUREMENTS_COMMAND "measurements" // number of measurements per cycle [--measurements=number_of_measurements]
 #define USE_ROBOT_COMMAND "userobot"                  // command flag to use meca500 robot [--userobot]
 #define MEASURE_DELAY_US_COMMAND "delay"              // delay between measurements in micro seconds [--delay=microseconds]
+#define ROBOT_STARTING_POSITION_COMMAND "position"    // starting pose of the meca500
 
 /* CONSTANTS */
 #define MEASUREMENTS_PER_CYCLE 100 // default number of measurements per cycle
@@ -39,6 +40,7 @@ using namespace std;
 // SETUP
 map<string, string> parseCommandLine(int argc, char *argv[]); // function to parse the appropriate command line arguments
 map<string, string> parseConfigFile(string config_file_path); // function to parse config file parameters
+vector<float> parseStringToVector(const string &input);       // function to parse a string representing a vector like this {140, -170, 120, 90, 90, 0}
 int setupOptions(map<string, string> options);                // function to setup the program based on the command line arguments
 int setupMeasurementsParameters();                            // function to setup the measurements parameters
 void displayUsage();                                          // function to display usage message from help command
@@ -57,12 +59,13 @@ void movePose(float robot_position[6]);
 /********************************/
 
 // GLOBAL VARIABLES
-DistanceSensor *sensor = nullptr;                      // Sensor to use for measuring
-Robot *robot = nullptr;                                // Robot object to handle meca500 communication
-int number_of_measurements = MEASUREMENTS_PER_CYCLE;   // Number of measurements per cycle
-bool use_robot = false;                                // Flag to enable meca500 usage
-float robot_position[6] = {140, -170, 120, 90, 90, 0}; // Robot starting position
-string surface_name = "";                              // surface name for saving measurements
+DistanceSensor *sensor = nullptr;                                         // Sensor to use for measuring
+Robot *robot = nullptr;                                                   // Robot object to handle meca500 communication
+int number_of_measurements = MEASUREMENTS_PER_CYCLE;                      // Number of measurements per cycle
+bool use_robot = false;                                                   // Flag to enable meca500 usage
+const vector<float> default_robot_position = {140, -170, 120, 90, 90, 0}; // default robot starting position
+vector<float> robot_position(default_robot_position);                     // Robot starting position
+string surface_name = "";                                                 // surface name for saving measurements
 long measurement_delay = MEASURE_DELAY_US;
 float min_measurement, max_measurement, step_size, current_measurement, robot_position_offset = 8;
 string sensor_type;
@@ -89,20 +92,18 @@ int main(int argc, char *argv[])
         char c = getchar();
         c = getchar();
 
-        // measurements.clear();
-        // cout << "Measuring robot position offset" << endl;
-        // make_measurements(*sensor, MEASUREMENTS_PER_CYCLE, measurements, 0.02e+6);
-        // cout << "Calculating robot position offset" << endl;
-        // map<float, float> probabilityDistribution = calculateProbabilityDistribution(measurements);
-        // robot_position_offset = calculateWeightedAverage(measurements, probabilityDistribution);
-        // float average = 0;
-        // for (float measurement : measurements)
-        // {
-        //     average += measurement;
-        // }
-        // average /= measurements.size();
-        // cout << "Robot weighted average position offset: " << robot_position_offset << endl;
-        // cout << "Robot average position offset: " << average << endl;
+        measurements.clear();
+        cout << "Measuring robot position offset" << endl;
+        make_measurements(*sensor, MEASUREMENTS_PER_CYCLE, measurements, 0.02e+6);
+        cout << "Calculating robot position offset" << endl;
+        float average = 0;
+        for (float measurement : measurements)
+        {
+            average += measurement;
+        }
+        average /= measurements.size();
+        robot_position_offset = average;
+        cout << "Robot average position offset: " << robot_position_offset << endl;
     }
 
     while (current_measurement <= max_measurement)
@@ -115,7 +116,9 @@ int main(int argc, char *argv[])
         if (use_robot)
         {
             cout << "Moving robot to position..." << endl;
-            robot_position[0] = robot_position[0] - step_size;
+
+            robot_position[0] = robot_position[0] - step_size + current_measurement == min_measurement ? robot_position_offset : 0;
+
             movePose(robot_position);
         }
         else
@@ -133,6 +136,7 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
 // Function to calculate the probability distribution for each number in the list
 map<float, float> calculateProbabilityDistribution(const vector<float> &numbers)
 {
@@ -208,7 +212,7 @@ void write_measurements_to_csv(vector<float> measurments, string file_path)
 
     measurements_logger.close();
 }
-void movePose(float robot_position[6])
+void movePose(vector<float> robot_position)
 {
     robot->move_pose(
         robot_position[0],
@@ -245,6 +249,21 @@ int setupOptions(map<string, string> options)
         {
             displayUsage();
             return 1;
+        }
+        else if (command = ROBOT_STARTING_POSITION_COMMAND)
+        {
+            vector<float> robot_position_values = parseStringToVector(value);
+            if (robot_position_values.size() < 6)
+            {
+                cerr << "Invalid robot position, not enough arguments" << endl;
+                cerr << "Program will now exit..." << endl;
+                return 1;
+            }
+            option_message << "Starting robot position: {";
+            for (float pos : robot_position_values)
+                option_message << pos << ", ";
+            option_message << "}" << endl;
+            robot_position(robot_position_values);
         }
         else if (command == SENSOR_COMMAND)
         {
@@ -368,6 +387,45 @@ map<string, string> parseConfigFile(string config_file_path)
 
     return options;
 }
+
+vector<float> parseStringToVector(const string &input)
+{
+    vector<float> result;
+
+    // Check if the string starts with a curly brace
+    if (input.empty() || input[0] != '{')
+    {
+        cerr << "Error: Input string does not start with a curly brace.\n";
+        return result;
+    }
+
+    stringstream ss(input);
+
+    // Remove curly braces from the input string
+    char discard;
+    ss >> discard; // Discard the opening curly brace
+
+    // Read the values into the vector
+    float value;
+    while (ss >> value)
+    {
+        result.push_back(value);
+
+        // Check for comma and discard if present
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
+
+    if (ss.peek() == '}')
+        ss >> discard; // Discard the closing curly brace
+    else
+    {
+        cerr << "Error: Input string does not end with a closing curly brace.\n";
+        result.clear(); // Clear the result in case of an error
+    }
+
+    return result;
+}
 void displayUsage()
 {
     const int optionWidth = 40;
@@ -382,6 +440,7 @@ void displayUsage()
          << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << setw(optionWidth - strlen(NUMBER_OF_MEASUREMENTS_COMMAND)) << "=COUNT" << setw(descriptionWidth) << "Specify the number of measurements to take" << endl
          << "  --" << setw(optionWidth) << USE_ROBOT_COMMAND << setw(descriptionWidth) << "Use robot for measurements" << endl
          << "  --" << MEASURE_DELAY_US_COMMAND << setw(optionWidth - strlen(MEASURE_DELAY_US_COMMAND)) << "=DELAY_VALUE_US" << setw(descriptionWidth) << "Specify the delay in microseconds between measurements" << endl
+         << "  --" << ROBOT_STARTING_POSITION_COMMAND << setw(optionWidth - strlen(ROBOT_STARTING_POSITION_COMMAND)) << "={x,y,z,alpha,beta,gamma}" << setw(descriptionWidth) << "Specify the starting pose of the meca500 [default {140, -170, 120, 90, 90, 0} ]" << endl
          << endl
          << setw(optionWidth) << "Example usage:" << endl
          << "  ./calibrazione --" << SENSOR_COMMAND << "=infrared --" << SURFACE_TYPE_COMMAND << "=wood --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --" << USE_ROBOT_COMMAND << " --" << MEASURE_DELAY_US_COMMAND << "=100000" << endl;
