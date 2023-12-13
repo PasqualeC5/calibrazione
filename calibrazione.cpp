@@ -283,10 +283,10 @@ int setupOptions(map<string, string> options)
     }
     if (sensor == nullptr)
     {
-        cerr << "Sensor type not set!!" << endl;
-        cerr << "Please specify the sensor type with" << endl;
-        cerr << "--" << SENSOR_COMMAND << "=[infrared, ultrasonic]";
-        cerr << "Program will now exit..." << endl;
+        cerr << "Sensor type not set!!" << endl
+             << "Please specify the sensor type with" << endl
+             << "--" << SENSOR_COMMAND << "=[infrared, ultrasonic]" << endl
+             << "Program will now exit..." << endl;
         return 1;
     }
     return 0;
