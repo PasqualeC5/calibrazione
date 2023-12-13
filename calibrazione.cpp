@@ -116,6 +116,7 @@ int main(int argc, char *argv[])
             cout << "Please position the obstacle in front of the sensor" << endl
                  << "Press any button to continue..." << endl;
             char c = getchar();
+            c = getchar(); //hack to fix infrared sensor user input
         }
         cout << "Measuring distance..." << endl;
         make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
