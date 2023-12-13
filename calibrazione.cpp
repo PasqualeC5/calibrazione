@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
         if (use_robot)
         {
             cout << "Moving robot to position..." << endl;
-            robot_position[0] = robot_position[0] - current_measurement + robot_position_offset;
+            robot_position[0] = robot_position[0] - step_size + robot_position_offset;
             movePose(robot_position);
         }
         else

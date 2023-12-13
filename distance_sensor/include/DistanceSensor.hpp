@@ -1,10 +1,5 @@
 #ifndef DISTANCESENSOR_HPP
 #define DISTANCESENSOR_HPP
-struct Line
-{
-    float m;
-    float q;
-};
 
 class DistanceSensor
 {
@@ -21,7 +16,7 @@ public:
     virtual float getDistanceInMillimeters() = 0;
 
     // Virtual method to use calibration
-    virtual void useCalibrationCurve(bool use) = 0;
+    virtual void useCalibrationCurve(float m, float q) = 0;
 };
 
 #endif // DISTANCESENSOR_HPP

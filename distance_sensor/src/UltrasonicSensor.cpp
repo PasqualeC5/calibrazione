@@ -1,7 +1,6 @@
 #include "DistanceSensor.hpp"
 #include "UltrasonicSensor.hpp"
 
-
 /*CONSTRUCTOR*/
 UltrasonicSensor::UltrasonicSensor(
     uint8_t attachedTrigPin,
@@ -52,8 +51,8 @@ float UltrasonicSensor::getDistanceInMeters()
     float distance = elapsed_time / 1000000.0 * SOUND_SPEED_MS / 2.0;
 
     /*ritorno la misura calibrata o non calibrata*/
-    if (calibration)
-        return calibrate(distance);
+    if (calibrationEnabled)
+        return getCalibratedDistance(distance);
     else
         return distance;
 }
@@ -66,13 +65,15 @@ float UltrasonicSensor::getDistanceInMillimeters()
     return getDistanceInMeters() * 1000;
 }
 
-void UltrasonicSensor::useCalibrationCurve(bool use)
+void UltrasonicSensor::useCalibrationCurve(float m, float q)
 {
-    calibration = use;
+    m_cal = m;
+    q_cal = q;
+    calibrationEnabled = true;
 }
 
 /*PRIVATE METHODS*/
-float UltrasonicSensor::calibrate(float spoiltMeasure)
+float UltrasonicSensor::getCalibratedDistance(float spoiltMeasure)
 {
-    return spoiltMeasure * calibrationLine.m + calibrationLine.q;
+    return (spoiltMeasure - q_cal) / m_cal;
 }

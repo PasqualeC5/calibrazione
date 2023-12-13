@@ -32,8 +32,6 @@ typedef struct
     std::vector<float> Offset;
 } Sensor_t;
 
-
-
 class InfraredSensor : public DistanceSensor
 {
 
@@ -44,14 +42,15 @@ private:
     uint8_t _SelectedSensorID;
     serial::Serial *_SensorSerial;
     uint16_t _TactileOffsetNumSamples;
-    bool calibration = false;
-    Line calibrationLine;
+    bool calibrationEnabled = false;
+    float m_cal;
+    float q_cal;
 
     /*PRIVATE METHODS*/
     /**
      * This function return the calibrated measure based on the spoilt measure to calibrate ad the calibration line
      */
-    float calibrate(float spoiltMeasure);
+    float getCalibratedDistance(float spoiltMeasure);
 
     /**
      * This function return vector of measures. This vector has size = #sensors
@@ -107,7 +106,7 @@ public:
     float getDistanceInMeters() override;
     float getDistanceInCentimeters() override;
     float getDistanceInMillimeters() override;
-    void useCalibrationCurve(bool use) override;
+    void useCalibrationCurve(float m, float q) override;
 };
 
 #endif /* INFRAREDSENSOR_HPP */
