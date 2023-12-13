@@ -34,15 +34,13 @@
 #define TRIG_PIN 22                // default TRIG GPIO PIN for the ultrasonic sensor
 #define MEASURE_DELAY_US 200       // default delay between measurements in micro seconds
 
-
 using namespace std;
-
 
 /********HELPER FUNCTIONS********/
 // SETUP
 map<string, string> parseCommandLine(int argc, char *argv[]); // function to parse the appropriate command line arguments
 map<string, string> parseConfigFile(string config_file_path); // function to parse config file parameters
-vector<float> parseStringToVector(string input);       // function to parse a string representing a vector like this {140, -170, 120, 90, 90, 0}
+vector<float> parseStringToVector(string input);              // function to parse a string representing a vector like this {140, -170, 120, 90, 90, 0}
 int setupOptions(map<string, string> options);                // function to setup the program based on the command line arguments
 int setupMeasurementsParameters();                            // function to setup the measurements parameters
 void displayUsage();                                          // function to display usage message from help command
@@ -62,8 +60,6 @@ void movePose(vector<float> robot_position);
 
 /********************************/
 
-
-
 // GLOBAL VARIABLES
 DistanceSensor *sensor = nullptr;                                         // Sensor to use for measuring
 Robot *robot = nullptr;                                                   // Robot object to handle meca500 communication
@@ -78,8 +74,6 @@ string sensor_type;
 string config_file_path = "";
 bool use_config_file = false;
 
-
-
 int main(int argc, char *argv[])
 {
     // setup from command line arguments
@@ -92,7 +86,6 @@ int main(int argc, char *argv[])
     string file_path = "measurements/" + sensor_type + "/" + surface_name + "/";
     string csv_file_name;
 
-
     // measure process
     cout << "Setup complete\n Starting measurements\n\n";
     if (use_robot)
@@ -102,7 +95,6 @@ int main(int argc, char *argv[])
         char c = getchar();
 
         c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
-
 
         measurements.clear();
         cout << "Measuring robot position offset" << endl;
@@ -120,8 +112,8 @@ int main(int argc, char *argv[])
 
     while (current_measurement <= max_measurement)
     {
-        //setup for next set of measures
-        measurements.clear(); 
+        // setup for next set of measures
+        measurements.clear();
         csv_file_name = (current_measurement < 100 ? "0" : "") + to_string((int)current_measurement) + "mm.csv";
 
         cout << "Currently measuring: " << current_measurement << " mm\n";
@@ -405,6 +397,7 @@ map<string, string> parseConfigFile(string config_file_path)
 
 vector<float> parseStringToVector(string input)
 {
+    cout << input << endl;
     vector<float> result;
 
     // Check if the string starts with a curly brace
