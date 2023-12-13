@@ -42,7 +42,7 @@ using namespace std;
 // SETUP
 map<string, string> parseCommandLine(int argc, char *argv[]); // function to parse the appropriate command line arguments
 map<string, string> parseConfigFile(string config_file_path); // function to parse config file parameters
-vector<float> parseStringToVector(const string &input);       // function to parse a string representing a vector like this {140, -170, 120, 90, 90, 0}
+vector<float> parseStringToVector(string input);       // function to parse a string representing a vector like this {140, -170, 120, 90, 90, 0}
 int setupOptions(map<string, string> options);                // function to setup the program based on the command line arguments
 int setupMeasurementsParameters();                            // function to setup the measurements parameters
 void displayUsage();                                          // function to display usage message from help command
@@ -403,7 +403,7 @@ map<string, string> parseConfigFile(string config_file_path)
     return options;
 }
 
-vector<float> parseStringToVector(const string &input)
+vector<float> parseStringToVector(string input)
 {
     vector<float> result;
 
