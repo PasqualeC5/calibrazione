@@ -239,7 +239,7 @@ int setupOptions(map<string, string> options)
         {
             cout << "Sensor used: " << value << "\n";
             if (value == INFRARED_SENSOR_VALUE)
-                sensor = new InfraredSensor(InfraredSensor::ENABLE_FIRST);
+                sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
             else if (value == ULTRASONIC_SENSOR_VALUE)
                 sensor = new UltrasonicSensor(TRIG_PIN, ECHO_PIN);
             else
