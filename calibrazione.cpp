@@ -374,7 +374,7 @@ void displayUsage()
          << setw(optionWidth) << "  --" << CONFIG_FROM_FILE_COMMAND << "=config_file_path" << setw(descriptionWidth) << "Parse options from text file" << endl
          << setw(optionWidth) << "  --" << SENSOR_COMMAND << "=TYPE" << setw(descriptionWidth) << "Specify sensor type (e.g., infrared, ultrasonic)" << endl
          << setw(optionWidth) << "  --" << SURFACE_TYPE_COMMAND << "=TYPE" << setw(descriptionWidth) << "Specify surface type for measurements" << endl
-         << setw(optionWidth) << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND + "=COUNT" << setw(descriptionWidth) << "Specify the number of measurements to take" << endl
+         << setw(optionWidth) << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=COUNT" << setw(descriptionWidth) << "Specify the number of measurements to take" << endl
          << setw(optionWidth) << "  --" << USE_ROBOT_COMMAND << setw(descriptionWidth) << "Use robot for measurements" << endl
          << setw(optionWidth) << "  --" << MEASURE_DELAY_US_COMMAND << "=DELAY_VALUE_US" << setw(descriptionWidth) << "Specify the delay in microseconds between measurements" << endl
          << endl
