@@ -371,7 +371,7 @@ void displayUsage()
     cout << left << setw(optionWidth) << "Usage: ./calibrazione [OPTIONS]" << endl
          << "Options:" << endl
          << "  --" << setw(optionWidth) << HELP_COMMAND << setw(descriptionWidth) << "Display this help message" << endl
-         << "  --" << CONFIG_FROM_FILE_COMMAND << setw(optionWidth - strlen(CONFIG_FROM_FILE_COMMAND)) << "=config_file_path" << setw(descriptionWidth) << "Parse options from text file" << endl
+         << "  --" << CONFIG_FROM_FILE_COMMAND << setw(optionWidth - strlen(CONFIG_FROM_FILE_COMMAND)) << "=\"path/to/configfile.txt\"" << setw(descriptionWidth) << "Parse options from text file" << endl
          << "  --" << SENSOR_COMMAND << setw(optionWidth - strlen(SENSOR_COMMAND)) << "=TYPE" << setw(descriptionWidth) << "Specify sensor type (e.g., infrared, ultrasonic)" << endl
          << "  --" << SURFACE_TYPE_COMMAND << setw(optionWidth - strlen(SURFACE_TYPE_COMMAND)) << "=TYPE" << setw(descriptionWidth) << "Specify surface type for measurements" << endl
          << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << setw(optionWidth - strlen(NUMBER_OF_MEASUREMENTS_COMMAND)) << "=COUNT" << setw(descriptionWidth) << "Specify the number of measurements to take" << endl
