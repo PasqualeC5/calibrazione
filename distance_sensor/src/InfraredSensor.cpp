@@ -83,7 +83,7 @@ float InfraredSensor::getDistanceInCentimeters()
 float InfraredSensor::getDistanceInMillimeters() // here is implemented the calibration
 {
     if (calibrationEnabled)
-        return calibrate(getDistanceInMillimetersVector()[0]);
+        return getCalibratedDistance(getDistanceInMillimetersVector()[0]);
     else
         return getDistanceInMillimetersVector()[0];
 }
