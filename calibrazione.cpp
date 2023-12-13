@@ -250,7 +250,7 @@ int setupOptions(map<string, string> options)
             displayUsage();
             return 1;
         }
-        else if (command = ROBOT_STARTING_POSITION_COMMAND)
+        else if (command == ROBOT_STARTING_POSITION_COMMAND)
         {
             vector<float> robot_position_values = parseStringToVector(value);
             if (robot_position_values.size() < 6)
