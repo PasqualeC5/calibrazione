@@ -424,6 +424,7 @@ vector<float> parseStringToVector(string input)
         if (ss.peek() == ',')
             ss.ignore();
     }
+    cout << ss.peek() << endl;
 
     if (ss.peek() == '}')
         ss >> discard; // Discard the closing curly brace
