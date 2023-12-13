@@ -2,6 +2,7 @@
 
 /*LIBRARIES*/
 #include <stdio.h>
+#include <pigpio.h>
 #include <iostream>
 #include <time.h>
 #include <vector>
@@ -33,6 +34,7 @@ void effettua_misure(DistanceSensor &sensore, int numero_misure, vector<float> &
 void scrivi_database(vector<float> misure, string name_file_to_create);
 int main(int argc, char *argv[])
 {
+      gpioInitialise();
       ifstream file_misure("input_files/misure_test.txt");
       //--nomeparametro valoreparametro
 

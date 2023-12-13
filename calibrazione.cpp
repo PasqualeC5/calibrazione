@@ -1,5 +1,6 @@
 /*LIBRARIES*/
 #include <stdio.h>
+#include <pigpio.h>
 #include <unistd.h>
 #include <iostream>
 #include <time.h>
@@ -63,6 +64,7 @@ string sensor_type;
 
 int main(int argc, char *argv[])
 {
+    gpioInitialise();
     // setup from command line arguments
     // if return value is != 0 there was an error
     if (setupOptions(parseCommandLine(argc, argv)) != 0)
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
         cout << "Please position the obstacle in front of the sensor" << endl
              << "Press any button to continue..." << endl;
         char c = getchar();
+        
         // measurements.clear();
         // cout << "Measuring robot position offset" << endl;
         // make_measurements(*sensor, MEASUREMENTS_PER_CYCLE, measurements, 0.02e+6);
@@ -104,7 +107,7 @@ int main(int argc, char *argv[])
         if (use_robot)
         {
             cout << "Moving robot to position..." << endl;
-            robot_position[0] = robot_position[0] - step_size + robot_position_offset;
+            robot_position[0] = robot_position[0] - step_size ;
             movePose(robot_position);
         }
         else
@@ -181,7 +184,7 @@ void make_measurements(DistanceSensor &sensor, int number_of_measurements, vecto
     {
         distance = sensor.getDistanceInMillimeters();
         measurements.push_back(distance);
-        usleep(delay_us);
+        gpioDelay(delay_us);
     }
 }
 void write_measurements_to_csv(vector<float> measurments, string file_path)
