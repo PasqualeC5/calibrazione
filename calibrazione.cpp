@@ -263,7 +263,7 @@ int setupOptions(map<string, string> options)
             for (float pos : robot_position_values)
                 option_message << pos << ", ";
             option_message << "}" << endl;
-            robot_position(robot_position_values);
+            robot_position = robot_position_values;
         }
         else if (command == SENSOR_COMMAND)
         {
