@@ -16,9 +16,9 @@
 #include "../meca500_ethercat_cpp/Robot.hpp"
 #include <string.h>
 #include <map>
-// COMMAND LINE COMMANDS
-#define HELP_COMMAND "help"                           // help command for displaying option usage
-#define CONFIG_FROM_FILE_COMMAND "config"             // config option for parsing options from given text file
+
+#define HELP_COMMAND "help"
+#define CONFIG_FROM_FILE_COMMAND "config"
 #define SENSOR_COMMAND "sensor"                       // REQUIRED sensor specifier command [--sensor]
 #define INFRARED_SENSOR_VALUE "infrared"              // infrared sensor specifier [--sensor=infrared]
 #define ULTRASONIC_SENSOR_VALUE "ultrasonic"          // ultrasonic sensor specifier [--sensor=ultrasonic]
@@ -34,7 +34,9 @@
 #define TRIG_PIN 22                // default TRIG GPIO PIN for the ultrasonic sensor
 #define MEASURE_DELAY_US 200       // default delay between measurements in micro seconds
 
+
 using namespace std;
+
 
 /********HELPER FUNCTIONS********/
 // SETUP
@@ -45,9 +47,11 @@ int setupOptions(map<string, string> options);                // function to set
 int setupMeasurementsParameters();                            // function to setup the measurements parameters
 void displayUsage();                                          // function to display usage message from help command
 
+/*
 // CALCULATIONS
 map<float, float> calculateProbabilityDistribution(const vector<float> &numbers);
 float calculateWeightedAverage(const vector<float> &numbers, const map<float, float> &probabilityDistribution);
+*/
 
 // MEASUREMENTS
 void make_measurements(DistanceSensor &sensor, int number_of_measurements, vector<float> &measurements, unsigned int delay_us);
@@ -57,6 +61,8 @@ void write_measurements_to_csv(vector<float> measurments, string file_path);
 void movePose(vector<float> robot_position);
 
 /********************************/
+
+
 
 // GLOBAL VARIABLES
 DistanceSensor *sensor = nullptr;                                         // Sensor to use for measuring
@@ -72,6 +78,8 @@ string sensor_type;
 string config_file_path = "";
 bool use_config_file = false;
 
+
+
 int main(int argc, char *argv[])
 {
     // setup from command line arguments
@@ -84,13 +92,17 @@ int main(int argc, char *argv[])
     string file_path = "measurements/" + sensor_type + "/" + surface_name + "/";
     string csv_file_name;
 
+
+    // measure process
     cout << "Setup complete\n Starting measurements\n\n";
     if (use_robot)
     {
         cout << "Please position the obstacle in front of the sensor" << endl
              << "Press any button to continue..." << endl;
         char c = getchar();
-        c = getchar();
+
+        c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
+
 
         measurements.clear();
         cout << "Measuring robot position offset" << endl;
@@ -108,8 +120,8 @@ int main(int argc, char *argv[])
 
     while (current_measurement <= max_measurement)
     {
-        // clear the array of measurements to prepare for next set of measurements
-        measurements.clear();
+        //setup for next set of measures
+        measurements.clear(); 
         csv_file_name = (current_measurement < 100 ? "0" : "") + to_string((int)current_measurement) + "mm.csv";
 
         cout << "Currently measuring: " << current_measurement << " mm\n";
@@ -126,8 +138,9 @@ int main(int argc, char *argv[])
             cout << "Please position the obstacle in front of the sensor" << endl
                  << "Press any button to continue..." << endl;
             char c = getchar();
-            c = getchar(); // hack to fix infrared sensor user input
+            c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
         }
+
         cout << "Measuring distance..." << endl;
         make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
         cout << "Writing measurements to csv file" << endl;
@@ -137,6 +150,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/*
 // Function to calculate the probability distribution for each number in the list
 map<float, float> calculateProbabilityDistribution(const vector<float> &numbers)
 {
@@ -170,6 +184,7 @@ float calculateWeightedAverage(const vector<float> &numbers, const map<float, fl
 
     return weightedSum;
 }
+*/
 
 int setupMeasurementsParameters()
 {
