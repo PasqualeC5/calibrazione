@@ -1,7 +1,6 @@
 /*LIBRARIES*/
 #include <stdio.h>
 #include <iomanip>
-#include <pigpio.h>
 #include <unistd.h>
 #include <iostream>
 #include <sstream>

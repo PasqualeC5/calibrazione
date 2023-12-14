@@ -65,10 +65,6 @@ InfraredSensor::InfraredSensor(int argc)
         rate = 50U;
     }
 
-    /*!!!!!!!!!!!!!!!!aggiunta carica curva di calibrazione...
-        calibrationLine. m = ...
-        calibrationLine. q = ...
-    */
 }
 
 /*PUBLIC*/
@@ -104,7 +100,7 @@ float InfraredSensor::getCalibratedDistance(float spoiltMeasure)
 
 vector<uint8_t> InfraredSensor::getDistanceInMillimetersVector()
 {
-    /*IMPORTANT: INDIPENDENT FROM CALIBRATION!!!! (NOT CALIBRATED)*/
+    /*IMPORTANT: INDEPENDENT FROM CALIBRATION!!!! (NOT CALIBRATED)*/
 
     /* Temporary variable for RAW Sensor data */
     vector<uint8_t> dataRaw;
