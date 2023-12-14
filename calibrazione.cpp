@@ -45,6 +45,7 @@ vector<float> parse_string_to_vector(string input);             // function to p
 int setup_options(map<string, string> options);                 // function to setup the program based on the command line arguments
 int setup_measurements_parameters();                            // function to setup the measurements parameters
 void display_usage();                                           // function to display usage message from help command
+void setup_robot_offset();                                      // function to measure the robot starting distance i.e. offset
 
 // MEASUREMENTS
 void make_measurements(DistanceSensor &sensor, int number_of_measurements, vector<float> &measurements, unsigned int delay_us);
