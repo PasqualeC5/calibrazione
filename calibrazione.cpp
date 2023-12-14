@@ -371,7 +371,6 @@ map<string, string> parse_config_file(string config_file_path)
 
 vector<float> parse_string_to_vector(string input)
 {
-    cout << input << endl;
     vector<float> result;
 
     // Check if the string starts with a curly brace
@@ -391,7 +390,6 @@ vector<float> parse_string_to_vector(string input)
     float value;
     while (ss >> value)
     {
-        cout << value << endl;
         result.push_back(value);
 
         // Check for comma and discard if present
