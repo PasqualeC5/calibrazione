@@ -27,6 +27,7 @@
 #define USE_ROBOT_COMMAND "userobot"                  // command flag to use meca500 robot [--userobot]
 #define MEASURE_DELAY_US_COMMAND "delay"              // delay between measurements in micro seconds [--delay=microseconds]
 #define ROBOT_STARTING_POSITION_COMMAND "position"    // starting pose of the meca500
+#define POSITION_OFFSET_COMMAND "offset"              // command to change the offset of the robot
 
 /* DEFAULT VALUES */
 #define MEASUREMENTS_PER_CYCLE_DEFAULT 100   // default number of measurements per cycle
@@ -62,15 +63,16 @@ const vector<float> default_robot_position = {200, -170, 120, 90, 90, 0}; // def
 vector<float> robot_position(default_robot_position);                     // Robot starting position
 string surface_name = "";                                                 // surface name for saving measurements
 bool use_robot = false;                                                   // Flag to enable meca500 usage
-string sensor_type;                                                       // sensor name to be used i.e. [infrared, ultrasonic]
-string config_file_path = "";                                             // path to config file
-DistanceSensor *sensor = nullptr;                                         // Sensor to use for measuring
-Robot *robot = nullptr;                                                   // Robot object to handle meca500 communication
-float min_measurement,                                                    // minimum distance to be measured
-    max_measurement,                                                      // maximum distance to be measured
-    step_size,                                                            // step interval between measurements
-    current_measurement,                                                  // current distance to be measured
-    robot_position_offset = 8;                                            // distance offset for robot position
+bool measure_offset = true;
+string sensor_type;               // sensor name to be used i.e. [infrared, ultrasonic]
+string config_file_path = "";     // path to config file
+DistanceSensor *sensor = nullptr; // Sensor to use for measuring
+Robot *robot = nullptr;           // Robot object to handle meca500 communication
+float min_measurement,            // minimum distance to be measured
+    max_measurement,              // maximum distance to be measured
+    step_size,                    // step interval between measurements
+    current_measurement,          // current distance to be measured
+    robot_position_offset = 8;    // distance offset for robot position
 
 int main(int argc, char *argv[])
 {
@@ -89,7 +91,17 @@ int main(int argc, char *argv[])
     cout << "Setup complete\nStarting measurements\n\n";
 
     if (use_robot)
-        setup_robot_offset();
+    {
+        vector<float> measurements = 100;
+        cout << "Please position the obstacle in front of the sensor" << endl
+             << "Press any button to continue..." << endl;
+        char c = getchar();
+
+        c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
+
+        if (measure_offset)
+            setup_robot_offset();
+    }
 
     while (current_measurement <= max_measurement)
     {
@@ -130,16 +142,9 @@ int main(int argc, char *argv[])
 void setup_robot_offset()
 {
     vector<float> measurements;
-    cout << "Please position the obstacle in front of the sensor" << endl
-         << "Press any button to continue..." << endl;
-    char c = getchar();
-
-    c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
-
     cout << "Measuring robot position offset" << endl;
     make_measurements(*sensor, MEASUREMENTS_PER_CYCLE_DEFAULT, measurements, 0.02e+6);
     cout << "Calculating robot position offset" << endl;
-
     robot_position_offset = 0;
     for (float measurement : measurements)
     {
@@ -224,10 +229,17 @@ int setup_options(map<string, string> options)
         string value = option.second;
 
         // You can assign any behavior based on the option
-        if (command == "help")
+        if (command == HELP_COMMAND)
         {
             display_usage();
             return 1;
+        }
+        else if (command == POSITION_OFFSET_COMMAND)
+        {
+            int value_int = stoi(value);
+            robot_position_offset = value_int;
+            measure_offset = false;
+            cout << "Robot offset set to: " << value_int << endl;
         }
         else if (command == ROBOT_STARTING_POSITION_COMMAND)
         {
@@ -405,13 +417,21 @@ void display_usage()
     cout << left << setw(optionWidth) << "Usage: ./calibrazione [OPTIONS]" << endl
          << "Options:" << endl
          << "  --" << setw(optionWidth) << HELP_COMMAND << setw(descriptionWidth) << "Display this help message" << endl
-         << "  --" << CONFIG_FROM_FILE_COMMAND << setw(optionWidth - strlen(CONFIG_FROM_FILE_COMMAND)) << "=\"path/to/configfile.txt\"" << setw(descriptionWidth) << "Parse options from text file" << endl
-         << "  --" << SENSOR_COMMAND << setw(optionWidth - strlen(SENSOR_COMMAND)) << "=TYPE" << setw(descriptionWidth) << "Specify sensor type (e.g., infrared, ultrasonic)" << endl
-         << "  --" << SURFACE_TYPE_COMMAND << setw(optionWidth - strlen(SURFACE_TYPE_COMMAND)) << "=TYPE" << setw(descriptionWidth) << "Specify surface type for measurements" << endl
-         << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << setw(optionWidth - strlen(NUMBER_OF_MEASUREMENTS_COMMAND)) << "=COUNT" << setw(descriptionWidth) << "Specify the number of measurements to take" << endl
+         << "  --" << POSITION_OFFSET_COMMAND << setw(optionWidth - strlen(POSITION_OFFSET_COMMAND)) << "VALUE"
+         << "Set initial position offset of the robot in mm" << endl
+         << "  --" << CONFIG_FROM_FILE_COMMAND << setw(optionWidth - strlen(CONFIG_FROM_FILE_COMMAND)) << "=\"path/to/configfile.txt\""
+         << "Parse options from text file" << endl
+         << "  --" << SENSOR_COMMAND << setw(optionWidth - strlen(SENSOR_COMMAND)) << "=TYPE"
+         << "Specify sensor type (e.g., infrared, ultrasonic)" << endl
+         << "  --" << SURFACE_TYPE_COMMAND << setw(optionWidth - strlen(SURFACE_TYPE_COMMAND)) << "=TYPE"
+         << "Specify surface type for measurements" << endl
+         << "  --" << NUMBER_OF_MEASUREMENTS_COMMAND << setw(optionWidth - strlen(NUMBER_OF_MEASUREMENTS_COMMAND)) << "=COUNT"
+         << "Specify the number of measurements to take" << endl
          << "  --" << setw(optionWidth) << USE_ROBOT_COMMAND << setw(descriptionWidth) << "Use robot for measurements" << endl
-         << "  --" << MEASURE_DELAY_US_COMMAND << setw(optionWidth - strlen(MEASURE_DELAY_US_COMMAND)) << "=DELAY_VALUE_US" << setw(descriptionWidth) << "Specify the delay in microseconds between measurements" << endl
-         << "  --" << ROBOT_STARTING_POSITION_COMMAND << setw(optionWidth - strlen(ROBOT_STARTING_POSITION_COMMAND)) << "=\"{x,y,z,alpha,beta,gamma}\"" << setw(descriptionWidth) << "Specify the starting pose of the meca500 [default {140, -170, 120, 90, 90, 0} ]" << endl
+         << "  --" << MEASURE_DELAY_US_COMMAND << setw(optionWidth - strlen(MEASURE_DELAY_US_COMMAND)) << "=DELAY_VALUE_US"
+         << "Specify the delay in microseconds between measurements" << endl
+         << "  --" << ROBOT_STARTING_POSITION_COMMAND << setw(optionWidth - strlen(ROBOT_STARTING_POSITION_COMMAND)) << "=\"{x,y,z,alpha,beta,gamma}\""
+         << "Specify the starting pose of the meca500 [default {140, -170, 120, 90, 90, 0} ]" << endl
          << endl
          << setw(optionWidth) << "Example usage:" << endl
          << "  ./calibrazione --" << SENSOR_COMMAND << "=infrared --" << SURFACE_TYPE_COMMAND << "=wood --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --" << USE_ROBOT_COMMAND << " --" << MEASURE_DELAY_US_COMMAND << "=100000" << endl;
