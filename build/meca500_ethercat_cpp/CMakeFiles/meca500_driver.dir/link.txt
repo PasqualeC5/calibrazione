@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmeca500_driver.a CMakeFiles/meca500_driver.dir/CsvLoggerFeedback.cpp.o CMakeFiles/meca500_driver.dir/Robot.cpp.o CMakeFiles/meca500_driver.dir/jacobian_meca.cpp.o CMakeFiles/meca500_driver.dir/joints_vel.cpp.o CMakeFiles/meca500_driver.dir/matrix-test.cpp.o CMakeFiles/meca500_driver.dir/matrix_tools.cpp.o CMakeFiles/meca500_driver.dir/test.cpp.o
-/usr/bin/ranlib libmeca500_driver.a

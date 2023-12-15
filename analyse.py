@@ -156,6 +156,7 @@ def analyse_files(folder_path):
             plt.ylabel("Probabilità")
             plt.title("Distribuzione dei valori")
             plt.tight_layout()
+            
             plt.savefig(sub_folder_path + "/plots/histogram_" +
                         measurements_csv_file_name + ".png")
             plt.close()
