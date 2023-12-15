@@ -115,8 +115,9 @@ int main(int argc, char *argv[])
 
             // decrease robot position x value by step size(moving away from the obstacle)
             // if its the first set of measurements account for the offset and position to the minimum distance
-            //robot_position[0] -= (current_measurement == min_measurement) ? (current_measurement - robot_position_offset) : step_size;
-            robot_position[0] -= step_size;
+            // robot_position[0] -= (current_measurement == min_measurement) ? (current_measurement - robot_position_offset) : step_size;
+            if (current_measurement != min_measurement)
+                robot_position[0] -= step_size;
 
             move_robot_to_position(robot_position);
         }
@@ -130,8 +131,9 @@ int main(int argc, char *argv[])
 
         cout << "Measuring distance..." << endl;
         make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
-        for(float measurement : measurements){
-            measurement -= robot_position_offset;
+        for (int i = 0; i < measurements.size(); i++)
+        {
+            measurements[i] -= robot_position_offset;
         }
         cout << "Writing measurements to csv file"
              << endl
