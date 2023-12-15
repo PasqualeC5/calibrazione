@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
             setup_robot_offset();
     }
 
-    while (current_measurement <= max_measurement)
+    while (current_measurement <= max_measurement  && current_measurement >= min_measurement)
     {
         // setup for next set of measurements
         measurements.clear();
@@ -117,7 +117,11 @@ int main(int argc, char *argv[])
             // if its the first set of measurements account for the offset and position to the minimum distance
             // robot_position[0] -= (current_measurement == min_measurement) ? (current_measurement - robot_position_offset) : step_size;
             if (current_measurement != min_measurement)
-                robot_position[0] -= step_size;
+            //if not first movement move robot by step size
+                robot_position[0] += step_size;
+            else
+            //if first measurement move robot to starting position
+                robot_position[0] += step_size > 0 ? min_measurement : max_measurement;
 
             move_robot_to_position(robot_position);
         }
@@ -436,7 +440,7 @@ void display_usage()
          << "  --" << MEASURE_DELAY_US_COMMAND << setw(optionWidth - strlen(MEASURE_DELAY_US_COMMAND)) << "=DELAY_VALUE_US"
          << "Specify the delay in microseconds between measurements" << endl
          << "  --" << ROBOT_STARTING_POSITION_COMMAND << setw(optionWidth - strlen(ROBOT_STARTING_POSITION_COMMAND)) << "=\"{x,y,z,alpha,beta,gamma}\""
-         << "Specify the starting pose of the meca500 [default {140, -170, 120, 90, 90, 0} ]" << endl
+         << "Specify the starting pose of the meca500 [default {200, -170, 120, 90, 90, 0} ]" << endl
          << endl
          << setw(optionWidth) << "Example usage:" << endl
          << "  ./calibrazione --" << SENSOR_COMMAND << "=infrared --" << SURFACE_TYPE_COMMAND << "=wood --" << NUMBER_OF_MEASUREMENTS_COMMAND << "=10 --" << USE_ROBOT_COMMAND << " --" << MEASURE_DELAY_US_COMMAND << "=100000" << endl;
