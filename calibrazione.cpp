@@ -92,7 +92,6 @@ int main(int argc, char *argv[])
 
     if (use_robot)
     {
-        vector<float> measurements = 100;
         cout << "Please position the obstacle in front of the sensor" << endl
              << "Press any button to continue..." << endl;
         char c = getchar();
