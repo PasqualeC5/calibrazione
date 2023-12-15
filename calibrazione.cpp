@@ -416,7 +416,7 @@ void display_usage()
     cout << left << setw(optionWidth) << "Usage: ./calibrazione [OPTIONS]" << endl
          << "Options:" << endl
          << "  --" << setw(optionWidth) << HELP_COMMAND << setw(descriptionWidth) << "Display this help message" << endl
-         << "  --" << POSITION_OFFSET_COMMAND << setw(optionWidth - strlen(POSITION_OFFSET_COMMAND)) << "VALUE"
+         << "  --" << POSITION_OFFSET_COMMAND << setw(optionWidth - strlen(POSITION_OFFSET_COMMAND)) << "=VALUE"
          << "Set initial position offset of the robot in mm" << endl
          << "  --" << CONFIG_FROM_FILE_COMMAND << setw(optionWidth - strlen(CONFIG_FROM_FILE_COMMAND)) << "=\"path/to/configfile.txt\""
          << "Parse options from text file" << endl
