@@ -178,7 +178,7 @@ int setup_measurements_parameters()
     input_file >> min_measurement;
     input_file >> max_measurement;
     input_file >> step_size;
-    current_measurement = min_measurement;
+    current_measurement = step_size < 0 ? max_measurement : min_measurement;
     return 0;
 }
 
