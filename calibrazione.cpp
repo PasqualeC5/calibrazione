@@ -135,10 +135,10 @@ int main(int argc, char *argv[])
 
         cout << "Measuring distance..." << endl;
         make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
-        for (int i = 0; i < measurements.size(); i++)
-        {
-            measurements[i] -= robot_position_offset;
-        }
+        // for (int i = 0; i < measurements.size(); i++)
+        // {
+        //     measurements[i] -= robot_position_offset;
+        // }
         cout << "Writing measurements to csv file"
              << endl
              << endl;
@@ -195,7 +195,7 @@ void make_measurements(DistanceSensor &sensor, int number_of_measurements, vecto
 }
 void write_measurements_to_csv(vector<float> measurments, string file_path)
 {
-    CsvLogger measurements_logger(file_path);
+    CsvLogger measurements_logger(file_path + "_" + to_string(robot_position_offset));
     measurements_logger.write("distance\n");
     for (float measurement : measurments)
     {
