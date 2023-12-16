@@ -27,7 +27,7 @@
 #define USE_ROBOT_COMMAND "userobot"                  // command flag to use meca500 robot [--userobot]
 #define MEASURE_DELAY_US_COMMAND "delay"              // delay between measurements in micro seconds [--delay=microseconds]
 #define ROBOT_STARTING_POSITION_COMMAND "position"    // starting pose of the meca500
-#define POSITION_OFFSET_COMMAND "offset"              // command to change the offset of the robot
+//#define POSITION_OFFSET_COMMAND "offset"              // command to change the offset of the measurement sistem respect top of pin
 
 /* DEFAULT VALUES */
 #define MEASUREMENTS_PER_CYCLE_DEFAULT 100   // default number of measurements per cycle
@@ -37,15 +37,15 @@
 
 using namespace std;
 
-/********HELPER FUNCTIONS********/
-// SETUP
+/********FUNCTIONS********/
+// SETUP 
 map<string, string> parse_command_line(int argc, char *argv[]); // function to parse the appropriate command line arguments
 map<string, string> parse_config_file(string config_file_path); // function to parse config file parameters
 vector<float> parse_string_to_vector(string input);             // function to parse a string representing a vector like this {140, -170, 120, 90, 90, 0}
 int setup_options(map<string, string> options);                 // function to setup the program based on the command line arguments
 int setup_measurements_parameters();                            // function to setup the measurements parameters
 void display_usage();                                           // function to display usage message from help command
-void setup_robot_offset();                                      // function to measure the robot starting distance i.e. offset
+//void setup_robot_offset();                                     // function to measure the robot starting distance i.e. offset
 
 // MEASUREMENTS
 void make_measurements(DistanceSensor &sensor, int number_of_measurements, vector<float> &measurements, unsigned int delay_us);
@@ -63,7 +63,6 @@ const vector<float> default_robot_position = {200, -170, 120, 90, 90, 0}; // def
 vector<float> robot_position(default_robot_position);                     // Robot starting position
 string surface_name = "";                                                 // surface name for saving measurements
 bool use_robot = false;                                                   // Flag to enable meca500 usage
-bool measure_offset = true;
 string sensor_type;               // sensor name to be used i.e. [infrared, ultrasonic]
 string config_file_path = "";     // path to config file
 DistanceSensor *sensor = nullptr; // Sensor to use for measuring
@@ -71,83 +70,99 @@ Robot *robot = nullptr;           // Robot object to handle meca500 communicatio
 float min_measurement,            // minimum distance to be measured
     max_measurement,              // maximum distance to be measured
     step_size,                    // step interval between measurements
-    current_measurement,          // current distance to be measured
-    robot_position_offset = 8;    // distance offset for robot position
+    current_measurement;          // current distance to be measured
+
+//bool measure_offset = true;
+//float robot_position_offset = 8;    //offset of the measurement sistem respect top of pin
 
 int main(int argc, char *argv[])
 {
-    // setup from command line arguments
-    // if return value is != 0 there was an error
-    if (setup_options(parse_command_line(argc, argv)) != 0)
-        return 1;
-    if (setup_measurements_parameters() != 0)
-        return 1;
+    /*INITIAL SETUP*/
+        
+        if (setup_options(parse_command_line(argc, argv)) != 0)
+            return 1; //error
 
-    vector<float> measurements;                                                  // vector storing all the measurements
-    string file_path = "measurements/" + sensor_type + "/" + surface_name + "/"; // output file path
-    string csv_file_name;                                                        // name of output file
+        if (setup_measurements_parameters() != 0)
+            return 1; //error
 
-    // measurement process
-    cout << "Setup complete\nStarting measurements\n\n";
+        vector<float> measurements;                                                  // vector storing all the measurements
+        string file_path = "measurements/" + sensor_type + "/" + surface_name + "/"; // output file path
+        string csv_file_name;                                                        // name of output file
 
-    if (use_robot)
-    {
-        cout << "Please position the obstacle in front of the sensor" << endl
-             << "Press any button to continue..." << endl;
-        char c = getchar();
 
-        c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
+    /*MEASUREMENT*/
+        cout << "Setup complete\nStarting measurements\n\n";
 
-        if (measure_offset)
-            setup_robot_offset();
-    }
-
-    while (current_measurement <= max_measurement  && current_measurement >= min_measurement)
-    {
-        // setup for next set of measurements
-        measurements.clear();
-        csv_file_name = (current_measurement < 100 ? "0" : "") + to_string((int)current_measurement) + "mm.csv";
-
-        cout << "Currently measuring: " << current_measurement << " mm\n";
         if (use_robot)
         {
-            cout << "Moving robot to position..." << endl;
-
-            // decrease robot position x value by step size(moving away from the obstacle)
-            // if its the first set of measurements account for the offset and position to the minimum distance
-            // robot_position[0] -= (current_measurement == min_measurement) ? (current_measurement - robot_position_offset) : step_size;
-            if (current_measurement != min_measurement)
-            //if not first movement move robot by step size
-                robot_position[0] += step_size;
-            else
-            //if first measurement move robot to starting position
-                robot_position[0] += step_size > 0 ? min_measurement : max_measurement;
-
-            move_robot_to_position(robot_position);
-        }
-        else
-        {
-            cout << "Please position the obstacle in front of the sensor" << endl
-                 << "Press any button to continue..." << endl;
+            cout << "Please position the obstacle in front of the sensor (WARNING: top of pin will be your new Ref Sys origin)" << endl
+                << "Press any button to continue..." << endl;
             char c = getchar();
+
             c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
+
+            /*
+            if (measure_offset)
+                setup_robot_offset();
+            */
         }
 
-        cout << "Measuring distance..." << endl;
-        make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
-        // for (int i = 0; i < measurements.size(); i++)
-        // {
-        //     measurements[i] -= robot_position_offset;
-        // }
-        cout << "Writing measurements to csv file"
-             << endl
-             << endl;
-        write_measurements_to_csv(measurements, file_path + csv_file_name);
-        current_measurement += step_size;
-    }
+        while (current_measurement <= max_measurement  && current_measurement >= min_measurement)
+        {
+            //note for while condition: meca can move positive or negative. It depends of step size (specified in input files)
+
+            // setup for next set of measurements
+            measurements.clear();
+            csv_file_name = (current_measurement < 100 ? "0" : "") + to_string((int)current_measurement) + "mm.csv";
+
+
+            cout << "Currently measuring: " << current_measurement << " mm\n";
+            if (use_robot)
+            {
+                cout << "Moving robot to position..." << endl;
+
+                // decrease robot position x value by step size(moving away from the obstacle)
+                // if its the first set of measurements account for the offset and position to the minimum distance
+                // robot_position[0] -= (current_measurement == min_measurement) ? (current_measurement - robot_position_offset) : step_size;
+                if (current_measurement != min_measurement)
+                //if not first movement move robot by step size
+                    robot_position[0] += step_size;
+                else
+                //if first measurement move robot to starting position
+                    robot_position[0] += step_size > 0 ? min_measurement : max_measurement;
+
+                move_robot_to_position(robot_position);
+            }
+            else
+            {
+                cout << "Please check if the right distance" << endl
+                    << "Press any button to continue..." << endl;
+                char c = getchar();
+                c = getchar(); // hack to fix infrared sensor user input (endl in buffer)
+            }
+
+            cout << "Measuring distance..." << endl;
+            make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
+
+            /*
+            //cycle to remove offset from measure
+            for (int i = 0; i < measurements.size(); i++)
+            {
+                measurements[i] -= robot_position_offset;
+            }
+            */
+
+            cout << "Writing measurements to csv file"
+                << endl
+                << endl;
+            write_measurements_to_csv(measurements, file_path + csv_file_name);
+            current_measurement += step_size;
+        }
+    
     return 0;
 }
 
+/*
 void setup_robot_offset()
 {
     vector<float> measurements;
@@ -163,6 +178,7 @@ void setup_robot_offset()
 
     cout << "Robot average position offset: " << robot_position_offset << endl;
 }
+*/
 
 int setup_measurements_parameters()
 {
@@ -243,13 +259,6 @@ int setup_options(map<string, string> options)
             display_usage();
             return 1;
         }
-        else if (command == POSITION_OFFSET_COMMAND)
-        {
-            int value_int = stoi(value);
-            robot_position_offset = value_int;
-            measure_offset = false;
-            cout << "Robot offset set to: " << value_int << endl;
-        }
         else if (command == ROBOT_STARTING_POSITION_COMMAND)
         {
             vector<float> robot_position_values = parse_string_to_vector(value);
@@ -325,6 +334,16 @@ int setup_options(map<string, string> options)
         {
             option_message << "Unknown option: " << command << "\n";
         }
+
+        /* (removed)
+        else if (command == POSITION_OFFSET_COMMAND)
+        {
+            int value_int = stoi(value);
+            robot_position_offset = value_int;
+            measure_offset = false;
+            cout << "Robot offset set to: " << value_int << endl;
+        }
+        */
     }
     if (sensor == nullptr)
     {
