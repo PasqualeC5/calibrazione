@@ -199,7 +199,7 @@ int setup_options(map<string, string> options)
                 cerr << "Program will now exit..." << endl;
                 return 1;
             }
-            if (measurement_options[0] <= measurement_options[1])
+            if (measurement_options[0] >= measurement_options[1])
             {
                 cerr << "Invalid measurement options, min_measurement can't be higher or equal to max_measurement" << endl;
                 cerr << "Program will now exit..." << endl;
