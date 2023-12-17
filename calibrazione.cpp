@@ -177,7 +177,7 @@ void initialise_robot()
 
 int setup_options(map<string, string> options)
 {
-    string message_length = 30;
+    int message_length = 30;
     // Handle each options
     stringstream option_message;
 
