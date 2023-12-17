@@ -112,14 +112,12 @@ void Robot::set_conf(short c1, short c2, short c3)
     std::cout << n << std::endl;
 }
 
-
-
 double Robot::get_position() // Returning x position of the Robot (horizontal)
 {
     float pose[6];
     meca500.getPose(pose);
 
-    return pose[0];              
+    return pose[0];
 }
 
 void Robot::get_pose(float *x) // Returning pose, cartesian(mm) and angular(°)
@@ -127,10 +125,11 @@ void Robot::get_pose(float *x) // Returning pose, cartesian(mm) and angular(°)
     meca500.getPose(x);
 
     /*
-    for (int i = 0; i < 3; i++) 
+    for (int i = 0; i < 3; i++)
     {
         x[i] *= 1e-3;                   //mm -> meters
     }
+    
     for (int i = 3; i < 6; i++)
     {
         x[i] = x[i] * M_PI / 180.0;     //degres -> rad
@@ -138,11 +137,11 @@ void Robot::get_pose(float *x) // Returning pose, cartesian(mm) and angular(°)
     */
 }
 
-double Robot::get_velocity() 
+double Robot::get_velocity()
 {
-    //implementato con derivatore discreto in banda sulla posizione
+    // implementato con derivatore discreto in banda sulla posizione
 
-    double pos = get_position() * 1e-3; //mm to meters
+    double pos = get_position() * 1e-3; // mm to meters
     double T = TARGET_CYCLE_TIME_MICROSECONDS * 1e-6;
     double tau = costante_tempo_filtro;
     double vel = -(T - 2 * tau) / (T + 2 * tau) * last_vel + 2 / (T + 2 * tau) * pos - 2 / (T + 2 * tau) * last_pos;
@@ -150,7 +149,7 @@ double Robot::get_velocity()
     last_pos = pos;
     last_vel = vel;
 
-    return vel * 1e3; //m/s -> mm/s
+    return vel * 1e3; // m/s -> mm/s
 }
 
 void Robot::print_pose()
@@ -175,16 +174,13 @@ void Robot::move_lin_vel_wrf(double velocity) // input is in mm/s, ranging from 
         velocity = 0;
     }
 
-    //vel[0] = (float)velocity * 1e+3;
+    // vel[0] = (float)velocity * 1e+3;
     meca500.moveLinVelWRF(vel);
 }
 
-
-
-
 void Robot::move_pose(double x, double y, double z, double alpha, double beta, double gamma)
 {
-    if (x >= POS_LIMIT_SUP || x <= POS_LIMIT_INF) //dangerous position
+    if (x >= POS_LIMIT_SUP || x <= POS_LIMIT_INF) // dangerous position
     {
         printf("impossibile to move: %d is a dangerous position:\n", x);
     }
@@ -203,7 +199,7 @@ void Robot::move_pose(double x, double y, double z, double alpha, double beta, d
 
 void Robot::move_lin(double x, double y, double z, double alpha, double beta, double gamma)
 {
-    if (x >= POS_LIMIT_SUP || x <= POS_LIMIT_INF) //dangerous position
+    if (x >= POS_LIMIT_SUP || x <= POS_LIMIT_INF) // dangerous position
     {
         printf("impossibile to move: %d is a dangerous position:\n", x);
     }
@@ -215,10 +211,9 @@ void Robot::move_lin(double x, double y, double z, double alpha, double beta, do
     }
 }
 
-
 void Robot::move_lin_rel_wrf(double x, double y, double z, double alpha, double beta, double gamma)
 {
-    if (x >= POS_LIMIT_SUP || x <= POS_LIMIT_INF) //dangerous position
+    if (x >= POS_LIMIT_SUP || x <= POS_LIMIT_INF) // dangerous position
     {
         printf("impossibile to move: %d is a dangerous position:\n", x);
     }
@@ -230,8 +225,7 @@ void Robot::move_lin_rel_wrf(double x, double y, double z, double alpha, double 
     }
 }
 
-
-/* //joints control
+// joints control
 
 void Robot::move_joints_vel(float *w)
 {
@@ -251,10 +245,7 @@ void Robot::get_joints(float *joints) // Returning Horizontal position of the Ro
     }
 }
 
-*/
-
-
-/* //trf control
+// trf control
 
 void Robot::move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma)
 {
@@ -297,5 +288,3 @@ void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -
     vel[0] = (float)velocity * 1e+3;
     meca500.moveLinVelTRF(vel);
 }
-
-*/

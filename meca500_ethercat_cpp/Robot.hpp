@@ -60,11 +60,11 @@ public:
     void print_pose();
     double get_velocity();
 
-    //void move_lin_vel_trf(double velocity);
-    //void move_lin_vel_trf_x(double velocity);
-    //void move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma);
-    //void move_joints_vel(float *w);
-    //void get_joints(float *joints);
+    void move_lin_vel_trf(double velocity);
+    void move_lin_vel_trf_x(double velocity);
+    void move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma);
+    void move_joints_vel(float *w);
+    void get_joints(float *joints);
     void move_pose(double x, double y, double z, double alpha, double beta, double gamma);
     void move_lin(double x, double y, double z, double alpha, double beta, double gamma);
     void move_lin_rel_wrf(double x, double y, double z, double alpha, double beta, double gamma);
