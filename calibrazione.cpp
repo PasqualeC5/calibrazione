@@ -383,7 +383,7 @@ vector<float> parse_string_to_vector(string input)
 }
 void display_usage()
 {
-    const int optionWidth = 40;
+    const int optionWidth = 60;
     const int descriptionWidth = 60;
 
     cout << left << setw(optionWidth) << "Usage: ./calibrazione [OPTIONS]" << endl
