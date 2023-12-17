@@ -209,7 +209,7 @@ int setup_options(map<string, string> options)
             max_measurement = measurement_options[1];
             step_size = measurement_options[2];
             current_measurement = step_size > 0 ? min_measurement : max_measurement;
-            option_message << "Measurement options:\n"
+            option_message << left << "Measurement options:\n"
                            << setw(message_length) << "Minimum measurement:" << min_measurement << endl
                            << setw(message_length) << "Maximum measurement:" << max_measurement << endl
                            << setw(message_length) << "Step size:" << step_size << endl;
@@ -223,7 +223,7 @@ int setup_options(map<string, string> options)
                 cerr << "Program will now exit..." << endl;
                 return 1;
             }
-            option_message << setw(message_length) << "Starting robot position: {";
+            option_message << left << setw(message_length) << "Starting robot position: {";
             for (float pos : robot_position_values)
                 option_message << pos << ", ";
             option_message << "}" << endl;
@@ -231,7 +231,7 @@ int setup_options(map<string, string> options)
         }
         else if (command == SENSOR_COMMAND)
         {
-            option_message << setw(message_length) << "Sensor used: " << value << "\n";
+            option_message << left << setw(message_length) << "Sensor used: " << value << "\n";
             if (value == INFRARED_SENSOR_VALUE)
                 sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
             else if (value == ULTRASONIC_SENSOR_VALUE)
@@ -254,7 +254,7 @@ int setup_options(map<string, string> options)
                 cerr << "Program will now exit..." << endl;
                 return 1;
             }
-            option_message << setw(message_length) << "Number of measurements per cycle: " << value << "\n";
+            option_message << left << setw(message_length) << "Number of measurements per cycle: " << value << "\n";
             number_of_measurements = int_value;
         }
         else if (command == USE_ROBOT_COMMAND)
@@ -265,7 +265,7 @@ int setup_options(map<string, string> options)
         }
         else if (command == SURFACE_TYPE_COMMAND)
         {
-            option_message << setw(message_length) << "Surface used: " << value << "\n";
+            option_message << left << setw(message_length) << "Surface used: " << value << "\n";
             surface_name = value;
         }
         else if (command == MEASURE_DELAY_US_COMMAND)
@@ -277,7 +277,7 @@ int setup_options(map<string, string> options)
                 cerr << "Program will now exit..." << endl;
                 return 1;
             }
-            option_message << setw(message_length) << "Measurement delay in us used: " << value << "\n";
+            option_message << left << setw(message_length) << "Measurement delay in us used: " << value << "\n";
             measurement_delay = int_value;
         }
         else if (command == CONFIG_FROM_FILE_COMMAND)
@@ -287,7 +287,7 @@ int setup_options(map<string, string> options)
         }
         else
         {
-            option_message << setw(message_length) << "Unknown option: " << command << "\n";
+            option_message << left << setw(message_length) << "Unknown option: " << command << "\n";
         }
     }
     if (sensor == nullptr)
@@ -298,7 +298,7 @@ int setup_options(map<string, string> options)
              << "Program will now exit..." << endl;
         return 1;
     }
-    cout << left << option_message.str() << endl;
+    cout << option_message.str() << endl;
     return 0;
 }
 
