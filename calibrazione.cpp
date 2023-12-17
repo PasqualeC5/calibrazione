@@ -298,7 +298,7 @@ int setup_options(map<string, string> options)
              << "Program will now exit..." << endl;
         return 1;
     }
-    cout << option_message.str() << endl;
+    cout << left << option_message.str() << endl;
     return 0;
 }
 
