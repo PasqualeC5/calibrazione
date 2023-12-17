@@ -259,11 +259,11 @@ void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from
     float joints[6];
     float joints_vel[6];
     float pose[6];
-    if (velocity > 0 && get_position() > POS_LIMIT)
+    if (velocity > 0 && get_position() > POS_LIMIT_SUP)
     {
         velocity = 0;
     }
-    if (velocity < 0 && get_position() < -POS_LIMIT)
+    if (velocity < 0 && get_position() < POS_LIMIT_INF)
     {
         velocity = 0;
     }
