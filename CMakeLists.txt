@@ -3,7 +3,6 @@ set(CMAKE_CXX_STANDARD 20)
 project(calibrazione VERSION 0.1.0 LANGUAGES C CXX)
 
 add_executable(calibrazione calibrazione.cpp)
-add_executable(loggertest loggertest.cpp)
 add_subdirectory(csvlogger)
 add_subdirectory(distance_sensor)
 add_subdirectory(meca500_ethercat_cpp)
