@@ -208,6 +208,7 @@ int setup_options(map<string, string> options)
             min_measurement = measurement_options[0];
             max_measurement = measurement_options[1];
             step_size = measurement_options[2];
+            current_measurement = step_size > 0 ? min_measurement : max_measurement;
             option_message << "Measurement options:\n"
                            << setw(message_length) << "Minimum measurement:" << min_measurement << endl
                            << setw(message_length) << "Maximum measurement:" << max_measurement << endl
