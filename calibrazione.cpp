@@ -42,6 +42,7 @@ using namespace std;
 map<string, string> parse_command_line(int argc, char *argv[]); // function to parse the appropriate command line arguments
 map<string, string> parse_config_file(string config_file_path); // function to parse config file parameters
 vector<float> parse_string_to_vector(string input);             // function to parse a string representing a vector like this {140, -170, 120, 90, 90, 0}
+int setup_options(map<string, string> options);                 // setup all the parameters
 void display_usage();                                           // function to display usage message from help command
 
 // MEASUREMENTS
