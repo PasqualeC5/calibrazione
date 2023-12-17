@@ -13,7 +13,7 @@
 #include <fstream>
 #include <cmath>
 
-void get_joints_vel_with_jacobian(double velocity, float *joints, float *joints_vel);
+//void get_joints_vel_with_jacobian(double velocity, float *joints, float *joints_vel);
 
 class Robot
 {
@@ -41,6 +41,7 @@ private:
     bool movement_ended();
 
 public:
+    /*CONSTRUCTORS*/
     Robot(double pos_limit_inf,
           double pos_limit_sup,
           uint32_t target_cycle_time_microseconds,
@@ -48,22 +49,26 @@ public:
           float blending_percentage,
           float cart_accel_limit);
     ~Robot();
-    void get_joints(float *joints);
+
+    /*METHODS*/
     void deactivate();
     void reset_error();
+    void set_conf(short c1, short c2, short c3);
+
     double get_position();
     void get_pose(float *x);
+    void print_pose();
     double get_velocity();
-    void move_lin_vel_wrf(double velocity);
-    void move_lin_vel_trf(double velocity);
+
+    //void move_lin_vel_trf(double velocity);
     //void move_lin_vel_trf_x(double velocity);
-    void move_joints_vel(float *w);
-    void set_conf(short c1, short c2, short c3);
+    //void move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma);
+    //void move_joints_vel(float *w);
+    //void get_joints(float *joints);
     void move_pose(double x, double y, double z, double alpha, double beta, double gamma);
     void move_lin(double x, double y, double z, double alpha, double beta, double gamma);
-    void move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma);
     void move_lin_rel_wrf(double x, double y, double z, double alpha, double beta, double gamma);
-    void print_pose();
+    void move_lin_vel_wrf(double velocity);
 };
 
 #endif
