@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     
     /*files to write, setup*/
-    CsvLogger input_logger("velocity_control");
+    CsvLogger input_logger("velocity_control.csv");
     input_logger.write("time, value\n");
     
     /*squarewave generation, setup*/
