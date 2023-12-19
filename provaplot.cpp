@@ -3,13 +3,11 @@
 //#include "CsvLogger.hpp"
 #include <time.h>
 
-
-
 int main(int argc, char *argv[])
 {
     
     /*files to write, setup*/
-    CsvLogger input_logger("velocity_control.csv");
+    CsvLogger input_logger("control/velocity_control.csv");
     input_logger.write("time, value\n");
     
     /*squarewave generation, setup*/
