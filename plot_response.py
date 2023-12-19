@@ -32,7 +32,7 @@ def remove_trailing_commas(file_path):
                 output_file.write(line)
 
 
-def analyse_file(file_path)
+def analyse_file(file_path):
     # Read the CSV file into a pandas DataFrame
     df = pd.read_csv(file_path)
 

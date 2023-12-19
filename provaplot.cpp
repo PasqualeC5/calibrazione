@@ -1,6 +1,6 @@
 
-//#include "../csvlogger/CsvLogger.hpp"
-#include "CsvLogger.hpp"
+#include "../csvlogger/CsvLogger.hpp"
+//#include "CsvLogger.hpp"
 #include <time.h>
 
 
@@ -12,9 +12,6 @@ int main(int argc, char *argv[])
     CsvLogger input_logger("velocity_control");
     input_logger.write("time, value\n");
     
-    
-
-
     /*squarewave generation, setup*/
     double input_velocity_mms = 10;         //10mm/s    (amplitude)
     double period_s = 6;                    //6sec      (period)

@@ -3,10 +3,12 @@ set(CMAKE_CXX_STANDARD 20)
 project(calibrazione VERSION 0.1.0 LANGUAGES C CXX)
 
 add_executable(calibrazione calibrazione.cpp)
+add_executable(provaplot provaplot.cpp)
 add_subdirectory(csvlogger)
 add_subdirectory(distance_sensor)
 add_subdirectory(meca500_ethercat_cpp)
 
+target_link_libraries(provaplot PRIVATE csvlogger)
 target_link_libraries(calibrazione PRIVATE csvlogger)
 target_link_libraries(calibrazione PRIVATE distance_sensor)
 target_compile_options(calibrazione PRIVATE -Wall -pthread)
