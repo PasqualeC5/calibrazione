@@ -7,6 +7,7 @@
 
 int main(int argc, char *argv[])
 {
+    gpioInitialise();
     
     /*files to write, setup*/
     CsvLogger input_logger("control/velocity_control.csv");
