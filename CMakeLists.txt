@@ -9,6 +9,7 @@ add_subdirectory(distance_sensor)
 add_subdirectory(meca500_ethercat_cpp)
 
 target_link_libraries(provaplot PRIVATE csvlogger)
+target_link_libraries(provaplot PRIVATE pigpio rt)
 target_link_libraries(calibrazione PRIVATE csvlogger)
 target_link_libraries(calibrazione PRIVATE distance_sensor)
 target_compile_options(calibrazione PRIVATE -Wall -pthread)
