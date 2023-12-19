@@ -1,32 +1,17 @@
-/*#include "../distance_sensor/include/DistanceSensor.hpp"
-#include "../distance_sensor/include/UltrasonicSensor.hpp"
-#include "../distance_sensor/include/InfraredSensor.hpp"
-*/
-#include "../meca500_ethercat_cpp/Robot.hpp"
-#include "../csvlogger/CsvLogger.hpp"
+
+//#include "../csvlogger/CsvLogger.hpp"
+#include "CsvLogger.hpp"
 #include <time.h>
 
 
 
 int main(int argc, char *argv[])
 {
-    /*robot, setup*/
-    Robot robot(40, 240, 5000, "eth0", 0.0, 10);
-    robot.reset_error();
-    // robot.main();
-
-    robot.set_conf(1, 1, -1);
-    robot.move_pose(130, -170, 120, 90, 90, 0);
-    robot.print_pose();
-
-
+    
     /*files to write, setup*/
     CsvLogger input_logger("velocity_control");
     input_logger.write("time, value\n");
-
-    CsvLogger output_logger("velocity_response");
-    output_logger.write("time, value\n");
-
+    
     
 
 
@@ -46,7 +31,7 @@ int main(int argc, char *argv[])
     while (true)
     {
         //input
-        robot.move_lin_vel_wrf(input_velocity_mms); //give 10mm/s or -10mm/s
+        //robot.move_lin_vel_wrf(input_velocity_mms); //give 10mm/s or -10mm/s
 
 
         time(&startTime);
@@ -64,9 +49,6 @@ int main(int argc, char *argv[])
             input_logger << input_velocity_mms;
             input_logger.end_row();
 
-            output_logger << (currentTime-t0);
-            output_logger << robot.get_velocity();
-            output_logger.end_row();
 
             // short delay:
             // usleep(putyourdelayhere);

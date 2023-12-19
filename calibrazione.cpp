@@ -382,6 +382,7 @@ vector<float> parse_string_to_vector(string input)
     }
     return result;
 }
+
 void display_usage()
 {
     const int optionWidth = 60;
