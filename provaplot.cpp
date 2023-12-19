@@ -3,6 +3,7 @@
 //#include "CsvLogger.hpp"
 #include <time.h>
 #include <pigpio.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
