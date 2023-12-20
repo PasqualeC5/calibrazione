@@ -286,5 +286,5 @@ void Robot::move_lin_vel_trf(float velocity[6]) // input is in mm/s, ranging fro
     // }
 
     // vel[0] = (float)velocity;
-    meca500.moveLinVelTRF(vel);
+    meca500.moveLinVelTRF(velocity);
 }
