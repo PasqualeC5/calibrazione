@@ -4,7 +4,7 @@
 #include "../meca500_ethercat_cpp/Robot.hpp"
 int main(int argc, char *argv[])
 {
-    Robot robot(-30, 200, 5000, "eth0", 0.0, 100);
+    Robot robot(-30, 200, 5000, "eth0", 0.0, 10);
     robot.reset_error();
     // robot.main();
     robot.set_conf(1, 1, -1);

@@ -12,6 +12,20 @@ from sklearn.linear_model import LinearRegression  # for best fit
 marker_size = 2
 
 
+def is_analysed(path):
+    return os.path.exists(path+"/.analysed")
+
+
+def create_folder(folder_path):
+    # Check if the folder exists
+    if not os.path.exists(folder_path):
+        # If not, create the folder
+        os.makedirs(folder_path)
+        print(f"Folder '{folder_path}' created successfully.")
+    else:
+        print(f"Folder '{folder_path}' already exists.")
+
+
 def remove_trailing_commas(file_path):
     # Open the input file in read mode
     with open(file_path, "r") as input_file:
@@ -76,12 +90,18 @@ def analyse_files(folder_path):
     surface_intercept = []
 
     for surface_name in surface_folders:
+
         sub_folder_path = folder_path + "/" + surface_name
+        if (is_analysed(sub_folder_path)):
+            continue
 
         # initializing stats file
+        create_folder(sub_folder_path + "/stats")
+        create_folder(sub_folder_path + "/plots")
+
         stats = open(sub_folder_path+"/stats/stats.csv", "w")
-        stats.write("valore,media,devstd\n")
-        i = 0
+
+        stats.write("valore,media,devstd,error\n")
 
         for measurements_csv_file_name in get_file_names(sub_folder_path):
 
@@ -126,20 +146,20 @@ def analyse_files(folder_path):
                          bbox=dict(boxstyle='round,pad=0.3',
                                    edgecolor='black', facecolor='white'),
                          fontsize=10)
+
             plt.savefig(sub_folder_path + "/plots/plot_" +
                         measurements_csv_file_name + ".png")
 
             misura = extract_number_from_string(measurements_csv_file_name)
 
-            stats.write(str(i) + "," + str(misura) + "," +
-                        str(mean_distance) + "," + str(std_dev_distance) + '\n')
-            i += 1
+            stats.write(str(misura) + "," +
+                        str(mean_distance) + "," + str(std_dev_distance) + "," + str(mean_distance-misura) + '\n')
             plt.close()
 
             x_values = np.linspace(0, 255, 5000)
 
             # Calculate the corresponding y values for the Gaussian distribution
-            desired_tollerance = 5
+            desired_tollerance = 1
             y_values = norm.pdf(x_values, misura, desired_tollerance/3)
             y_values_m = norm.pdf(x_values, mean_distance, std_dev_distance)
 
@@ -156,7 +176,7 @@ def analyse_files(folder_path):
             plt.ylabel("Probabilità")
             plt.title("Distribuzione dei valori")
             plt.tight_layout()
-            
+
             plt.savefig(sub_folder_path + "/plots/histogram_" +
                         measurements_csv_file_name + ".png")
             plt.close()
@@ -164,8 +184,7 @@ def analyse_files(folder_path):
 
         stats.close()
         stats_df = pd.read_csv(sub_folder_path + "/stats/stats.csv")
-        errors = abs(stats_df['media'].astype(float) -
-                     stats_df['valore'].astype(float))
+        errors = stats_df['error']
 
         # best fit
         model = LinearRegression()
@@ -230,7 +249,7 @@ def analyse_files(folder_path):
             linewidth=0.5,
             markersize=marker_size,
             color="green",
-            label="errore assoluto tra media e riferimento  mm",
+            label="errore tra media e riferimento  mm",
         )
         plt.xlabel("misura aspettata mm")
         plt.ylabel("media misurata mm")
@@ -244,22 +263,8 @@ def analyse_files(folder_path):
               str(stats_df["devstd"].describe()["mean"]))
         # plt.show()
         plt.close()
-
-    # medium best fit
-    medium_slope = 0
-    medium_intercept = 0
-
-    for value in surface_slopes:
-        medium_slope += value
-
-    for value in surface_intercept:
-        medium_intercept += value
-
-    medium_slope = medium_slope / len(surface_slopes)
-    medium_intercept = medium_intercept / len(surface_intercept)
-
-    print("best fit media: " + str(medium_slope) +
-          "x + " + str(medium_intercept))
+        flag = open(sub_folder_path+"/.analysed", "w")
+        flag.close()
 
 
 def main():
