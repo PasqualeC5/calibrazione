@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
             elapsed = (current.tv_sec - start.tv_sec) * 1000.0;    // sec to ms
             elapsed += (current.tv_usec - start.tv_usec) / 1000.0; // us to ms
 
-            if (duration.count() >= period_s / 2 * 1e3)
+            if (elapsed >= period_s / 2 * 1e3)
             {
                 break; // Exit the loop after 3 seconds
             }
