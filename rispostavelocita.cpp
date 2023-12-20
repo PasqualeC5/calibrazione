@@ -17,10 +17,10 @@ int main(int argc, char *argv[])
     robot.print_pose();
 
     /*files to write, setup*/
-    CsvLogger input_logger("velocity_control");
+    CsvLogger input_logger("control/velocity_control");
     input_logger.write("time, value\n");
 
-    CsvLogger output_logger("velocity_response");
+    CsvLogger output_logger("control/velocity_response");
     output_logger.write("time, value\n");
 
     /*squarewave generation, setup*/

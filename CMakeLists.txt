@@ -32,6 +32,7 @@ target_link_libraries(rispostavelocita PRIVATE meca500_driver)
 
 target_compile_features(calibrazione PRIVATE cxx_std_17)
 target_compile_features(controltest PRIVATE cxx_std_17)
+target_compile_features(rispostavelocita PRIVATE cxx_std_17)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
