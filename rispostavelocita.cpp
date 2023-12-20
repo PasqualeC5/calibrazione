@@ -59,13 +59,14 @@ int main(int argc, char *argv[])
             {
                 break; // Exit the loop after 3 seconds
             }
+        
 
             // get datas
-            input_logger << (currentTime - t0);
+            input_logger << (endTime - t0);
             input_logger << input_velocity_mms;
             input_logger.end_row();
 
-            output_logger << (currentTime - t0);
+            output_logger << (endTime - t0);
             output_logger << robot.get_velocity();
             output_logger.end_row();
 
