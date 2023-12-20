@@ -16,10 +16,10 @@ int main(int argc, char *argv[])
     {
         robot.move_lin_vel_trf(velocity);
         usleep(3e+6);
-        velocity[i % 3] = -vel;
+        velocity[i] = -vel;
         robot.move_lin_vel_trf(velocity);
         usleep(3e+6);
-        velocity[i % 3] = vel;
+        velocity[i] = vel;
         i++;
     }
 }

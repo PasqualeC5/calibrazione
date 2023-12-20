@@ -13,7 +13,7 @@
 #include <fstream>
 #include <cmath>
 
-//void get_joints_vel_with_jacobian(double velocity, float *joints, float *joints_vel);
+// void get_joints_vel_with_jacobian(double velocity, float *joints, float *joints_vel);
 
 class Robot
 {
@@ -30,8 +30,6 @@ private:
     double last_vel = 0;
 
     double costante_tempo_filtro = 10e-3;
-    const double POS_LIMIT_INF;
-    const double POS_LIMIT_SUP;
 
     int activateRob, deactivateRob, homeRob;
     const uint32_t TARGET_CYCLE_TIME_MICROSECONDS;
@@ -41,6 +39,8 @@ private:
     bool movement_ended();
 
 public:
+    const double POS_LIMIT_INF;
+    const double POS_LIMIT_SUP;
     /*CONSTRUCTORS*/
     Robot(double pos_limit_inf,
           double pos_limit_sup,
