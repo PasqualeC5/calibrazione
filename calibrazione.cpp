@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     {
         // setup for next set of measurements
         measurements.clear();
-        csv_file_name = (current_measurement < 100 ? "0" : "") + (current_measurement < 10 ? "0" : "") + to_string((int)current_measurement) + "mm.csv";
+        csv_file_name = (current_measurement < 100 ? "0" : "") << (current_measurement < 10 ? "0" : "") << to_string((int)current_measurement) + "mm.csv";
 
         cout << "Currently measuring: " << current_measurement << " mm\n";
         if (use_robot)
