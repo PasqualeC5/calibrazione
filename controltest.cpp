@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     float distance;
     float vel = 15;
-    int pos = 2;
+    int pos = 0;
     float setpoint = 50;
     float kp = 1.5;
     while (true)
@@ -34,13 +34,13 @@ int main(int argc, char *argv[])
             cout << "Velocity: " << vel << endl;
             velocity[pos] = vel;
             
-            robot.move_lin_vel_trf(velocity);
+            robot.move_lin_vel_wrf(velocity);
 
         }
         else
         {
             velocity[pos] = 0;
-            robot.move_lin_vel_trf(velocity);
+            robot.move_lin_vel_wrf(velocity);
         }
     }
 }

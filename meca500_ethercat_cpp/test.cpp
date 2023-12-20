@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
     robot.print_pose();
     float velocity[6] = {0, 0, 0, 0, 0, 0};
     float vel = 10;
-    velocity[1] = vel;
     int i = 0;
     while (true)
     {

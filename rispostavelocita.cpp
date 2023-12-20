@@ -1,6 +1,6 @@
 
-#include "../meca500_ethercat_cpp/Robot.hpp"
-#include "../csvlogger/CsvLogger.hpp"
+#include "meca500_ethercat_cpp/Robot.hpp"
+#include "csvlogger/CsvLogger.hpp"
 #include <pigpio.h>
 #include <unistd.h>
 
@@ -24,9 +24,9 @@ int main(int argc, char *argv[])
     output_logger.write("time, value\n");
 
     /*squarewave generation, setup*/
-    double input_velocity_mms = 10; // 10mm/s    (amplitude)
-    double period_s = 6;            // 6sec      (period)
-
+    float input_velocity_mms = 10; // 10mm/s    (amplitude)
+    double period_s = 6;           // 6sec      (period)
+    float velocity[6] = {0, 0, 0, 0, 0, 0};
     /*squarewawe T = 6s, A=10mm/s*/
 
     /*time variables setup*/
@@ -36,8 +36,9 @@ int main(int argc, char *argv[])
     /*process*/
     while (true)
     {
+        velocity[0] = input_velocity_mms;
         // input
-        robot.move_lin_vel_wrf(input_velocity_mms); // give 10mm/s or -10mm/s
+        robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
         startTime = gpioTick();
         while (1) // Run the loop for 3 seconds
