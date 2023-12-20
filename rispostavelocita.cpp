@@ -56,15 +56,15 @@ int main(int argc, char *argv[])
             }
 
             // get datas
-            input_logger << (currentTime - t0);
+            input_logger << (currentTime - t0)/1e6;
             input_logger << input_velocity_mms;
             input_logger.end_row();
 
-            output_velocity_logger << (currentTime - t0);
+            output_velocity_logger << (currentTime - t0)/1e6;
             output_velocity_logger << robot.get_velocity();
             output_velocity_logger.end_row();
 
-            output_position_logger << (currentTime - t0);
+            output_position_logger << (currentTime - t0)/1e6;
             output_position_logger << robot.get_position();
             output_position_logger.end_row();
 

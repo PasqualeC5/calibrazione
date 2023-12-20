@@ -10,6 +10,6 @@ rem Extract the current directory name only
 for %%I in ("%currentDirectory%") do set "currentDirectoryName=%%~nI"
 
 rem Transfer folder from Raspberry Pi to local machine
-scp -r pi@raspberrypi5:/home/pi/Desktop/meca500/%currentDirectoryName%/measurements .
+scp -r pi@192.168.10.10:/home/pi/c_projects/%currentDirectoryName%/control .
 
 echo Folder %currentDirectoryName% transferred from Raspberry Pi to local machine.
