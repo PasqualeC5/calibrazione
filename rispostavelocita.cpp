@@ -6,7 +6,8 @@
 
 int main(int argc, char *argv[])
 {
-    gpioInitialise();
+    if (gpioInitialise() < 0)
+        exit(1);
     /*robot, setup*/
     Robot robot(40, 240, 5000, "eth0", 0.0, 10);
     robot.reset_error();
