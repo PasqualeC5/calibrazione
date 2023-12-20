@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     input_logger.write("time, value\n");
 
     CsvLogger output_velocity_logger("control/velocity_response");
-    output_logger.write("time, value\n");
+    output_velocity_logger.write("time, value\n");
 
     CsvLogger output_position_logger("control/position_response");
     output_position_logger.write("time, value\n");
