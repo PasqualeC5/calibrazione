@@ -9,17 +9,18 @@ int main(int argc, char *argv[])
     robot.move_pose(130, -170, 120, 90, 90, 0);
     robot.print_pose();
     float velocity[6] = {0, 0, 0, 0, 0, 0};
-    float vel = 2;
+    float vel = 10;
     velocity[1] = vel;
     int i = 0;
     while (true)
     {
-        robot.move_lin_vel_trf(velocity);
-        usleep(3e+6);
-        velocity[i] = -vel;
-        robot.move_lin_vel_trf(velocity);
-        usleep(3e+6);
-        velocity[i] = vel;
+        velocity[i%3] = vel;
+        robot.move_lin_vel_wrf(velocity);
+        usleep(2e+6);
+        velocity[i%3] = -vel;
+        robot.move_lin_vel_wrf(velocity);
+        usleep(2e+6);
+        velocity[i%3] = 0;
         i++;
     }
 }

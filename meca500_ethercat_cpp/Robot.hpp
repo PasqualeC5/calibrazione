@@ -68,7 +68,7 @@ public:
     void move_pose(double x, double y, double z, double alpha, double beta, double gamma);
     void move_lin(double x, double y, double z, double alpha, double beta, double gamma);
     void move_lin_rel_wrf(double x, double y, double z, double alpha, double beta, double gamma);
-    void move_lin_vel_wrf(double velocity);
+    void move_lin_vel_wrf(float velocity[6]);
 };
 
 #endif

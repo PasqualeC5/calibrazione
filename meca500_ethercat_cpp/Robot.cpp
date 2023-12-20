@@ -129,7 +129,7 @@ void Robot::get_pose(float *x) // Returning pose, cartesian(mm) and angular(°)
     {
         x[i] *= 1e-3;                   //mm -> meters
     }
-    
+
     for (int i = 3; i < 6; i++)
     {
         x[i] = x[i] * M_PI / 180.0;     //degres -> rad
@@ -162,20 +162,11 @@ void Robot::print_pose()
     }
 }
 
-void Robot::move_lin_vel_wrf(double velocity) // input is in mm/s, ranging from -1000 to 1000
+void Robot::move_lin_vel_wrf(float velocity[6]) // input is in mm/s, ranging from -1000 to 1000
 {
-    float vel[6] = {0, 0, 0, 0, 0, 0};
-    if (velocity > 0 && get_position() >= POS_LIMIT_SUP)
-    {
-        velocity = 0;
-    }
-    if (velocity < 0 && get_position() <= POS_LIMIT_INF)
-    {
-        velocity = 0;
-    }
 
     // vel[0] = (float)velocity * 1e+3;
-    meca500.moveLinVelWRF(vel);
+    meca500.moveLinVelWRF(velocity);
 }
 
 void Robot::move_pose(double x, double y, double z, double alpha, double beta, double gamma)
