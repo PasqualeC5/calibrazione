@@ -60,7 +60,7 @@ public:
     void print_pose();
     double get_velocity();
 
-    void move_lin_vel_trf(double velocity);
+    void move_lin_vel_trf(float velocity[6]);
     void move_lin_vel_trf_x(double velocity);
     void move_lin_rel_trf(double x, double y, double z, double alpha, double beta, double gamma);
     void move_joints_vel(float *w);

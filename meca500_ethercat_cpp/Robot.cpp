@@ -273,18 +273,18 @@ void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from
     move_joints_vel(joints_vel);
 }
 
-void Robot::move_lin_vel_trf(double velocity) // input is in mm/s, ranging from -1000 to 1000
+void Robot::move_lin_vel_trf(float velocity[6]) // input is in mm/s, ranging from -1000 to 1000
 {
-    float vel[6] = {0, 0, 0, 0, 0, 0};
-    if (velocity > 0 && get_position() >= POS_LIMIT_SUP)
-    {
-        velocity = 0;
-    }
-    if (velocity < 0 && get_position() <= POS_LIMIT_INF)
-    {
-        velocity = 0;
-    }
+    // float vel[6] = {0, 0, 0, 0, 0, 0};
+    // if (velocity > 0 && get_position() >= POS_LIMIT_SUP)
+    // {
+    //     velocity = 0;
+    // }
+    // if (velocity < 0 && get_position() <= POS_LIMIT_INF)
+    // {
+    //     velocity = 0;
+    // }
 
-    vel[0] = (float)velocity;
+    // vel[0] = (float)velocity;
     meca500.moveLinVelTRF(vel);
 }
