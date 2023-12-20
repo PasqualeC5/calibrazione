@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     robot.set_conf(1, 1, -1);
     robot.move_pose(130, -170, 120, 90, 90, 0);
     robot.print_pose();
-    double velocity = 5;
+    double velocity = 10;
     while (true)
     {
         robot.move_lin_vel_wrf(velocity);
