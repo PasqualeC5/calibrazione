@@ -32,10 +32,12 @@ int main(int argc, char *argv[])
         {
             vel = -kp * (setpoint - distance);
             cout << "Velocity: " << vel << endl;
+            if ((vel < 0 && position[0] <= robot.POS_LIMIT_INF) ||
+                (vel > 0 && position[0 >= robot.POS_LIMIT_SUP]))
+                vel = 0;
             velocity[pos] = vel;
-            
-            robot.move_lin_vel_wrf(velocity);
 
+            robot.move_lin_vel_wrf(velocity);
         }
         else
         {

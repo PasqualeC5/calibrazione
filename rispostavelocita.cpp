@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
-#include <sys/time.h>
+#include <time.h>
 
 int main(int argc, char *argv[])
 {
@@ -32,8 +32,10 @@ int main(int argc, char *argv[])
     /*squarewawe T = 6s, A=10mm/s*/
 
     /*time variables setup*/
-    timeval t0, start, current;
+    clock_t t0, start, current;
     double elapsed;
+    t0 = clock();
+
     /*process*/
     while (true)
     {
@@ -41,7 +43,7 @@ int main(int argc, char *argv[])
         // input
         robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
-        gettimeofday(&start, NULL);
+        start = clock();
         // Your code here
 
         // Record the end time
@@ -50,17 +52,16 @@ int main(int argc, char *argv[])
         while (1) // Run the loop for 3 seconds
         {
             // Check if 3 secone passed. Exit cycle if true
-            gettimeofday(&current, NULL);
-            elapsed = (current.tv_sec - start.tv_sec) * 1000.0;    // sec to ms
-            elapsed += (current.tv_usec - start.tv_usec) / 1000.0; // us to ms
+            current = clock();
+             elapsed = double((double(current - start))/CLOCKS_PER_SEC) ;
+             std::cout<< elapsed << std::endl;
 
-            if (elapsed >= period_s / 2 * 1e3)
+            if (elapsed >= period_s / 2)
             {
                 break; // Exit the loop after 3 seconds
             }
 
-            elapsed = (current.tv_sec - t0.tv_sec) * 1000.0;    // sec to ms
-            elapsed += (current.tv_usec - t0.tv_usec) / 1000.0; // us to ms
+            elapsed = double((double(current - t0))/CLOCKS_PER_SEC);
 
             // get data
             input_logger << (elapsed);
