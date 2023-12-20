@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
     /*squarewawe T = 6s, A=10mm/s*/
 
     /*time variables setup*/
-    uint32_t startTime, currentTime, t0;
     auto t0 = std::chrono::high_resolution_clock::now();
 
     /*process*/
