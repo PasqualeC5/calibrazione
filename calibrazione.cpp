@@ -79,8 +79,7 @@ int main(int argc, char *argv[])
         return 1; // error
 
     vector<float> measurements;                                                  // vector storing all the measurements
-    string file_path = "measurements/" + sensor_type + "/" + surface_name + "/"; // output file path
-    stringstream csv_file_name;                                                        // name of output file
+    string file_path = "measurements/" + sensor_type + "/" + surface_name + "/"; // output file path                                                    // name of output file
 
     /*MEASUREMENT*/
     cout << "Setup complete\nStarting measurements\n\n";
@@ -98,7 +97,7 @@ int main(int argc, char *argv[])
     {
         // setup for next set of measurements
         measurements.clear();
-        csv_file_name = (current_measurement < 100 ? "0" : "") << (current_measurement < 10 ? "0" : "") << to_string((int)current_measurement) + "mm.csv";
+        stringstream csv_file_name << (current_measurement < 100 ? "0" : "") << (current_measurement < 10 ? "0" : "") << to_string((int)current_measurement) + "mm.csv";
 
         cout << "Currently measuring: " << current_measurement << " mm\n";
         if (use_robot)
