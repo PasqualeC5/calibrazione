@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    InfraredSensor sensor(InfraredSensor::);
+    InfraredSensor sensor(InfraredSensor::ENABLE_FIRST);
     Robot robot(0, 200, 5000, "eth0", 0.0, 10);
     robot.reset_error();
     // robot.main();
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         cout << "Position: " << position[0] << endl;
         if (distance < 200)
         {
-            
+
             vel = -kp * (setpoint - distance);
             cout << "Velocity: " << vel << endl;
             if ((vel < 0 && position[0] <= robot.POS_LIMIT_INF) ||
