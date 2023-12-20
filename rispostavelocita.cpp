@@ -3,11 +3,11 @@
 #include "csvlogger/CsvLogger.hpp"
 #include <pigpio.h>
 #include <unistd.h>
+#include <iostream>
+#include <chrono>
 
 int main(int argc, char *argv[])
 {
-    if (gpioInitialise() < 0)
-        exit(1);
     /*robot, setup*/
     Robot robot(40, 240, 5000, "eth0", 0.0, 10);
     robot.reset_error();
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     /*time variables setup*/
     uint32_t startTime, currentTime, t0;
-    t0 = gpioTick(); // time to start analysing response
+    auto t0 = std::chrono::high_resolution_clock::now();
 
     /*process*/
     while (true)
@@ -41,12 +41,22 @@ int main(int argc, char *argv[])
         // input
         robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
-        startTime = gpioTick();
+        auto startTime = std::chrono::high_resolution_clock::now();
+
+        // Your code here
+
+        // Record the end time
+
+        // Ou
         while (1) // Run the loop for 3 seconds
         {
             // Check if 3 secone passed. Exit cycle if true
-            currentTime = gpioTick();
-            if (currentTime - startTime >= period_s / 2)
+            auto endTime = std::chrono::high_resolution_clock::now();
+
+            // Calculate the duration between start and end times
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+            if (duration.count() >= period_s / 2 * 1e3)
             {
                 break; // Exit the loop after 3 seconds
             }
