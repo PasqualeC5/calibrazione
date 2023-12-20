@@ -11,9 +11,9 @@ int main(int argc, char *argv[])
     double velocity = 5;
     while (true)
     {
-        robot.move_lin_vel_trf(velocity);
+        robot.move_lin_vel_wrf(velocity);
         usleep(3e+6);
-        robot.move_lin_vel_trf(-velocity);
+        robot.move_lin_vel_wrf(-velocity);
         usleep(3e+6);
     }
 }
