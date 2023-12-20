@@ -7,8 +7,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    InfraredSensor sensor(InfraredSensor::ENABLE_FIRST);
-    Robot robot(0, 200, 5000, "eth0", 0.0, 10);
+    InfraredSensor sensor(InfraredSensor::USER_INPUT);
+    Robot robot(100, 200, 5000, "eth0", 0.0, 10);
     robot.reset_error();
     // robot.main();
     robot.set_conf(1, 1, -1);
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     float vel = 15;
     int pos = 0;
     float setpoint = 50;
-    float kp = 1.5;
+    float kp = 1;
     while (true)
     {
         robot.get_pose(position);
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
             vel = -kp * (setpoint - distance);
             cout << "Velocity: " << vel << endl;
             if ((vel < 0 && position[0] <= robot.POS_LIMIT_INF) ||
-                (vel > 0 && position[0 >= robot.POS_LIMIT_SUP]))
+                (vel > 0 && position[0] >= robot.POS_LIMIT_SUP))
                 vel = 0;
             velocity[pos] = vel;
 
