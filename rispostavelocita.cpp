@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
+#include <sys/time.h>
 
 int main(int argc, char *argv[])
 {
@@ -31,8 +32,8 @@ int main(int argc, char *argv[])
     /*squarewawe T = 6s, A=10mm/s*/
 
     /*time variables setup*/
-    auto t0 = std::chrono::high_resolution_clock::now();
-
+    timeval t0, start, current;
+    double elapsed;
     /*process*/
     while (true)
     {
@@ -40,8 +41,7 @@ int main(int argc, char *argv[])
         // input
         robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
-        auto startTime = std::chrono::high_resolution_clock::now();
-
+        gettimeofday(&start, NULL);
         // Your code here
 
         // Record the end time
@@ -50,23 +50,24 @@ int main(int argc, char *argv[])
         while (1) // Run the loop for 3 seconds
         {
             // Check if 3 secone passed. Exit cycle if true
-            auto endTime = std::chrono::high_resolution_clock::now();
-
-            // Calculate the duration between start and end times
-            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+            gettimeofday(&current, NULL);
+            elapsed = (current.tv_sec - start.tv_sec) * 1000.0;    // sec to ms
+            elapsed += (current.tv_usec - start.tv_usec) / 1000.0; // us to ms
 
             if (duration.count() >= period_s / 2 * 1e3)
             {
                 break; // Exit the loop after 3 seconds
             }
-        
 
-            // get datas
-            //input_logger << (endTime - t0);
+            elapsed = (current.tv_sec - t0.tv_sec) * 1000.0;    // sec to ms
+            elapsed += (current.tv_usec - t0.tv_usec) / 1000.0; // us to ms
+
+            // get data
+            input_logger << (elapsed);
             input_logger << input_velocity_mms;
             input_logger.end_row();
 
-            //output_logger << (endTime - t0);
+            output_logger << (elapsed);
             output_logger << robot.get_velocity();
             output_logger.end_row();
 
