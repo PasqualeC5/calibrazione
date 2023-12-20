@@ -16,7 +16,8 @@ int main(int argc, char *argv[])
     float vel = 5;
     velocity[0] = vel;
     int i = 0;
-    float setpoint = 50 InfraredSensor sensor(InfraredSensor::USER_INPUT);
+    float setpoint = 50;
+    InfraredSensor sensor(InfraredSensor::USER_INPUT);
     float distance;
     while (true)
     {
