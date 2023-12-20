@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
     vector<float> measurements;                                                  // vector storing all the measurements
     string file_path = "measurements/" + sensor_type + "/" + surface_name + "/"; // output file path
-    string csv_file_name;                                                        // name of output file
+    stringstream csv_file_name;                                                        // name of output file
 
     /*MEASUREMENT*/
     cout << "Setup complete\nStarting measurements\n\n";
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
         cout << "Measuring distance..." << endl;
         make_measurements(*sensor, number_of_measurements, measurements, measurement_delay);
         cout << "Writing measurements to csv file\n\n";
-        write_measurements_to_csv(measurements, file_path + csv_file_name);
+        write_measurements_to_csv(measurements, file_path + csv_file_name.str());
         current_measurement += step_size;
     }
     return 0;
