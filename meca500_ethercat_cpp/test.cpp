@@ -11,9 +11,9 @@ int main(int argc, char *argv[])
     float velocity[6] = {0,2,0,0,0,0};
     while (true)
     {
-        robot.move_lin_vel_wrf(velocity);
+        robot.move_lin_vel_trf(velocity);
         usleep(3e+6);
-        robot.move_lin_vel_wrf(-velocity);
+        robot.move_lin_vel_trf(-velocity);
         usleep(3e+6);
     }
 }
