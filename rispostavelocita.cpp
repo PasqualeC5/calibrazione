@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 
     CsvLogger output_position_logger("control/position_response");
     output_position_logger.write("time, value\n");
-    
 
     /*squarewave generation, setup*/
     float input_velocity_mms = 10; // 10mm/s    (amplitude)
@@ -43,31 +42,29 @@ int main(int argc, char *argv[])
     {
         velocity[0] = input_velocity_mms;
         // input
-        robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
         startTime = gpioTick();
-        while (1) // Run the loop for 3 seconds
+        currentTime = gpioTick();
+        while (currentTime - startTime >= period_s * 1e6 / 2) // Run the loop for 3 seconds
         {
+
+            robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
+
             // Check if 3 secone passed. Exit cycle if true
             currentTime = gpioTick();
-            if (currentTime - startTime >= period_s * 1e6 / 2)
-            {
-                break; // Exit the loop after 3 seconds
-            }
 
             // get datas
-            input_logger << (currentTime - t0)/1e6;
+            input_logger << (currentTime - t0) / 1e6;
             input_logger << input_velocity_mms;
             input_logger.end_row();
 
-            output_velocity_logger << (currentTime - t0)/1e6;
+            output_velocity_logger << (currentTime - t0) / 1e6;
             output_velocity_logger << robot.get_velocity();
             output_velocity_logger.end_row();
 
-            output_position_logger << (currentTime - t0)/1e6;
+            output_position_logger << (currentTime - t0) / 1e6;
             output_position_logger << robot.get_position();
             output_position_logger.end_row();
-
 
             // short delay:
             usleep(1000);
