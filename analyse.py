@@ -82,8 +82,7 @@ def analyse_files(folder_path):
     contents = os.listdir(folder_path)
 
     # Filter out only directories
-    surface_folders = [item for item in contents if os.path.isdir(
-        os.path.join(folder_path, item))]
+    surface_folders = [item for item in contents if os.path.isdir(os.path.join(folder_path, item))]
 
     # array to fill with datas of best fit
     surface_slopes = []
@@ -136,8 +135,7 @@ def analyse_files(folder_path):
             max_value = distance_stats["max"]
             mean_distance = distance_stats["mean"]
             std_dev_distance = distance_stats["std"]
-            tag_text = f'Mean: {mean_distance:.2f}\nStd Dev: {
-                std_dev_distance:.2f}\nMin: {min_value:.2f}\nMax: {max_value:.2f}'
+            tag_text = f'Mean: {mean_distance:.2f}\nStd Dev: {std_dev_distance:.2f}\nMin: {min_value:.2f}\nMax: {max_value:.2f}'
 
             plt.annotate(tag_text,
                          xy=(1, 1), xycoords='axes fraction',

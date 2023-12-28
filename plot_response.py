@@ -1,4 +1,4 @@
-# PURPOSE: this script analyse data-sensor
+# PURPOSE: this script plot the response
 
 import os  # interation with operating system
 import sys  # interation with operating system
@@ -10,9 +10,8 @@ import matplotlib.pyplot as plt  # draw graph
 # from sklearn.linear_model import LinearRegression  # for best fit
 import numpy as np
 from scipy.signal import savgol_filter, butter, filtfilt
+import csv
 
-
-# marker_size = 2
 
 def remove_trailing_commas(file_path):
     # Open the input file in read mode
@@ -35,62 +34,42 @@ def remove_trailing_commas(file_path):
                 output_file.write(line)
 
 
-def analyse_file(file_path):
+def graph_plot(file_path):
+    # Remove final commas of the datas
+    remove_trailing_commas(file_path)
+    
     # Read the CSV file into a pandas DataFrame
     df = pd.read_csv(file_path)
 
-    # Assuming the CSV file has two columns named 'x' and 'y'
+    # Assuming the CSV file has two columns named 'time' and 'value'
     x_values = df['time']
     y_values = df['value']
-    if (file_path == "control/velocity_response"):
-        y_values = [20 if num > 20 else num for num in y_values]
+
+    #saturation to resize the spikes (optional)
+    y_values = [20 if num > 20 else num for num in y_values]
 
     # Plotting the data
-    plt.subplot(3, 1, 1)
     plt.plot(x_values, y_values, marker='.', markersize=0.2,
-             linestyle='-', color='b', linewidth=0.3,)
+            linestyle='-', color='b', linewidth=0.3,)
 
     # Adding labels and title
     plt.xlabel('time[s]')
     plt.ylabel('velocity[mm/s]')
     plt.title(file_path)
 
-    if (file_path == "control/position_response"):
-        window_size = 50  # Adjust the window size based on your data characteristics
-        poly_order = 1
-        dy_dx = np.gradient(y_values, x_values)
-        filtered_derivative = savgol_filter(dy_dx, window_size, poly_order)
-        
-        plt.subplot(3, 1, 2)
-        plt.plot(x_values, dy_dx, label='Derivative')
-        plt.title('Derivative of the Vector')
-        plt.xlabel('x')
-        plt.ylabel('dy/dx')
-        plt.legend()
-        plt.subplot(3, 1, 3)
-        plt.plot(x_values, filtered_derivative,
-                 label=f'Filtered Derivative (Savitzky-Golay)')
-        plt.title('Filtered Derivative')
-        plt.xlabel('x')
-        plt.ylabel('Filtered dy/dx')
-        plt.legend()
-        
-
-# Apply the filter to the derivative
-
-
     # Show the plot
     plt.show()
 
 
 def main():
-    # remove_trailing_commas("control/velocity_control")
-    # remove_trailing_commas("control/velocity_response")
-    remove_trailing_commas("control/position_response")
-
-    # analyse_file("control/velocity_control")
-    # analyse_file("control/velocity_response")
-    analyse_file("control/position_response")
+    # Check if a folder path is provided as a command-line argument
+    if len(sys.argv) != 2:
+        print("Usage: python script.py /control/your_argument")
+        sys.exit(1)
+    
+    # Get the file path where take data to graph plot
+    file_path = "control/" + sys.argv[1]
+    graph_plot(file_path)
 
 
 if __name__ == "__main__":
