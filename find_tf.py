@@ -18,5 +18,18 @@ def main():
     # Get the file path where take data
     file_path = "control/velocity_response_computed_filtered" 
 
+    
+    # Read the CSV file into a pandas DataFrame
+    df = pd.read_csv(file_path)
+
+    # Assuming the CSV file has two columns named 'time' and 'value'
+    x_values = df['time']
+    y_values = df['value']
+
+    # Extract the first N elements (indicial response)
+    N = 500
+    x_values = x_values[:N]
+    y_values = y_values[:N]
+
 
 
