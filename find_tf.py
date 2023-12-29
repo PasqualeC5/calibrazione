@@ -15,7 +15,38 @@ from scipy.signal import savgol_filter, butter, filtfilt
 import csv
 
 
+def rise_index(array):
+    
+    """
+    find the first index where array is different from the beginning
+    
+    Parameters:
+    - array: array to work on
+
+    """
+
+    # Store the first element as the initial value to compare
+    # Prepare to find index of rise
+    initial_value = array[0]
+    index_of_rise = -1
+
+    # Iterate through the vector starting from the second element
+    for index, value in enumerate(array[1:], start=1):
+        if value != initial_value:
+            # Found a different value
+            index_of_rise = index
+            break
+    
+    return index_of_rise
+
+
 def find_Tau(folder_path, file_name):
+
+    """
+    find the delay of the signal stored in folder_path/file_name
+    return Tau or -1 if signal is constant
+
+    """
 
     file_path = folder_path + "/" + file_name
 
@@ -31,24 +62,26 @@ def find_Tau(folder_path, file_name):
         if abs(value) < 1e-4:
             y_values[index] = round(abs(value))
 
-
-    # Store the first element as the initial value to compare
-    # Prepare to find index of rise
-    initial_value = y_values[0]
-    index_of_rise = -1
-
-    # Iterate through the vector starting from the second element
-    for index, value in enumerate(y_values[1:], start=1):
-        if value != initial_value:
-            # Found a different value
-            index_of_rise = index - 1
-            break
+    # Compute index of rise
+    index_of_rise = rise_index(y_values)
     
+
     # Computed delay
-    return x_values[index_of_rise]
+    if index_of_rise != -1:
+        return x_values[index_of_rise]
+    else:
+        return -1   #signal is constant
 
-
+    
 def find_T(folder_path):
+
+    
+    """
+    find T of the signal stored in folder_path/velocity_response_computed
+    return T or -1 if some mistake
+
+    """
+
     # Get the file path where take data
     file_path = folder_path + "/velocity_response_computed_filtered"
 
@@ -65,9 +98,62 @@ def find_T(folder_path):
     y_values = y_values[:N]
 
 
-    # Plotting the graph
-    plt.plot(x_values, y_values, linestyle='-', color='b', label='Indicial response')
+    
+    #finding delay Tau_temp in this signal 
+    Tau_temp = find_Tau(folder_path, "velocity_response_computed_filtered")
+
+    # Compute derivative
+    dy_dx = np.gradient(y_values, x_values)
+
+    # Find oblique tangent flex y = m(x-xo) + yo
+    m = max(dy_dx)                                              #slope m
+    index_to_max = np.where(dy_dx == m)[0][0] + 1
+    time_to_max = x_values[index_to_max]                        #xo
+    value_in_max = y_values[index_to_max]                       #yo
+    q = - m * time_to_max + value_in_max                        #intercept q
+    #note: that +1 is to fix the advance of the derivative effect
+
+    #Line is: y=mx+q
+    y_flex = m * x_values + q
+    y_flex = y_flex[20:50]
+    x_flex = x_values[20:50]
+
+    #regime value is indicated in the foldername (last two carachters)
+    regime_value = folder_path[-2:]
+    #print(regime_value)
+    y_regime = 0 * x_values + int(regime_value)
+
+    #Create a two-frame subplots
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4))
+
+    # Plot data on each subplot
+    axes[0].plot(x_values, y_values)
+    axes[0].plot(x_flex, y_flex, color='red')
+    axes[0].plot(x_values, y_regime, color='green')
+    axes[0].set_title('velocity')
+    axes[0].set_xlabel('time[s]')
+    axes[0].set_ylabel('velocity[mm/s]')
+
+    axes[1].plot(x_values, dy_dx)
+    axes[1].set_title('derivative')
+    axes[1].set_xlabel('time[s]')
+    axes[1].set_ylabel('position[mm]')
+
+    # Adjust layout to prevent clipping of titles
+    plt.tight_layout()
+
+    #save the plot
+    plt.savefig(folder_path + '/open_loop_calibration.png')
+    
+    # Show the plots
     plt.show()
+
+
+
+    #find T solving y_regime = m(T+Tau_temp) + q
+    T = (int(regime_value) - q) / m - Tau_temp
+
+    return T
 
 
 def main():
@@ -81,11 +167,12 @@ def main():
 
 
     # Compute
-    Tau = find_Tau(folder_path, "position_response_computed")
-    T = find_T((folder_path, "position_response_computed"))
+    Tau = find_Tau(folder_path, "position_response")
+    T = find_T(folder_path)
+
+    # Show output
+    print("Tau: " + str(Tau) + " T: "+ str(T))
     
-
-
 
 
 if __name__ == "__main__":
