@@ -97,7 +97,7 @@ def generate_derivatives(folder_path):
         
     # Compute filtering 
     window_size = 50  # Adjust the window size based on your data characteristics
-    poly_order = 1
+    poly_order = 0
     filtered_derivative = savgol_filter(dy_dx, window_size, poly_order)
 
     # write to file csv velocity_response_computed
@@ -204,17 +204,17 @@ def graph_plots(folder_path):
         if file_name == "velocity_response":
             velocity_response_values = df['value']
             velocity_response_values = velocity_response_values[:N]
-            velocity_response_values = cut_spikes(velocity_response_values, 20, 20)
+            velocity_response_values = cut_spikes(velocity_response_values, 30, 30)
         
         if file_name == "velocity_response_filtered":
             velocity_response_filtered_values = df['value']
             velocity_response_filtered_values = velocity_response_filtered_values[:N]
-            velocity_response_filtered_values = cut_spikes(velocity_response_filtered_values, 20, 20)
+            velocity_response_filtered_values = cut_spikes(velocity_response_filtered_values, 30, 30)
         
         if file_name == "velocity_response_computed":
             velocity_response_computed_values = df['value']
             velocity_response_computed_values = velocity_response_computed_values[:N]
-            velocity_response_computed_values = cut_spikes(velocity_response_computed_values, 20, 20)
+            velocity_response_computed_values = cut_spikes(velocity_response_computed_values, 30, 30)
         
         if file_name == "velocity_response_computed_filtered":
             velocity_response_computed_filtered_values = df['value']
@@ -267,9 +267,15 @@ def graph_plots(folder_path):
 
 def main():
     
-    # Get the folder path where take data to graph plots
-    folder_path = "control"
+    # Check if a folder path is provided as a command-line argument
+    if len(sys.argv) != 2:
+        print("Usage: python script.py /folder_to_analyse")
+        sys.exit(1)
+    
+    # Get the folder path from the command-line argument
+    folder_path = sys.argv[1]
 
+    # Compute
     generate_derivatives(folder_path)
     graph_plots(folder_path)
 
