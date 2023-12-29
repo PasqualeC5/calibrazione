@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 def create_grid(values, threshold):
     # Convert the list of values to a NumPy array
@@ -22,24 +23,27 @@ def create_grid(values, threshold):
 
     return binary_grid
 
-def plot_grid(binary_grid):
+def plot_grid(binary_grid, values_list):
     fig, ax = plt.subplots(1, 1, figsize=(len(binary_grid[0]), 1))  # Set figsize based on the number of columns
 
+    # Define custom colormap for 0 and 1 values
+    custom_cmap = mcolors.ListedColormap(['gray', 'black'])
+
     # Plot the binary grid as a black-and-white image
-    cax = ax.imshow(binary_grid, cmap='binary', interpolation='nearest')
-
-    # Add grid lines
-    ax.set_xticks(np.arange(-0.5, len(binary_grid[0]), 1), minor=True)
-    ax.set_yticks(np.arange(-0.5, 1, 1), minor=True)
-    ax.grid(which="minor", color="black", linestyle='-', linewidth=2)
-
-    # Add labels with index values
-    for j in range(len(binary_grid[0])):
-        ax.text(j, 0, str(j), ha='center', va='center', color='black')
+    cax = ax.imshow(binary_grid, cmap=custom_cmap, interpolation='nearest')
 
     # Display the colorbar
     cbar = fig.colorbar(cax)
 
+    # Add text to each square with corresponding value
+    for i in range(len(binary_grid)):
+        for j in range(len(binary_grid[0])):
+            text_color = 'black' if binary_grid[i, j] == 0 else 'white'
+            ax.text(j, i, f'{binary_grid[i, j]}\n{values_list[i * len(binary_grid[0]) + j]:.2f}',
+                    color=text_color, ha='center', va='center')
+
+    #save and show
+    plt.savefig("grid_plot.png")
     plt.show()
 
 if __name__ == "__main__":
@@ -57,4 +61,4 @@ if __name__ == "__main__":
     binary_grid = create_grid(values_list, threshold_value)
 
     # Plot the binary grid with grid lines and index labels
-    plot_grid(binary_grid)
+    plot_grid(binary_grid, values_list)

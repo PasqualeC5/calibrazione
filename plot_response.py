@@ -14,6 +14,14 @@ import csv
 
 
 def remove_trailing_commas(file_path):
+    """
+    Remove the final line commas in csv file
+    
+    Parameters:
+    - arr: filepath of csv
+
+    """
+
     # Open the input file in read mode
     with open(file_path, "r") as input_file:
         # Read lines from the input file
@@ -33,11 +41,30 @@ def remove_trailing_commas(file_path):
                 # If there is no trailing comma, write the line as it is to the output file
                 output_file.write(line)
 
-
-def graph_plot(file_path):
-    # Remove final commas of the datas
-    remove_trailing_commas(file_path)
     
+def generate_derivatives(folder_path):
+    """
+    generates from position_response and velocity_response the following cvs files:
+    -velocity_response_computed
+    -velocity_response_computed_filtered
+    -velocity_response_filtered
+
+    Parameters:
+    - folder_path: path to folder "control"
+
+    """
+
+    #preparing csv files removing commas
+    remove_trailing_commas(folder_path + "/position_response")
+    remove_trailing_commas(folder_path + "/velocity_response")
+
+
+    # 1 - GENERATING velocity_response_computed
+
+    #start form position response
+    file_path = folder_path + "/position_response"
+
+
     # Read the CSV file into a pandas DataFrame
     df = pd.read_csv(file_path)
 
@@ -45,31 +72,204 @@ def graph_plot(file_path):
     x_values = df['time']
     y_values = df['value']
 
-    #saturation to resize the spikes (optional)
-    y_values = [20 if num > 20 else num for num in y_values]
 
-    # Plotting the data
-    plt.plot(x_values, y_values, marker='.', markersize=0.2,
-            linestyle='-', color='b', linewidth=0.3,)
+    # Compute derivative
+    dy_dx = np.gradient(y_values, x_values)
 
-    # Adding labels and title
-    plt.xlabel('time[s]')
-    plt.ylabel('velocity[mm/s]')
-    plt.title(file_path)
 
-    # Show the plot
+    # write to file csv velocity_response_computed
+    file_to_write_path = folder_path + '/velocity_response_computed'
+
+    # Write the data to the CSV file
+    data = list(zip(x_values, dy_dx))
+
+    with open(file_to_write_path, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        
+        # Write header (optional)
+        csv_writer.writerow(['time', 'value'])
+        
+        # Write the data rows
+        csv_writer.writerows(data)
+
+
+    # 2 - GENERATING velocity_response_computed_filtered
+        
+    # Compute filtering 
+    window_size = 50  # Adjust the window size based on your data characteristics
+    poly_order = 1
+    filtered_derivative = savgol_filter(dy_dx, window_size, poly_order)
+
+    # write to file csv velocity_response_computed
+    file_to_write_path = folder_path + '/velocity_response_computed_filtered'
+
+    # Write the data to the CSV file
+    data = list(zip(x_values, filtered_derivative))
+
+    with open(file_to_write_path, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        
+        # Write header (optional)
+        csv_writer.writerow(['time', 'value'])
+        
+        # Write the data rows
+        csv_writer.writerows(data)
+
+
+
+    # 3 - GENERATING velocity_response_filtered
+        
+    file_path = folder_path + "/velocity_response"
+
+    # Read the CSV file into a pandas DataFrame
+    df = pd.read_csv(file_path)
+
+    # Assuming the CSV file has two columns named 'time' and 'value'
+    x_values = df['time']
+    y_values = df['value']
+
+    # Compute filtering 
+    window_size = 50  # Adjust the window size based on your data characteristics
+    poly_order = 1
+    filtered_derivative = savgol_filter(y_values, window_size, poly_order)
+
+    # write to file csv velocity_response_computed
+    file_to_write_path = folder_path + '/velocity_response_filtered'
+
+    # Write the data to the CSV file
+    data = list(zip(x_values, filtered_derivative))
+
+    with open(file_to_write_path, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        
+        # Write header (optional)
+        csv_writer.writerow(['time', 'value'])
+        
+        # Write the data rows
+        csv_writer.writerows(data)
+
+
+def cut_spikes(arr, threshold, value):
+    """
+    Set elements of an array above (module) a threshold to value.
+    
+    Parameters:
+    - arr: NumPy array
+    - threshold: Threshold value
+    - value: substitute value
+    
+    Returns:
+    - Modified array
+    """
+    arr[arr > threshold] = value
+    arr[arr < -threshold] = value
+
+    return arr
+
+def graph_plots(folder_path):
+
+    #takes all filenames
+    file_list = os.listdir(folder_path)
+
+    #analize file by file 
+    for file_name in file_list:
+        # Construct the full path to the file
+        file_path = folder_path + "/" + file_name
+
+        # Remove final commas of the datas
+        remove_trailing_commas(file_path)
+        
+        # Read the CSV file into a pandas DataFrame
+        df = pd.read_csv(file_path)
+
+        # Assuming the CSV file has two columns named 'time' and 'value'
+        x_values = df['time']
+
+        # Extract the first N elements (to let the array have the same lenght)
+        N = 3500
+        x_values = x_values[:N]
+
+        if file_name == "position_response":
+            position_response_values = df['value']
+            position_response_values = position_response_values[:N]
+        
+        if file_name == "velocity_control":
+            velocity_control_values = df['value']
+            velocity_control_values = velocity_control_values[:N]
+        
+        if file_name == "velocity_response":
+            velocity_response_values = df['value']
+            velocity_response_values = velocity_response_values[:N]
+            velocity_response_values = cut_spikes(velocity_response_values, 20, 20)
+        
+        if file_name == "velocity_response_filtered":
+            velocity_response_filtered_values = df['value']
+            velocity_response_filtered_values = velocity_response_filtered_values[:N]
+            velocity_response_filtered_values = cut_spikes(velocity_response_filtered_values, 20, 20)
+        
+        if file_name == "velocity_response_computed":
+            velocity_response_computed_values = df['value']
+            velocity_response_computed_values = velocity_response_computed_values[:N]
+            velocity_response_computed_values = cut_spikes(velocity_response_computed_values, 20, 20)
+        
+        if file_name == "velocity_response_computed_filtered":
+            velocity_response_computed_filtered_values = df['value']
+            velocity_response_computed_filtered_values = velocity_response_computed_filtered_values[:N]
+        
+    # Create a 3x2 grid of subplots
+    fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(12, 8))
+
+    # Plot data on each subplot
+    axes[0, 0].plot(x_values, velocity_control_values)
+    axes[0, 0].set_title('Velocity control (input)')
+    axes[0, 0].set_xlabel('time[s]')
+    axes[0, 0].set_ylabel('velocity[mm/s]')
+
+    axes[0, 1].plot(x_values, position_response_values)
+    axes[0, 1].set_title('Meca position response')
+    axes[0, 1].set_xlabel('time[s]')
+    axes[0, 1].set_ylabel('position[mm]')
+
+    axes[1, 0].plot(x_values, velocity_response_values)
+    axes[1, 0].set_title('Meca velocity response')
+    axes[1, 0].set_xlabel('time[s]')
+    axes[1, 0].set_ylabel('velocity[mm/s]')
+
+    axes[1, 1].plot(x_values, velocity_response_computed_values)
+    axes[1, 1].set_title('Computed velocity response')
+    axes[1, 1].set_xlabel('time[s]')
+    axes[1, 1].set_ylabel('velocity[mm/s]')
+
+    axes[2, 0].plot(x_values, velocity_response_filtered_values)
+    axes[2, 0].set_title('Filtered Meca velocity response')
+    axes[2, 0].set_xlabel('time[s]')
+    axes[2, 0].set_ylabel('velocity[mm/s]')
+
+    axes[2, 1].plot(x_values, velocity_response_computed_filtered_values)
+    axes[2, 1].set_title('Filtered computed velocity response')
+    axes[2, 1].set_xlabel('time[s]')
+    axes[2, 1].set_ylabel('velocity[mm/s]')
+
+    # Adjust layout to prevent clipping of titles
+    plt.tight_layout()
+
+    #save the plot
+    plt.savefig(folder_path + '/resume_plot.png')
+
+    # Show the plots
     plt.show()
 
 
+
 def main():
-    # Check if a folder path is provided as a command-line argument
-    if len(sys.argv) != 2:
-        print("Usage: python script.py /control/your_argument")
-        sys.exit(1)
     
-    # Get the file path where take data to graph plot
-    file_path = "control/" + sys.argv[1]
-    graph_plot(file_path)
+    # Get the folder path where take data to graph plots
+    folder_path = "control"
+
+    generate_derivatives(folder_path)
+    graph_plots(folder_path)
+
+
 
 
 if __name__ == "__main__":
