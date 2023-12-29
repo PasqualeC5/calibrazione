@@ -171,6 +171,10 @@ def graph_plots(folder_path):
     #takes all filenames
     file_list = os.listdir(folder_path)
 
+    # Remove "resume_plot.png" from the array
+    if "resume_plot.png" in file_list:
+        file_list.remove("resume_plot.png")
+
     #analize file by file 
     for file_name in file_list:
         # Construct the full path to the file
