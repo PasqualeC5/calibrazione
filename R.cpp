@@ -19,8 +19,7 @@
 #include <unistd.h>
 
 /*costants*/
-#define ORS 130                     //origine sis riferimento (pos = 0)
-#define Tc_s 0.1                    //passo camp
+#define Tc_s 0.1                   //passo camp
 #define RANGEINF_mm 10             //range for reference_distance (inferior)
 #define RANGESUP_mm 150            //range for reference_distance (superior)
 #define DEFAULTREFERENCE_mm 50     //reference (desired distance Meca-Obstacle)
@@ -69,8 +68,9 @@ int main(int argc, char *argv[])
         u_k = reference_distance - sensor.getDistanceInMillimeters();
         y_k = 9.1 * u_k - 3.968 * u_k1 - 0.531 * y_k1;
 
-        /*give meca velocity control command*/
-        robot.move_lin_vel_wrf(y_k); 
+        /*give meca velocity control command (check first)*/
+        if(!(y_k1 * Tc_s + robot.get_position() > robot.POS_LIMIT_SUP || y_k1 * Tc_s + robot.get_position() < robot.POS_LIMIT_INF))
+            robot.move_lin_vel_wrf(y_k); 
 
 
         /*prepare for next */
