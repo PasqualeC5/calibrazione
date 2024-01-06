@@ -92,7 +92,7 @@ def analyse_files(folder_path):
 
         sub_folder_path = folder_path + "/" + surface_name
         if (is_analysed(sub_folder_path)):
-            continue
+           continue
 
         # initializing stats file
         create_folder(sub_folder_path + "/stats")
@@ -103,6 +103,9 @@ def analyse_files(folder_path):
         stats.write("valore,media,devstd,error\n")
 
         for measurements_csv_file_name in get_file_names(sub_folder_path):
+
+            #if(measurements_csv_file_name == ".analysed"):
+            #    continue
 
             measurements_csv_file_path = sub_folder_path + "/" + measurements_csv_file_name
 
@@ -158,12 +161,12 @@ def analyse_files(folder_path):
 
             # Calculate the corresponding y values for the Gaussian distribution
             desired_tollerance = 1
-            y_values = norm.pdf(x_values, misura, desired_tollerance/3)
+            #y_values = norm.pdf(x_values, misura, desired_tollerance/3)
             y_values_m = norm.pdf(x_values, mean_distance, std_dev_distance)
 
             plt.hist(measurements_data_frame["distance"].astype(float), bins=20, color="skyblue",
                      edgecolor="black", density=True, stacked=True)
-            plt.plot(x_values, y_values, 'r-', label='Desired distribution')
+            #plt.plot(x_values, y_values, 'r-', label='Desired distribution')
             plt.plot(x_values, y_values_m, 'b-', label='Measured distribution')
             plt.legend()
 
