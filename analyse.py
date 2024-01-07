@@ -258,12 +258,23 @@ def analyse_files(folder_path):
 
         # Step 5: Show or Save the Plot (Optional)
         plt.savefig(sub_folder_path+"/plots/stats_plot.png")
-        #print(stats_df["devstd"].describe())
-        print("La deviazione standard media in mm: " +
-              str(stats_df["devstd"].describe()["mean"]))
-        
         # plt.show()
         plt.close()
+
+
+        # Step 6: creation of dev_std_media.txt
+
+        # initializing stats
+        stats_df = pd.read_csv(sub_folder_path + "/stats/stats.csv")
+
+        #open file and write mean of devstd
+        with open(sub_folder_path + '/stats/dev_std_media.txt', 'w') as file:
+            # Write content to the file
+            file.write(str(stats_df["devstd"].describe()["mean"]))
+            #print("scritto: " + surface_name)
+        
+        
+        # Step 7: add a flag of 'already analysed'
         flag = open(sub_folder_path+"/.analysed", "w")
         flag.close()
 
