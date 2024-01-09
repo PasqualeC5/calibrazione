@@ -262,7 +262,7 @@ def analyse_files(folder_path):
         plt.close()
 
 
-        # Step 6: creation of dev_std_media.txt
+        # Step 6: creation of dev_std_media.txt and dev_std_max.txt
 
         # initializing stats
         stats_df = pd.read_csv(sub_folder_path + "/stats/stats.csv")
@@ -273,6 +273,11 @@ def analyse_files(folder_path):
             file.write(str(stats_df["devstd"].describe()["mean"]))
             #print("scritto: " + surface_name)
         
+        # creation of dev_std_max.txt
+        with open(sub_folder_path + '/stats/dev_std_max.txt', 'w') as file:
+            # Write content to the file
+            file.write(str(stats_df["devstd"].describe()["max"]))
+            #print("scritto: " + surface_name)
         
         # Step 7: add a flag of 'already analysed'
         flag = open(sub_folder_path+"/.analysed", "w")
