@@ -1,20 +1,9 @@
 #include <iostream>
 #include <unistd.h>
-#include <termios.h>
 #include <chrono>
 #include "distance_sensor/include/InfraredSensor.hpp"
 #include "meca500_ethercat_cpp/Robot.hpp"
 #include "csvlogger/CsvLogger.hpp"
-
-// Function to set the terminal to non-blocking mode
-void setNonBlockingMode()
-{
-    struct termios t;
-    tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag &= ~ICANON;
-    t.c_lflag &= ~ECHO;
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-}
 
 // Function to get current time in microseconds
 uint64_t getCurrentTimeMicros()
@@ -39,8 +28,6 @@ int main()
 {
     char targetChar = 'q'; // Change this to the character you want to be the exit condition
     char userInput;
-
-    setNonBlockingMode();
 
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
 
@@ -71,11 +58,9 @@ int main()
     t0 = getCurrentTimeMicros(); // time to start analyzing response
 
     velocity[0] = input_velocity_mms;
+    int cycles = 0;
 
-    bool stopFlag = false;
-
-    std::cout << "Press '" << targetChar << "' to exit the loop." << std::endl;
-    while (!stopFlag)
+    while (cycles < 3)
     {
         // input
 
@@ -85,17 +70,10 @@ int main()
 
         while (currentTime - startTime <= period_s * 1e6) // Run the loop for 3 seconds
         {
-            if (read(STDIN_FILENO, &userInput, 1) > 0)
-            {
-                if (userInput == targetChar)
-                {
-                    stopFlag = true;
-                    break; // Exit the loop when the target character is pressed
-                }
-            }
+
             // Check if 3 seconds passed. Exit cycle if true
             currentTime = getCurrentTimeMicros();
-            std::cout << currentTime/ 1e3 << std::endl;
+            std::cout << currentTime / 1e3 << std::endl;
 
             // get data
             sensor_output_logger << (currentTime - t0) / 1e6;
@@ -110,6 +88,7 @@ int main()
         velocity[0] = -velocity[0];
         std::cout << "Waiting for 1 second" << std::endl;
         delayMicroseconds(1e6);
+        cycles++;
     }
     // stop the robot
     velocity[0] = 0;
@@ -118,8 +97,6 @@ int main()
     // save the data
     output_position_logger.close();
     sensor_output_logger.close();
-
-    std::cout << "Exiting the loop. You pressed '" << targetChar << "'." << std::endl;
 
     return 0;
 }
