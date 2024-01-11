@@ -26,9 +26,6 @@ void delayMicroseconds(uint64_t microseconds)
 
 int main()
 {
-    char targetChar = 'q'; // Change this to the character you want to be the exit condition
-    char userInput;
-
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
 
     /*robot, setup*/
@@ -73,8 +70,6 @@ int main()
 
             // Check if 3 seconds passed. Exit cycle if true
             currentTime = getCurrentTimeMicros();
-            std::cout << currentTime / 1e3 << std::endl;
-
             // get data
             sensor_output_logger << (currentTime - t0) / 1e6;
             sensor_output_logger << sensor.getDistanceInMillimeters();

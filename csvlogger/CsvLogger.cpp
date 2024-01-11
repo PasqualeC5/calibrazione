@@ -43,7 +43,7 @@ CsvLogger::~CsvLogger()
 void CsvLogger::write(const std::string header)
 {
     file << header;
-    file.flush();
+   // file.flush();
 }
 
 void CsvLogger::flush()
