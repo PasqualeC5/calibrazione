@@ -24,6 +24,17 @@ uint64_t getCurrentTimeMicros()
         .count();
 }
 
+void delayMicroseconds(uint64_t microseconds)
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    auto end = start + std::chrono::microseconds(microseconds);
+
+    while (std::chrono::high_resolution_clock::now() < end)
+    {
+        // Busy-wait loop
+    }
+}
+
 int main()
 {
     char targetChar = 'q'; // Change this to the character you want to be the exit condition
@@ -51,7 +62,7 @@ int main()
 
     /*squarewave generation, setup*/
     float input_velocity_mms = 10; // 10mm/s    (amplitude)
-    double period_s = 6;           // 6sec      (period)
+    double period_s = 3;           // 6sec      (period)
     float velocity[6] = {0, 0, 0, 0, 0, 0};
     /*squarewawe T = 6s, A=10mm/s*/
 
@@ -84,6 +95,7 @@ int main()
             }
             // Check if 3 seconds passed. Exit cycle if true
             currentTime = getCurrentTimeMicros();
+            std::cout << currentTime/ 1e3 << std::endl;
 
             // get data
             sensor_output_logger << (currentTime - t0) / 1e6;
@@ -96,6 +108,8 @@ int main()
         }
 
         velocity[0] = -velocity[0];
+        std::cout << "Waiting for 1 second" << std::endl;
+        delayMicroseconds(1e6);
     }
     // stop the robot
     velocity[0] = 0;
