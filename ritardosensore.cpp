@@ -38,7 +38,7 @@ int main()
     robot.print_pose();
 
     /*files to write, setup*/
-    CsvLogger input_logger("control/velocity_control");
+    CsvLogger input_logger("delay/velocity_control");
     input_logger.write("time, value\n");
 
     CsvLogger output_position_logger("delay/position_response");
