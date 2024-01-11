@@ -2,7 +2,6 @@
 #include <csignal>
 #include <unistd.h>
 #include <termios.h>
-#include <cstring>
 
 volatile sig_atomic_t stopFlag = 0;
 
@@ -31,10 +30,7 @@ int main() {
     std::cout << "Press '" << targetChar << "' to exit the loop." << std::endl;
 
     // Register the signal handler
-    struct sigaction sa;
-    memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = handleSignal;
-    sigaction(SIGINT, &sa, nullptr);
+    signal(SIGINT, handleSignal);
 
     while (!stopFlag) {
         if (read(STDIN_FILENO, &userInput, 1) > 0) {  // Check if a key is pressed without blocking
