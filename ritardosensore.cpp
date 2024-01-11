@@ -1,7 +1,7 @@
 #include <iostream>
-#include <csignal>
-#include <unistd.h>
+#include <sys/select.h>
 #include <termios.h>
+#include <unistd.h>
 
 volatile sig_atomic_t stopFlag = 0;
 
@@ -30,15 +30,30 @@ int main() {
     std::cout << "Press '" << targetChar << "' to exit the loop." << std::endl;
 
     // Register the signal handler
-    signal(SIGINT, handleSignal);
+    struct sigaction sa;
+    sa.sa_handler = handleSignal;
+    sigaction(SIGINT, &sa, nullptr);
 
     while (!stopFlag) {
-        if (read(STDIN_FILENO, &userInput, 1) > 0) {  // Check if a key is pressed without blocking
-            std::cout << "You pressed: '" << userInput << "'. Keep going!" << std::endl;
-        }
+        fd_set inputSet;
+        FD_ZERO(&inputSet);
+        FD_SET(STDIN_FILENO, &inputSet);
 
-        // Add some delay to avoid high CPU usage
-        usleep(100000);  // Sleep for 100,000 microseconds (0.1 seconds)
+        struct timeval timeout;
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 100000;  // 100,000 microseconds (0.1 seconds)
+
+        int ready = select(STDIN_FILENO + 1, &inputSet, nullptr, nullptr, &timeout);
+
+        if (ready > 0 && FD_ISSET(STDIN_FILENO, &inputSet)) {
+            if (read(STDIN_FILENO, &userInput, 1) > 0) {
+                std::cout << "You pressed: '" << userInput << "'. Keep going!" << std::endl;
+
+                if (userInput == targetChar) {
+                    stopFlag = 1;
+                }
+            }
+        }
     }
 
     std::cout << "Exiting the loop. You pressed '" << targetChar << "'." << std::endl;
