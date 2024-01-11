@@ -1,10 +1,10 @@
 #include <iostream>
 #include <unistd.h>
 #include <termios.h>
+#include <chrono>
 #include "distance_sensor/include/InfraredSensor.hpp"
 #include "meca500_ethercat_cpp/Robot.hpp"
 #include "csvlogger/CsvLogger.hpp"
-#include <pigpio.h>
 
 // Function to set the terminal to non-blocking mode
 void setNonBlockingMode()
@@ -16,15 +16,20 @@ void setNonBlockingMode()
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 }
 
+// Function to get current time in microseconds
+uint64_t getCurrentTimeMicros()
+{
+    return std::chrono::duration_cast<std::chrono::microseconds>(
+               std::chrono::system_clock::now().time_since_epoch())
+        .count();
+}
+
 int main()
 {
     char targetChar = 'q'; // Change this to the character you want to be the exit condition
     char userInput;
 
     setNonBlockingMode();
-
-    if (gpioInitialise() < 0)
-        exit(1);
 
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
 
@@ -51,8 +56,8 @@ int main()
     /*squarewawe T = 6s, A=10mm/s*/
 
     /*time variables setup*/
-    uint32_t startTime, currentTime, t0;
-    t0 = gpioTick(); // time to start analysing response
+    uint64_t startTime, currentTime, t0;
+    t0 = getCurrentTimeMicros(); // time to start analyzing response
 
     velocity[0] = input_velocity_mms;
 
@@ -63,8 +68,8 @@ int main()
     {
         // input
 
-        startTime = gpioTick();
-        currentTime = gpioTick();
+        startTime = getCurrentTimeMicros();
+        currentTime = getCurrentTimeMicros();
         robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
         while (currentTime - startTime >= period_s * 1e6 / 2) // Run the loop for 3 seconds
@@ -77,10 +82,10 @@ int main()
                     break; // Exit the loop when the target character is pressed
                 }
             }
-            // Check if 3 secone passed. Exit cycle if true
-            currentTime = gpioTick();
+            // Check if 3 seconds passed. Exit cycle if true
+            currentTime = getCurrentTimeMicros();
 
-            // get datas
+            // get data
             sensor_output_logger << (currentTime - t0) / 1e6;
             sensor_output_logger << sensor.getDistanceInMillimeters();
             sensor_output_logger.end_row();
