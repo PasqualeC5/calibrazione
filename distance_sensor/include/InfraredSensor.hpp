@@ -16,6 +16,7 @@
 #include <unistd.h> // write(), read(), close()
 #include <cstdint>
 #include <serial/serial.h>
+#include <DistanceSensor.hpp>
 
 // Private headers
 
