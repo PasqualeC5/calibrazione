@@ -46,7 +46,7 @@ int main()
 
     /*squarewave generation, setup*/
     float input_velocity_mms = 10; // 10mm/s    (amplitude)
-    double period_s = 3;           // 6sec      (period)
+    double period_s = 5;           // 6sec      (period)
     float velocity[6] = {0, 0, 0, 0, 0, 0};
     /*squarewawe T = 6s, A=10mm/s*/
 
