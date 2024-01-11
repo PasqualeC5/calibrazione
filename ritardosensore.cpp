@@ -45,8 +45,8 @@ int main()
     sensor_output_logger.write("time, value\n");
 
     /*squarewave generation, setup*/
-    float input_velocity_mms = 10; // 10mm/s    (amplitude)
-    double period_s = 5;           // 6sec      (period)
+    float input_velocity_mms = 30; // 10mm/s    (amplitude)
+    double period_s = 3;           // 6sec      (period)
     float velocity[6] = {0, 0, 0, 0, 0, 0};
     /*squarewawe T = 6s, A=10mm/s*/
 
@@ -63,13 +63,13 @@ int main()
 
         startTime = getCurrentTimeMicros();
         currentTime = getCurrentTimeMicros();
-        robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
         while (currentTime - startTime <= period_s * 1e6) // Run the loop for 3 seconds
         {
 
             // Check if 3 seconds passed. Exit cycle if true
             currentTime = getCurrentTimeMicros();
+            robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
             // get data
             sensor_output_logger << (currentTime - t0) / 1e6;
             sensor_output_logger << sensor.getDistanceInMillimeters();
@@ -79,15 +79,17 @@ int main()
             output_position_logger << robot.get_position();
             output_position_logger.end_row();
         }
-        //stop the robot
-        velocity[0] = 0;
-        robot.move_lin_vel_wrf(velocity);
-
-        std::cout << "Waiting for 1 second" << std::endl;
-        delayMicroseconds(1e6);
-
-        input_velocity_mms = - input_velocity_mms;
-        velocity[0] = input_velocity_mms;
+        // stop the robot
+        if (velocity[0] != 0)
+        {
+            velocity[0] = 0;
+            robot.move_lin_vel_wrf(velocity);
+        }
+        else
+        {
+            input_velocity_mms = -input_velocity_mms;
+            velocity[0] = input_velocity_mms;
+        }
 
         cycles++;
     }
