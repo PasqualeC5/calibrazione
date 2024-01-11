@@ -72,7 +72,7 @@ int main()
         currentTime = getCurrentTimeMicros();
         robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
 
-        while (currentTime - startTime >= period_s * 1e6 / 2) // Run the loop for 3 seconds
+        while (currentTime - startTime <= period_s * 1e6) // Run the loop for 3 seconds
         {
             if (read(STDIN_FILENO, &userInput, 1) > 0)
             {
