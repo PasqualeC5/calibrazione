@@ -57,7 +57,7 @@ int main()
     velocity[0] = input_velocity_mms;
     int cycles = 0;
 
-    while (cycles < 3)
+    while (cycles < 10)
     {
         // input
 
