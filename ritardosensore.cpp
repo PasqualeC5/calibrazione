@@ -79,10 +79,16 @@ int main()
             output_position_logger << robot.get_position();
             output_position_logger.end_row();
         }
+        //stop the robot
+        velocity[0] = 0;
+        robot.move_lin_vel_wrf(velocity);
 
-        velocity[0] = -velocity[0];
         std::cout << "Waiting for 1 second" << std::endl;
         delayMicroseconds(1e6);
+
+        input_velocity_mms = - input_velocity_mms;
+        velocity[0] = input_velocity_mms;
+
         cycles++;
     }
     // stop the robot
