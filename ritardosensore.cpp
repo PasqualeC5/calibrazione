@@ -38,6 +38,9 @@ int main()
     robot.print_pose();
 
     /*files to write, setup*/
+    CsvLogger input_logger("control/velocity_control");
+    input_logger.write("time, value\n");
+
     CsvLogger output_position_logger("delay/position_response");
     output_position_logger.write("time, value\n");
 
@@ -71,6 +74,10 @@ int main()
             currentTime = getCurrentTimeMicros();
             robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
             // get data
+            input_logger << (currentTime - t0) / 1e6;
+            input_logger << input_velocity_mms;
+            input_logger.end_row();
+
             sensor_output_logger << (currentTime - t0) / 1e6;
             sensor_output_logger << sensor.getDistanceInMillimeters();
             sensor_output_logger.end_row();
