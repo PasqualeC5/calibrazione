@@ -27,6 +27,7 @@ target_compile_options(rispostavelocita PRIVATE -Wall -pthread)
 target_link_libraries(rispostavelocita PRIVATE pigpio rt)
 target_link_libraries(rispostavelocita PRIVATE meca500_driver)
 
+target_link_libraries(ritardosensore PRIVATE distance_sensor)
 target_link_libraries(ritardosensore PRIVATE csvlogger)
 target_compile_options(ritardosensore PRIVATE -Wall -pthread)
 target_link_libraries(ritardosensore PRIVATE pigpio rt)
