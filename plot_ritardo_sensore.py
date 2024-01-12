@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def remove_trailing_commas(file_path):
     # Open the input file in read mode
     with open(file_path, "r") as input_file:
@@ -21,23 +22,37 @@ def remove_trailing_commas(file_path):
                 # If there is no trailing comma, write the line as it is to the output file
                 output_file.write(line)
 
-def plot_csv_data(file1, file2):
-    # Read CSV files into Pandas DataFrames
-    df1 = pd.read_csv(file1)
-    df2 = pd.read_csv(file2)
 
-    # Check if the columns 'time' and 'value' exist in both DataFrames
-    if 'time' not in df1.columns or 'value' not in df1.columns:
-        print(f"Error: 'time' and 'value' columns not found in {file1}")
+def plot_csv_data(*files, rolling_window=1):
+    # Check if at least one file is provided
+    if not files:
+        print("Error: At least one CSV file must be provided.")
         return
-    if 'time' not in df2.columns or 'value' not in df2.columns:
-        print(f"Error: 'time' and 'value' columns not found in {file2}")
-        return
+
+    # Create an empty DataFrame to hold the combined data
+    combined_df = pd.DataFrame()
+
+    # Read each CSV file and append its data to the combined DataFrame
+    for file in files:
+        remove_trailing_commas(file)
+        df = pd.read_csv(file)
+        if 'time' not in df.columns or 'value' not in df.columns:
+            print(f"Error: 'time' and 'value' columns not found in {file}")
+            return
+        combined_df = pd.concat([combined_df, df], axis=0)
+
+    # Apply rolling mean to smooth the data
+    combined_df['smoothed_value'] = combined_df['value'].rolling(
+        window=rolling_window).mean()
 
     # Plot the data
     plt.figure(figsize=(10, 6))
-    plt.plot(df1['time'], df1['value'], label='File 1')
-    plt.plot(df2['time'], df2['value'], label='File 2')
+
+    # Plot each file's data
+    for file in files:
+        df = pd.read_csv(file)
+        plt.plot(df['time'], df['value'], label=f'{file}')
+
     plt.xlabel('Time')
     plt.ylabel('Value')
     plt.title('Comparison of CSV Files')
@@ -45,11 +60,10 @@ def plot_csv_data(file1, file2):
     plt.grid(True)
     plt.show()
 
-if __name__ == "__main__":
-    # Replace 'file1.csv' and 'file2.csv' with your actual CSV file paths
-    csv_file1 = 'delay/position_response'
-    csv_file2 = 'delay/sensor_response'
-    remove_trailing_commas(csv_file1)
-    remove_trailing_commas(csv_file2)
 
-    plot_csv_data(csv_file1, csv_file2)
+if __name__ == "__main__":
+    # Replace 'file1.csv', 'file2.csv', etc. with your actual CSV file paths
+    csv_files = ['delay/position_response',
+                 'delay/sensor_response', 'delay/velocity_control']
+
+    plot_csv_data(*csv_files)
