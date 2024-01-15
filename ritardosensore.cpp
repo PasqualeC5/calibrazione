@@ -97,7 +97,7 @@ int main()
         timeRemaining -= getCurrentTimeMicros();
 
         delayMicroseconds(timeRemaining);
-    } while (t <= 10);
+    } while (t <= Ta);
     // stop the robot
     velocity[0] = 0;
     robot.move_lin_vel_wrf(velocity);
