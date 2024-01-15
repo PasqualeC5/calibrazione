@@ -62,7 +62,7 @@ int main()
 
     velocity[0] = 0;
 
-    const Ta = 10; // time of analysis in seconds
+    const float Ta = 10; // time of analysis in seconds
 
     t0 = getCurrentTimeMicros(); // time to start analyzing response
 
