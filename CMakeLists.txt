@@ -6,7 +6,7 @@ add_executable(calibrazione calibrazione.cpp)
 add_executable(controltest controltest.cpp)
 add_executable(rispostavelocita rispostavelocita.cpp)
 add_executable(ritardosensore ritardosensore.cpp)
-add_executable(ritardosensoreistruzione ritardosensore.cpp)
+add_executable(ritardosensoreistruzione ritardosensoreistruzione.cpp)
 
 add_subdirectory(csvlogger)
 add_subdirectory(distance_sensor)
