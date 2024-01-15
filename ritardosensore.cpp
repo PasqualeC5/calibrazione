@@ -53,7 +53,7 @@ int main()
     float currentDistance, currentPosition;
 
     float freq = 0.05; // frequenza del segnale di controllo in hertz
-    float amplitude = 10;
+    float amplitude = 5;
     /*time variables setup*/
     uint64_t currentTime, t0;
     double tc = 0.02; /** tempo di campionamento in secondi pari al
