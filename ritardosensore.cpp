@@ -76,7 +76,7 @@ int main()
 
         robot.move_lin_vel_wrf(velocity);
 
-        currentPosition = -robot.get_position() + 130;
+        currentPosition = -robot.get_position() + 230;
         currentDistance = sensor.getDistanceInMillimeters();
 
         // log data
