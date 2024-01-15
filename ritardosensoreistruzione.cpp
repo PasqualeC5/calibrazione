@@ -40,7 +40,7 @@ int main()
         t = getCurrentTimeMicros() - currentTime;
         output_logger << t;
         output_logger.end_row();
-        delayMicroseconds(0.02 * 1e6);
+        delayMicroseconds(0.05*1e6);
     }
 
     output_logger.close();
