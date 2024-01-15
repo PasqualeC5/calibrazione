@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
+
 
 def remove_trailing_commas(file_path):
     # Open the input file in read mode
@@ -21,6 +21,7 @@ def remove_trailing_commas(file_path):
             else:
                 # If there is no trailing comma, write the line as it is to the output file
                 output_file.write(line)
+
 
 def plot_csv_data(*files, rolling_window=1):
     # Check if at least one file is provided
@@ -45,33 +46,20 @@ def plot_csv_data(*files, rolling_window=1):
         window=rolling_window).mean()
 
     # Plot the data
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(10, 6))
 
     # Plot each file's data
     for file in files:
         df = pd.read_csv(file)
-        plt.subplot(2, 1, 1)
         plt.plot(df['time'], df['value'], label=f'{file}')
-        plt.xlabel('Time')
-        plt.ylabel('Value')
-        plt.title('Comparison of CSV Files')
-        plt.legend()
-        plt.grid(True)
 
-        # Plot Fourier spectrum
-        plt.subplot(2, 1, 2)
-        values = df['value']
-        fourier_transform = np.fft.fft(values)
-        frequencies = np.fft.fftfreq(len(fourier_transform))
-        plt.plot(frequencies, np.abs(fourier_transform), label=f'{file}')
-        plt.xlabel('Frequency')
-        plt.ylabel('Amplitude')
-        plt.title('Fourier Spectrum')
-        plt.legend()
-        plt.grid(True)
-
-    plt.tight_layout()
+    plt.xlabel('Time')
+    plt.ylabel('Value')
+    plt.title('Comparison of CSV Files')
+    plt.legend()
+    plt.grid(True)
     plt.show()
+
 
 if __name__ == "__main__":
     # Replace 'file1.csv', 'file2.csv', etc. with your actual CSV file paths

@@ -40,36 +40,37 @@ int main()
 
     /*files to write, setup*/
     CsvLogger input_logger("delay/velocity_control");
-    input_logger.write("time, value\n");
+    input_logger.write("time,value\n");
 
     CsvLogger output_position_logger("delay/position_response");
-    output_position_logger.write("time, value\n");
+    output_position_logger.write("time,value\n");
 
     CsvLogger sensor_output_logger("delay/sensor_response");
-    sensor_output_logger.write("time, value\n");
+    sensor_output_logger.write("time,value\n");
 
     float velocity[6] = {0, 0, 0, 0, 0, 0};
 
     float currentDistance, currentPosition;
 
-    double freq = 1; // frequenza del segnale di controllo in hertz
+    float freq = 0.5; // frequenza del segnale di controllo in hertz
 
     /*time variables setup*/
     uint64_t currentTime, t0;
     double tc = 0.02; /** tempo di campionamento in secondi pari al
                        tempo di campionamento del sensore **/
-    double t;         // current time in seconds
+    float t;          // current time in seconds
 
     velocity[0] = 0;
 
     const float Ta = 10; // time of analysis in seconds
 
+    float timeRemaining;
+
     t0 = getCurrentTimeMicros(); // time to start analyzing response
 
-    while (t < 10)
+    do
     {
-        currentTime = getCurrentTimeMicros();
-        t = (currentTime - t0) / 1e6;
+        t = (getCurrentTimeMicros() - t0) / 1e6;
         // input
         velocity[0] = 50 * sin(2 * M_PI * freq * t);
 
@@ -91,8 +92,12 @@ int main()
         output_position_logger << currentPosition;
         output_position_logger.end_row();
 
-        delayMicroseconds(tc * 1e6 - (getCurrentTimeMicros() - currentTime));
-    }
+        timeRemaining = tc * 1e6;
+        timeRemaining += currentTime;
+        timeRemaining -= getCurrentTimeMicros();
+
+        delayMicroseconds(timeRemaining);
+    } while (t <= 10.0);
     // stop the robot
     velocity[0] = 0;
     robot.move_lin_vel_wrf(velocity);
