@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <chrono>
+#include <math.h>
 #include "distance_sensor/include/InfraredSensor.hpp"
 #include "meca500_ethercat_cpp/Robot.hpp"
 #include "csvlogger/CsvLogger.hpp"
@@ -47,58 +48,50 @@ int main()
     CsvLogger sensor_output_logger("delay/sensor_response");
     sensor_output_logger.write("time, value\n");
 
-    /*squarewave generation, setup*/
-    float input_velocity_mms = 30; // 10mm/s    (amplitude)
-    double period_s = 3;           // 6sec      (period)
     float velocity[6] = {0, 0, 0, 0, 0, 0};
-    /*squarewawe T = 6s, A=10mm/s*/
+
+    float currentDistance, currentPosition;
+
+    double freq = 1; // frequenza del segnale di controllo in hertz
 
     /*time variables setup*/
-    uint64_t startTime, currentTime, t0;
+    uint64_t currentTime, t0;
+    double tc = 0.02; /** tempo di campionamento in secondi pari al
+                       tempo di campionamento del sensore **/
+    double t;         // current time in seconds
+
+    velocity[0] = 0;
+
+    const Ta = 10; // time of analysis in seconds
+
     t0 = getCurrentTimeMicros(); // time to start analyzing response
 
-    velocity[0] = input_velocity_mms;
-    int cycles = 0;
-
-    while (cycles < 10)
+    while (t < 10)
     {
-        // input
-
-        startTime = getCurrentTimeMicros();
         currentTime = getCurrentTimeMicros();
+        t = (currentTime - t0) / 1e6;
+        // input
+        velocity[0] = 50 * sin(2 * M_PI * freq * t);
 
-        while (currentTime - startTime <= period_s * 1e6) // Run the loop for 3 seconds
-        {
+        robot.move_lin_vel_wrf(velocity);
 
-            // Check if 3 seconds passed. Exit cycle if true
-            currentTime = getCurrentTimeMicros();
-            robot.move_lin_vel_wrf(velocity); // give 10mm/s or -10mm/s
-            // get data
-            input_logger << (currentTime - t0) / 1e6;
-            input_logger << input_velocity_mms;
-            input_logger.end_row();
+        currentPosition = robot.get_position();
+        currentDistance = sensor.getDistanceInMillimeters();
 
-            sensor_output_logger << (currentTime - t0) / 1e6;
-            sensor_output_logger << sensor.getDistanceInMillimeters();
-            sensor_output_logger.end_row();
+        // log data
+        input_logger << t;
+        input_logger << velocity[0];
+        input_logger.end_row();
 
-            output_position_logger << (currentTime - t0) / 1e6;
-            output_position_logger << robot.get_position();
-            output_position_logger.end_row();
-        }
-        // stop the robot
-        if (velocity[0] != 0)
-        {
-            velocity[0] = 0;
-            robot.move_lin_vel_wrf(velocity);
-        }
-        else
-        {
-            input_velocity_mms = -input_velocity_mms;
-            velocity[0] = input_velocity_mms;
-        }
+        sensor_output_logger << t;
+        sensor_output_logger << currentDistance;
+        sensor_output_logger.end_row();
 
-        cycles++;
+        output_position_logger << t;
+        output_position_logger << currentPosition;
+        output_position_logger.end_row();
+
+        delayMicroseconds(tc * 1e6 - (getCurrentTimeMicros() - currentTime));
     }
     // stop the robot
     velocity[0] = 0;
