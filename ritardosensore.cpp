@@ -35,7 +35,7 @@ int main()
     // robot.main();
 
     robot.set_conf(1, 1, -1);
-    robot.move_pose(50, -170, 120, 90, 90, 0);
+    robot.move_pose(100, -170, 120, 90, 90, 0);
     robot.print_pose();
 
     /*files to write, setup*/
@@ -52,8 +52,8 @@ int main()
 
     float currentDistance, currentPosition;
 
-    float freq = 0.5; // frequenza del segnale di controllo in hertz
-
+    float freq = 0.05; // frequenza del segnale di controllo in hertz
+    float amplitude = 10;
     /*time variables setup*/
     uint64_t currentTime, t0;
     double tc = 0.02; /** tempo di campionamento in secondi pari al
@@ -62,7 +62,7 @@ int main()
 
     velocity[0] = 0;
 
-    const float Ta = 5; // time of analysis in seconds
+    const float Ta = 1 * 1/freq; // time of analysis in seconds
 
     float timeRemaining;
 
@@ -72,7 +72,7 @@ int main()
     {
         t = (getCurrentTimeMicros() - t0) / 1e6;
         // input
-        velocity[0] = 50 * sin(2 * M_PI * freq * t) > 0 ? 50 : 0;
+        velocity[0] = amplitude * sin(2 * M_PI * freq * t) > 0 ? amplitude : -amplitude;
 
         robot.move_lin_vel_wrf(velocity);
 
@@ -97,7 +97,7 @@ int main()
         timeRemaining -= getCurrentTimeMicros();
 
         delayMicroseconds(timeRemaining);
-    } while (t <= Ta);
+    } while (t <= 10);
     // stop the robot
     velocity[0] = 0;
     robot.move_lin_vel_wrf(velocity);
