@@ -3,7 +3,6 @@
 #include <chrono>
 #include <math.h>
 #include "distance_sensor/include/InfraredSensor.hpp"
-#include "meca500_ethercat_cpp/Robot.hpp"
 #include "csvlogger/CsvLogger.hpp"
 
 // Function to get current time in microseconds
