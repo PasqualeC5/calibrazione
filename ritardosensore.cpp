@@ -35,7 +35,7 @@ int main()
     // robot.main();
 
     robot.set_conf(1, 1, -1);
-    robot.move_pose(130, -170, 120, 90, 90, 0);
+    robot.move_pose(50, -170, 120, 90, 90, 0);
     robot.print_pose();
 
     /*files to write, setup*/
@@ -62,7 +62,7 @@ int main()
 
     velocity[0] = 0;
 
-    const float Ta = 10; // time of analysis in seconds
+    const float Ta = 5; // time of analysis in seconds
 
     float timeRemaining;
 
@@ -72,11 +72,11 @@ int main()
     {
         t = (getCurrentTimeMicros() - t0) / 1e6;
         // input
-        velocity[0] = 50 * sin(2 * M_PI * freq * t);
+        velocity[0] = 50 * sin(2 * M_PI * freq * t) > 0 ? 50 : 0;
 
         robot.move_lin_vel_wrf(velocity);
 
-        currentPosition = -robot.get_position() + 230;
+        currentPosition = robot.get_position();
         currentDistance = sensor.getDistanceInMillimeters();
 
         // log data
@@ -97,7 +97,7 @@ int main()
         timeRemaining -= getCurrentTimeMicros();
 
         delayMicroseconds(timeRemaining);
-    } while (t <= 10.0);
+    } while (t <= Ta);
     // stop the robot
     velocity[0] = 0;
     robot.move_lin_vel_wrf(velocity);
