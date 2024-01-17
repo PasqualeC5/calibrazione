@@ -1,7 +1,7 @@
 /*
     DISCRETE-TIME REGULATOR:
 
-    y[k] = 9.1 * u[k]  -  3.986 * u[k-1]  -  0.531 y[k-1]
+    y[k] = 4.6129 * u[k]  -  3.8864 * u[k-1]  + 0.7 * y[k-1]
 
 
     IMPORTANT:
@@ -21,9 +21,8 @@
 
 /*costants*/
 #define Tc_s 0.02               // passo camp
-#define RANGEINF_mm 20          // range for reference_distance (inferior)
-#define RANGESUP_mm 150         // range for reference_distance (superior)
 #define DEFAULTREFERENCE_mm -50 // reference (desired distance Meca-Obstacle)
+
 /*global*/
 float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
 bool reference_initialised = false;
@@ -85,8 +84,6 @@ int main(int argc, char *argv[])
 
     float d;
 
-    
-
     /*process variables*/
     float u_k; // u[k]
     float y_k; // y[k]
@@ -96,7 +93,7 @@ int main(int argc, char *argv[])
     /*process*/
     while (true)
     {
-        start = getCurrentTimeMicros() - t0;
+        start = getCurrentTimeMicros();
         if (!reference_initialised)
         {
             // sigmoid starter curve
@@ -109,33 +106,45 @@ int main(int argc, char *argv[])
         }
 
         /*compute*/
-        d = sensor.getDistanceInMillimeters();
+        d = -sensor.getDistanceInMillimeters();
 
         u_k = reference_distance - d;
-        y_k = 9.1 * u_k - 3.968 * u_k1 - 0.531 * y_k1;
+        y_k = 4.6129 * u_k - 3.8864 * u_k1 + 0.7 * y_k1;
 
-        /*check position limits. if not sure for Meca -> y_k = 0 (stop)*/
-        if ((y_k > y_k1) ? y_k : y_k1 * Tc_s + robot.get_position() > robot.POS_LIMIT_SUP || (y_k < y_k1) ? y_k
-                                                                                                          : y_k1 * Tc_s + robot.get_position() < robot.POS_LIMIT_INF)
-            y_k = 0;
+        // checking robot position limits
+        if (robot.get_position() >= robot.POS_LIMIT_SUP)
+        {
+            if (y_k > 0) // if velocity is positive
+            {
+                y_k = 0;
+            }
+        }
+        else if (robot.get_position() <= robot.POS_LIMIT_INF)
+        {
+            if (y_k < 0) // if velocity is negative
+            {
+                y_k = 0;
+            }
+        }
 
         /*give meca velocity command*/
         robot.move_lin_vel_wrf(y_k);
 
         /*if take_date requested*/
-        if (take_data)
-        {
-            data_test << t;
-            data_test << d;
-            data_test.end_row();
-        }
+        // if (take_data && reference_initialised)
+        // {
+        //     data_test << t;
+        //     data_test << d;
+        //     data_test.end_row();
+        // }
 
         /*prepare for next */
         u_k1 = u_k;
         y_k1 = y_k;
+
         delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
-        delayMicroseconds(delay_time); //????
-        t += Tc_s;
+        delayMicroseconds(delay_time); //delay by time remaining
+        t += Tc_s; // increse time by Tc_s for reference smoothing
     }
 }
 
@@ -150,10 +159,7 @@ void menu(int n_par, char *par[])
     /* if distance_reference is passed and correct, so set, else default*/
     if (argc == 2 || argc == 3)
     {
-        if (reference_distance < RANGEINF_mm || reference_distance > RANGESUP_mm)
-            printf("OUT OF RANGE [%d, %d]. Refence set to default: %d mm", RANGEINF_mm, RANGESUP_mm, DEFAULTREFERENCE_mm);
-        else
-            reference_user = -atof(argv[1]);
+        reference_user = -atof(argv[1]);
     }
 
     if (argc == 3)
