@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
     robot.move_pose(115, -170, 120, 90, 90, 0); // bring Meca to 0_position
     // robot.print_pose();
 
-    // /*files to write, setup*/
-    // CsvLogger data_test("data_test.csv");
-    // data_test.write("time,distance\n"); // if !take_data -> empy file
+    /*files to write, setup*/
+    // CsvLogger data_test("test_closed_loop/data_test.csv");
+    // data_test.write("time,distance,error,velocity_control,reference\n"); // if !take_data -> empy file
 
     /*time variables setup*/
     uint64_t t0, start;
@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
     bool out_of_range = false;
 
     current_time = 0;
+    float interpolate_time = 0;
     /*process*/
     while (true)
     {
@@ -105,7 +106,8 @@ int main(int argc, char *argv[])
 
         if (d < -200)
         {
-            cout << endl << "Sensor out of range" << endl;
+            cout << endl
+                 << "Sensor out of range" << endl;
             cout << "Stopping robot" << endl;
             velocity[0] = 0;
             robot.move_lin_vel_wrf(velocity);
@@ -119,21 +121,20 @@ int main(int argc, char *argv[])
             while (d < -200)
             {
                 d = -sensor.getDistanceInMillimeters();
-                delayMicroseconds(Tc_s);
+                delayMicroseconds(Tc_s * 1e6);
             }
 
             cout << "Obstacle in range" << endl;
             cout << "Resuming control" << endl;
-            
 
             starting_reference = d;
             slope = (reference_user - starting_reference) / rise_time;
-            current_time = 0;
+            interpolate_time = current_time;
         }
 
-         if (interpolate)
+        if (interpolate)
         {
-            reference_distance = slope * current_time + starting_reference;
+            reference_distance = slope * (current_time - interpolate_time) + starting_reference;
             if ((slope > 0 && reference_distance >= reference_user) || (slope <= 0 && reference_distance <= reference_user))
             {
                 reference_distance = reference_user;
