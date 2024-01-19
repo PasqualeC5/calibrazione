@@ -61,11 +61,11 @@ int main(int argc, char *argv[])
     menu(argc, argv);
 
     /*robot, setup*/
-    Robot robot(40, 240, 5000, "eth0", 0.0, 10);
+    Robot robot(30, 200, 5000, "eth0", 0.0, 10);
     robot.reset_error();
     // robot.main();
     robot.set_conf(1, 1, -1);
-    robot.move_pose(130, -170, 120, 90, 90, 0); // bring Meca to 0_position
+    robot.move_pose(115, -170, 120, 90, 90, 0); // bring Meca to 0_position
     // robot.print_pose();
 
     // /*files to write, setup*/
