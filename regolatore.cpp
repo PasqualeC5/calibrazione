@@ -23,6 +23,8 @@
 #define Tc_s 0.02               // passo camp
 #define DEFAULTREFERENCE_mm -50 // reference (desired distance Meca-Obstacle)
 
+using namespace std;
+
 /*global*/
 float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
 bool reference_initialised = false;
@@ -107,6 +109,12 @@ int main(int argc, char *argv[])
 
         /*compute*/
         d = -sensor.getDistanceInMillimeters();
+
+        if(abs(d) >= 254){
+            cout << "Sensor out of range" << endl;
+            cout << "Stopping robot" << endl;
+            robot.move_lin_vel_wrf(0);
+        }
 
         u_k = reference_distance - d;
         y_k = 4.6129 * u_k - 3.8864 * u_k1 + 0.7 * y_k1;
