@@ -139,7 +139,7 @@ void make_measurements(DistanceSensor &sensor, int number_of_measurements, vecto
     float distance;
     for (int i = 0; i < number_of_measurements; i++)
     {
-        distance = (sensor.getDistanceInMillimeters() - 12)/1;
+        distance = sensor.getDistanceInMillimeters();
         measurements.push_back(distance);
         usleep(delay_us);
     }
