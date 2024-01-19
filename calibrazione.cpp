@@ -19,7 +19,7 @@
 // COMMAND LINE ARGUMENTS
 #define HELP_COMMAND "help"
 #define CONFIG_FROM_FILE_COMMAND "config"
-#define SENSOR_COMMAND "sensor"                       // REQUIRED sensor specifier command [--sensor]
+#define SENSOR_COMMAND "sensor" // REQUIRED sensor specifier command [--sensor]
 #define CALIBRATION_COMMAND "calibration"
 #define INFRARED_SENSOR_VALUE "infrared"              // infrared sensor specifier [--sensor=infrared]
 #define ULTRASONIC_SENSOR_VALUE "ultrasonic"          // ultrasonic sensor specifier [--sensor=ultrasonic]
@@ -248,13 +248,6 @@ int setup_options(map<string, string> options)
             }
             sensor_type = value;
         }
-        else if (command == CALIBRATION_COMMAND)
-        {
-            vector<float> calibration_parameters = parse_string_to_vector(value);
-            cout << calibration_parameters[0] << endl;
-            cout << calibration_parameters[1] << endl;
-            sensor->useCalibrationCurve(calibration_parameters[0],calibration_parameters[1]);
-        }
         else if (command == NUMBER_OF_MEASUREMENTS_COMMAND)
         {
 
@@ -290,6 +283,13 @@ int setup_options(map<string, string> options)
             }
             option_message << left << setw(message_length) << "Measurement delay in us used: " << value << "\n";
             measurement_delay = int_value;
+        }
+        else if (command == CALIBRATION_COMMAND)
+        {
+            vector<float> calibration_parameters = parse_string_to_vector(value);
+            cout << calibration_parameters[0] << endl;
+            cout << calibration_parameters[1] << endl;
+            sensor->useCalibrationCurve(calibration_parameters[0], calibration_parameters[1]);
         }
         else if (command == CONFIG_FROM_FILE_COMMAND)
         {
