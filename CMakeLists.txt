@@ -27,6 +27,7 @@ target_link_libraries(regolatore PRIVATE distance_sensor)
 target_compile_options(regolatore PRIVATE -Wall -pthread)
 target_link_libraries(regolatore PRIVATE pigpio rt)
 target_link_libraries(regolatore PRIVATE meca500_driver)
+target_link_libraries(regolatore PRIVATE csvlogger)
 
 target_link_libraries(rispostavelocita PRIVATE csvlogger)
 target_compile_options(rispostavelocita PRIVATE -Wall -pthread)
