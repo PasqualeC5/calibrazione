@@ -30,7 +30,7 @@ float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
 bool interpolate = true;
 float reference_user = DEFAULTREFERENCE_mm;
 
-DistanceSensor sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
+InfraredSensor sensor(InfraredSensor::USER_INPUT);
 bool take_data = false; // no take data default
 
 /*functions*/
@@ -90,6 +90,8 @@ int main(int argc, char *argv[])
     float u_k; // u[k]
     float y_k; // y[k]
 
+    float velocity[] = {0,0,0,0,0,0};
+
     bool out_of_range = false;
 
     t0 = getCurrentTimeMicros(); // time to start analysing response
@@ -106,7 +108,8 @@ int main(int argc, char *argv[])
         {
             cout << "Sensor out of range" << endl;
             cout << "Stopping robot" << endl;
-            robot.move_lin_vel_wrf(0);
+            velocity[0] = 0;
+            robot.move_lin_vel_wrf(velocity);
 
             y_k1 = 0;
             u_k1 = 0;
@@ -152,9 +155,9 @@ int main(int argc, char *argv[])
                 y_k = 0;
             }
         }
-
+        velocity[0] = y_k;
         /*give meca velocity command*/
-        robot.move_lin_vel_wrf(y_k);
+        robot.move_lin_vel_wrf(velocity);
 
         /*if take_date requested*/
         // if (take_data && reference_initialised)
