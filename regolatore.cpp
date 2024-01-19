@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
     /*time variables setup*/
     uint64_t t0, start;
-    float t = 0;
+    float current_time = 0;
     float delay_time;
 
     /*state variables*/
@@ -90,12 +90,11 @@ int main(int argc, char *argv[])
     float u_k; // u[k]
     float y_k; // y[k]
 
-    float velocity[] = {0,0,0,0,0,0};
+    float velocity[] = {0, 0, 0, 0, 0, 0};
 
     bool out_of_range = false;
 
-    t0 = getCurrentTimeMicros(); // time to start analysing response
-    t = 0;
+    current_time = 0;
     /*process*/
     while (true)
     {
@@ -116,6 +115,7 @@ int main(int argc, char *argv[])
 
             interpolate = true;
             out_of_range = true;
+            delayMicroseconds(Tc_s);
             continue;
         }
 
@@ -123,14 +123,15 @@ int main(int argc, char *argv[])
         {
             out_of_range = false;
             starting_reference = d;
-            t = 0;
+            slope = (reference_user - starting_reference) / rise_time;
+            current_time = 0;
         }
 
         if (interpolate)
         {
 
-            reference_distance = slope * t + starting_reference;
-            if (abs(reference_distance - reference_user) <= 0.1)
+            reference_distance = slope * current_time + starting_reference;
+            if ((slope > 0 && reference_distance >= reference_user) || (slope <= 0 && reference_distance <= reference_user))
             {
                 reference_distance = reference_user;
                 interpolate = false;
@@ -173,7 +174,7 @@ int main(int argc, char *argv[])
 
         delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
         delayMicroseconds(delay_time); // delay by time remaining
-        t += Tc_s;                     // increse time by Tc_s for reference smoothing
+        current_time += Tc_s;          // increse time by Tc_s for reference smoothing
     }
 }
 
