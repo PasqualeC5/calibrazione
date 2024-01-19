@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
     robot.move_pose(130, -170, 120, 90, 90, 0); // bring Meca to 0_position
     // robot.print_pose();
 
-    /*files to write, setup*/
-    CsvLogger data_test("data_test.csv");
-    data_test.write("time,distance\n"); // if !take_data -> empy file
+    // /*files to write, setup*/
+    // CsvLogger data_test("data_test.csv");
+    // data_test.write("time,distance\n"); // if !take_data -> empy file
 
     /*time variables setup*/
     uint64_t t0, start;
