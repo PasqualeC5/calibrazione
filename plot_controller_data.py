@@ -45,36 +45,46 @@ def analyse_file(file_path):
     measured_distance = df['measured_distance']
     error = df['error']
     velocity_control = df['velocity_control']
+    robot_position = df['position']
 
-    plt.figure(1)
+    plt.figure(num=1,figsize=[10,10])
 
-    plt.subplot(2, 2, 1)
+    plt.subplot(3, 2, 1)
     plt.plot(time, -reference, label='Reference [mm]')
     plt.xlabel('Time [s]')
     plt.ylabel('Reference [mm]')
     plt.legend(loc='best')
 
-    plt.subplot(2, 2, 2)
+    plt.subplot(3, 2, 2)
     plt.plot(time, -measured_distance,
              label='Measured Distance [mm]')
     plt.xlabel('Time [s]')
     plt.ylabel('Measured distance [mm]')
     plt.legend(loc='best')
 
-    plt.subplot(2, 2, 3)
+    plt.subplot(3, 2, 3)
     plt.plot(time, error, label='Error [mm]')
     plt.xlabel('Time [s]')
     plt.ylabel('Error [mm]')
     plt.legend(loc='best')
 
-    plt.subplot(2, 2, 4)
+    plt.subplot(3, 2, 4)
     plt.plot(time, velocity_control,
              label='Velocity Control [mm/s]')
     plt.xlabel('Time [s]')
     plt.ylabel('Velocity control [mm/s]')
     plt.legend(loc='best')
+    
+    plt.subplot(3, 2, 5)
+    plt.plot(time, robot_position,
+             label='Robot position [mm]')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Robot position [mm]')
+    plt.legend(loc='best')
+    plt.savefig('dati_separati.png')
+    plt.show()
 
-    plt.figure(2)
+    plt.figure(num=2,figsize=[10,10])
 
     plt.plot(time, -reference, label='Reference [mm]')
 
@@ -85,14 +95,18 @@ def analyse_file(file_path):
 
     plt.plot(time, velocity_control,
              label='Velocity Control [mm/s]')
+    
+    plt.plot(time, robot_position,
+             label='Robot position [mm]')
 
     plt.xlabel('Time [s]')
     plt.legend(loc='best')
-
+    plt.savefig('dati_sovrapposti.png')
     plt.show()
 
     plt.tight_layout()
     plt.grid(True)
+    plt.savefig('dati.png')
 
 
 def main():
