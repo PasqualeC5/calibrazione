@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
         if (d < -200)
         {
-            cout << "Sensor out of range" << endl;
+            cout << endl << "Sensor out of range" << endl;
             cout << "Stopping robot" << endl;
             velocity[0] = 0;
             robot.move_lin_vel_wrf(velocity);
@@ -121,6 +121,10 @@ int main(int argc, char *argv[])
                 d = -sensor.getDistanceInMillimeters();
                 delayMicroseconds(Tc_s);
             }
+
+            cout << "Obstacle in range" << endl;
+            cout << "Resuming control" << endl;
+            
 
             starting_reference = d;
             slope = (reference_user - starting_reference) / rise_time;
