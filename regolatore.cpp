@@ -120,6 +120,7 @@ int main(int argc, char *argv[])
 
                 data_test << current_time;
                 data_test << reference_distance;
+                data_test << robot.get_position();
                 data_test << d;
                 data_test << 0;
                 data_test << 0;
