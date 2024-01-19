@@ -251,7 +251,7 @@ int setup_options(map<string, string> options)
         else if (command == CALIBRATION_COMMAND)
         {
             vector<float> calibration_parameters = parse_string_to_vector(value);
-            sensor->useCalibrationCurve(calibration_parameters[0],calibration_parameters[1]);
+            sensor.useCalibrationCurve(calibration_parameters[0],calibration_parameters[1]);
         }
         else if (command == NUMBER_OF_MEASUREMENTS_COMMAND)
         {
