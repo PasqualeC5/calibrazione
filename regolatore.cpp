@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     float y_k1 = 0; // y[k-1]
     float u_k1 = 0; // u[k-1]
     float starting_reference = -sensor.getDistanceInMillimeters();
-    float rise_time = 1;
+    float rise_time = 0.5;
     float slope = (reference_user - starting_reference) / rise_time;
 
     float d;
