@@ -27,18 +27,9 @@ using namespace std;
 
 
 /*GLOBAL*/
-    /*variable for interpolation
-        reference_user: desired distance meca - obastacle                            5 cm default
-        reference_distance: reference variable  (desidered to be reference_user)     5 cm default
-        interpolate: flag to smooth reference distance when required
-    */
-    float reference_distance = DEFAULTREFERENCE_mm;
-    float reference_user = DEFAULTREFERENCE_mm;
-    bool interpolate = true;
+    float reference_user = DEFAULTREFERENCE_mm;     //specific choice by user
 
-    /*sensor initialize
-        m & q = parameters for calibration line -> y=mx+q           y=1x+0 default
-    */
+    /*sensor variables*/
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
     float m = 1;
     float q = 0;
@@ -53,6 +44,13 @@ int main(int argc, char *argv[])
 {
     /*menu control and sensor initialisation*/
     menu(argc, argv);
+    sensor.useCalibrationCurve(m,q);
+
+
+    /*sensor setup*/
+    InfraredSensor sensor(InfraredSensor::USER_INPUT);
+    float m = 1;
+    float q = 0;
     sensor.useCalibrationCurve(m, q);
 
 
@@ -77,6 +75,13 @@ int main(int argc, char *argv[])
 
 
     /*interpolation variables*/
+    /*variable for interpolation
+        reference_user: desired distance meca - obastacle                            5 cm default
+        reference_distance: reference variable  (desidered to be reference_user)     5 cm default
+        interpolate: flag to smooth reference distance when required
+    */
+    float reference_distance = DEFAULTREFERENCE_mm;
+    bool interpolate = true;
     float starting_reference = -sensor.getDistanceInMillimeters();      
     float rise_time = 0.5;
     float slope = (reference_user - starting_reference) / rise_time;
@@ -118,13 +123,13 @@ int main(int argc, char *argv[])
             u_k1 = 0;
 
             
-            /*wait for to reveal obstacle.*/
-            interpolate = true;
-
+            /*wait untile reveal obstacle.*/
+    
             while (d < -200)
             {
                 d = -sensor.getDistanceInMillimeters();
 
+                /*export data*/
                 data_test << current_time;
                 data_test << reference_distance;
                 data_test << robot.get_position();
@@ -133,6 +138,7 @@ int main(int argc, char *argv[])
                 data_test << 0;
                 data_test.end_row();
 
+                /*compute dalay*/
                 delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
                 delayMicroseconds(Tc_s * 1e6);
                 current_time += Tc_s;
@@ -140,11 +146,16 @@ int main(int argc, char *argv[])
 
             cout << "Obstacle in range.. resuming control\n";
 
+
+            /*new interpolation nedeed, preparation (see interpolation)*/
+            interpolate = true;                 
             starting_reference = d;
             slope = (reference_user - starting_reference) / rise_time;
             interpolate_time = current_time;
         }
 
+
+        /* interpolation */
         if (interpolate)
         {
             reference_distance = slope * (current_time - interpolate_time) + starting_reference;
@@ -155,10 +166,13 @@ int main(int argc, char *argv[])
             }
         }
 
+
+        /* computing */
         u_k = reference_distance - d;
         y_k = 4.6129 * u_k - 3.8864 * u_k1 + 0.7 * y_k1;
 
-        // checking robot position limits
+
+        /* security control: checking robot position limits */
         if (robot.get_position() >= robot.POS_LIMIT_SUP)
         {
             if (y_k > 0) // if velocity is positive
@@ -173,13 +187,14 @@ int main(int argc, char *argv[])
                 y_k = 0;
             }
         }
-        velocity[0] = y_k;
+
         /*give meca velocity command*/
+        velocity[0] = y_k;
         robot.move_lin_vel_wrf(velocity);
 
-        /*if take_date requested*/
-        // data_test.write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
 
+        /*export data*/
+        // "time,reference,position,measured_distance,error,velocity_control"
         data_test << current_time;
         data_test << reference_distance;
         data_test << robot.get_position();
@@ -188,10 +203,13 @@ int main(int argc, char *argv[])
         data_test << y_k;
         data_test.end_row();
 
+
         /*prepare for next */
         u_k1 = u_k;
         y_k1 = y_k;
 
+
+        /*delay*/
         delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
         delayMicroseconds(delay_time); // delay by time remaining
         current_time += Tc_s;          // increse time by Tc_s for reference smoothing
