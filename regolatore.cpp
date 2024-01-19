@@ -30,8 +30,10 @@ float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
 bool interpolate = true;
 float reference_user = DEFAULTREFERENCE_mm;
 
+float m = 1;
+float q = 0;
+
 InfraredSensor sensor(InfraredSensor::USER_INPUT);
-bool take_data = false; // no take data default
 
 /*functions*/
 void menu(int n_par, char *par[]);
@@ -60,6 +62,8 @@ int main(int argc, char *argv[])
     /*menu display - control*/
     menu(argc, argv);
 
+    sensor.useCalibrationCurve(m,q);
+
     /*robot, setup*/
     Robot robot(30, 200, 5000, "eth0", 0.0, 10);
     robot.reset_error();
@@ -69,8 +73,8 @@ int main(int argc, char *argv[])
     // robot.print_pose();
 
     /*files to write, setup*/
-    // CsvLogger data_test("test_closed_loop/data_test.csv");
-    // data_test.write("time,distance,error,velocity_control,reference\n"); // if !take_data -> empy file
+    CsvLogger data_test("test_closed_loop/data_test.csv");
+    data_test.write("time,reference,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
 
     /*time variables setup*/
     uint64_t t0, start;
@@ -165,12 +169,14 @@ int main(int argc, char *argv[])
         robot.move_lin_vel_wrf(velocity);
 
         /*if take_date requested*/
-        // if (take_data && reference_initialised)
-        // {
-        //     data_test << t;
-        //     data_test << d;
-        //     data_test.end_row();
-        // }
+        // data_test.write("time,reference,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
+
+        data_test << current_time;
+        data_test << reference_distance;
+        data_test << d;
+        data_test << u_k;
+        data_test << y_k;
+        data_test.end_row();
 
         /*prepare for next */
         u_k1 = u_k;
@@ -191,13 +197,13 @@ int main(int argc, char *argv[])
 void menu(int n_par, char *par[])
 {
     /* if distance_reference is passed and correct, so set, else default*/
-    if (n_par == 2 || n_par == 3)
+    if (n_par >= 2)
     {
         reference_user = -atof(par[1]);
     }
-
-    if (n_par == 3)
+    if (n_par >= 4)
     {
-        take_data = atoi(par[2]);
+        m = par[2];
+        q = par[3];
     }
 }
