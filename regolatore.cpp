@@ -203,7 +203,7 @@ void menu(int n_par, char *par[])
     }
     if (n_par >= 4)
     {
-        m = par[2];
-        q = par[3];
+        m = -atof(par[2]);
+        q = -atof(par[3]);
     }
 }
