@@ -237,7 +237,11 @@ int setup_options(map<string, string> options)
         {
             option_message << left << setw(message_length) << "Sensor used: " << value << "\n";
             if (value == INFRARED_SENSOR_VALUE)
+            {
                 sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
+                sensor->useCalibrationCurve(1,13.01);
+            }
+
             else if (value == ULTRASONIC_SENSOR_VALUE)
                 sensor = new UltrasonicSensor(TRIG_PIN, ECHO_PIN);
             else
