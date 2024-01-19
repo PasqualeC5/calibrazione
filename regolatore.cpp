@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
             cout << "Sensor out of range" << endl;
             cout << "Stopping robot" << endl;
             robot.move_lin_vel_wrf(0);
-            
+
             y_k1 = 0;
             u_k1 = 0;
 
@@ -183,12 +183,12 @@ int main(int argc, char *argv[])
 void menu(int n_par, char *par[])
 {
     /* if distance_reference is passed and correct, so set, else default*/
-    if (argc == 2 || argc == 3)
+    if (n_par == 2 || n_par == 3)
     {
-        reference_user = -atof(argv[1]);
+        reference_user = -atof(par[1]);
     }
 
-    if (argc == 3)
+    if (n_par == 3)
     {
         take_data = atoi(par[2]);
     }
