@@ -139,7 +139,7 @@ void make_measurements(DistanceSensor &sensor, int number_of_measurements, vecto
     float distance;
     for (int i = 0; i < number_of_measurements; i++)
     {
-        distance = sensor.getDistanceInMillimeters();
+        distance = (sensor.getDistanceInMillimeters() - 13.04)/1;
         measurements.push_back(distance);
         usleep(delay_us);
     }
@@ -239,7 +239,7 @@ int setup_options(map<string, string> options)
             if (value == INFRARED_SENSOR_VALUE)
             {
                 sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
-                sensor->useCalibrationCurve(1,13.01);
+                //sensor->useCalibrationCurve(1.0,13.01);
             }
 
             else if (value == ULTRASONIC_SENSOR_VALUE)
@@ -287,13 +287,6 @@ int setup_options(map<string, string> options)
             }
             option_message << left << setw(message_length) << "Measurement delay in us used: " << value << "\n";
             measurement_delay = int_value;
-        }
-        else if (command == CALIBRATION_COMMAND)
-        {
-            vector<float> calibration_parameters = parse_string_to_vector(value);
-            cout << calibration_parameters[0] << endl;
-            cout << calibration_parameters[1] << endl;
-            sensor->useCalibrationCurve(calibration_parameters[0], calibration_parameters[1]);
         }
         else if (command == CONFIG_FROM_FILE_COMMAND)
         {

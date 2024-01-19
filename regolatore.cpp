@@ -28,20 +28,21 @@ using namespace std;
 
 /*GLOBAL*/
     /*variable for interpolation
-        reference_user: desired distance meca - obastacle
-        reference_distance: reference variable  (desidered to be reference_user)
+        reference_user: desired distance meca - obastacle                            5 cm default
+        reference_distance: reference variable  (desidered to be reference_user)     5 cm default
         interpolate: flag to smooth reference distance when required
     */
-    float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
+    float reference_distance = DEFAULTREFERENCE_mm;
     float reference_user = DEFAULTREFERENCE_mm;
     bool interpolate = true;
 
     /*sensor initialize
-        m & q = parameters for calibration line -> y=mx+q
+        m & q = parameters for calibration line -> y=mx+q           y=1x+0 default
     */
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
     float m = 1;
     float q = 0;
+
 
 /*FUNCTIONS*/
     void menu(int n_par, char *par[]);              //manage user input from cmd
@@ -50,11 +51,10 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-
-    /*menu control*/
+    /*menu control and sensor initialisation*/
     menu(argc, argv);
-
     sensor.useCalibrationCurve(m, q);
+
 
     /*robot, setup*/
     Robot robot(30, 200, 5000, "eth0", 0.0, 10);
@@ -64,56 +64,64 @@ int main(int argc, char *argv[])
     robot.move_pose(115, -170, 120, 90, 90, 0); // bring Meca to 0_position
     // robot.print_pose();
 
-    /*files to write, setup*/
+
+    /*file to write data, setup*/
     CsvLogger data_test("test_closed_loop/data_test.csv");
     data_test.write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
+
 
     /*time variables setup*/
     uint64_t t0, start;
     float current_time = 0;
     float delay_time;
 
-    /*state variables*/
-    float y_k1 = 0; // y[k-1]
-    float u_k1 = 0; // u[k-1]
-    float starting_reference = -sensor.getDistanceInMillimeters();
+
+    /*interpolation variables*/
+    float starting_reference = -sensor.getDistanceInMillimeters();      
     float rise_time = 0.5;
     float slope = (reference_user - starting_reference) / rise_time;
-
-    float d;
-
-    /*process variables*/
-    float u_k; // u[k]
-    float y_k; // y[k]
-
-    float velocity[] = {0, 0, 0, 0, 0, 0};
-
+    float interpolate_time = 0;
     bool out_of_range = false;
 
-    current_time = 0;
-    float interpolate_time = 0;
-    /*process*/
+
+    /*other storage variables*/
+    float d;
+    float velocity[] = {0, 0, 0, 0, 0, 0};
+
+
+    /*process variables and state variables*/
+        float u_k;          // u[k]
+        float y_k;          // y[k]
+        float y_k1 = 0;     // y[k-1]
+        float u_k1 = 0;     // u[k-1]
+
+
+
+    /*control*/
     while (true)
     {
         start = getCurrentTimeMicros();
 
-        /*compute*/
+        /*compute distance*/
         d = -sensor.getDistanceInMillimeters();
 
+        /*OUT OF RANGE CASE (example: obstacle removed) */
         if (d < -200)
         {
-            cout << endl
-                 << "Sensor out of range" << endl;
-            cout << "Stopping robot" << endl;
+            cout << "Sensor out of range.. stopping robot\n";
+            cout << "Waiting for Obstacle in range..\n"
+
+            /*stop Meca*/
             velocity[0] = 0;
             robot.move_lin_vel_wrf(velocity);
-
             y_k1 = 0;
             u_k1 = 0;
 
+            
+            /*stop */
             interpolate = true;
+            
 
-            cout << "Waiting for Obstacle in range" << endl;
             while (d < -200)
             {
                 d = -sensor.getDistanceInMillimeters();
@@ -131,8 +139,7 @@ int main(int argc, char *argv[])
                 current_time += Tc_s;
             }
 
-            cout << "Obstacle in range" << endl;
-            cout << "Resuming control" << endl;
+            cout << "Obstacle in range.. resuming control\n";
 
             starting_reference = d;
             slope = (reference_user - starting_reference) / rise_time;
