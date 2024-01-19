@@ -20,6 +20,7 @@
 #define HELP_COMMAND "help"
 #define CONFIG_FROM_FILE_COMMAND "config"
 #define SENSOR_COMMAND "sensor"                       // REQUIRED sensor specifier command [--sensor]
+#define CALIBRATION_COMMAND "calibration"
 #define INFRARED_SENSOR_VALUE "infrared"              // infrared sensor specifier [--sensor=infrared]
 #define ULTRASONIC_SENSOR_VALUE "ultrasonic"          // ultrasonic sensor specifier [--sensor=ultrasonic]
 #define SURFACE_TYPE_COMMAND "surface"                // surface specifier [--surface="surface_name"]
@@ -246,6 +247,11 @@ int setup_options(map<string, string> options)
                 return 1;
             }
             sensor_type = value;
+        }
+        else if (command == CALIBRATION_COMMAND)
+        {
+            vector<float> calibration_parameters = parse_string_to_vector(value);
+            sensor->useCalibrationCurve(calibration_parameters[0],calibration_parameters[1]);
         }
         else if (command == NUMBER_OF_MEASUREMENTS_COMMAND)
         {
