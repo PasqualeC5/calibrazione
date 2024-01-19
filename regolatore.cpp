@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     /*menu display - control*/
     menu(argc, argv);
 
-    sensor.useCalibrationCurve(m,q);
+    sensor.useCalibrationCurve(m, q);
 
     /*robot, setup*/
     Robot robot(30, 200, 5000, "eth0", 0.0, 10);
@@ -125,7 +125,17 @@ int main(int argc, char *argv[])
             while (d < -200)
             {
                 d = -sensor.getDistanceInMillimeters();
+
+                data_test << current_time;
+                data_test << reference_distance;
+                data_test << d;
+                data_test << 0;
+                data_test << 0;
+                data_test.end_row();
+
+                delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
                 delayMicroseconds(Tc_s * 1e6);
+                current_time += Tc_s;
             }
 
             cout << "Obstacle in range" << endl;
