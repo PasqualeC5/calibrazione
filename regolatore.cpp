@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
         /*compute*/
         d = -sensor.getDistanceInMillimeters();
 
-        if (abs(d) >= 254)
+        if (d < -200)
         {
             cout << "Sensor out of range" << endl;
             cout << "Stopping robot" << endl;
@@ -114,22 +114,21 @@ int main(int argc, char *argv[])
             u_k1 = 0;
 
             interpolate = true;
-            out_of_range = true;
-            delayMicroseconds(Tc_s);
-            continue;
-        }
 
-        if (out_of_range)
-        {
-            out_of_range = false;
+            cout << "Waiting for Obstacle in range" << endl;
+            while (d < -200)
+            {
+                d = -sensor.getDistanceInMillimeters();
+                delayMicroseconds(Tc_s);
+            }
+
             starting_reference = d;
             slope = (reference_user - starting_reference) / rise_time;
             current_time = 0;
         }
 
-        if (interpolate)
+         if (interpolate)
         {
-
             reference_distance = slope * current_time + starting_reference;
             if ((slope > 0 && reference_distance >= reference_user) || (slope <= 0 && reference_distance <= reference_user))
             {
