@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
         if (d < -200)
         {
             cout << "Sensor out of range.. stopping robot\n";
-            cout << "Waiting for Obstacle in range..\n"
+            cout << "Waiting for Obstacle in range..\n";
 
             /*stop Meca*/
             velocity[0] = 0;
