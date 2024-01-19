@@ -4,7 +4,7 @@
     y[k] = 4.6129 * u[k]  -  3.8864 * u[k-1]  + 0.7 * y[k-1]
 
 
-    IMPORTANT:
+    LEGENDA:
     y is R output -> Meca next velocity
     u is R input -> error = reference - measured distance
 
@@ -25,41 +25,33 @@
 
 using namespace std;
 
-/*global*/
-float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
-bool interpolate = true;
-float reference_user = DEFAULTREFERENCE_mm;
 
-float m = 1;
-float q = 0;
+/*GLOBAL*/
+    /*variable for interpolation
+        reference_user: desired distance meca - obastacle
+        reference_distance: reference variable  (desidered to be reference_user)
+        interpolate: flag to smooth reference distance when required
+    */
+    float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
+    float reference_user = DEFAULTREFERENCE_mm;
+    bool interpolate = true;
 
-InfraredSensor sensor(InfraredSensor::USER_INPUT);
+    /*sensor initialize
+        m & q = parameters for calibration line -> y=mx+q
+    */
+    InfraredSensor sensor(InfraredSensor::USER_INPUT);
+    float m = 1;
+    float q = 0;
 
-/*functions*/
-void menu(int n_par, char *par[]);
-
-uint64_t getCurrentTimeMicros()
-{
-    return std::chrono::duration_cast<std::chrono::microseconds>(
-               std::chrono::system_clock::now().time_since_epoch())
-        .count();
-}
-
-void delayMicroseconds(uint64_t microseconds)
-{
-    auto start = std::chrono::high_resolution_clock::now();
-    auto end = start + std::chrono::microseconds(microseconds);
-
-    while (std::chrono::high_resolution_clock::now() < end)
-    {
-        // Busy-wait loop
-    }
-}
+/*FUNCTIONS*/
+    void menu(int n_par, char *par[]);              //manage user input from cmd
+    uint64_t getCurrentTimeMicros();                //return current time in microseconds
+    void delayMicroseconds(uint64_t microseconds);  //stop execution 
 
 int main(int argc, char *argv[])
 {
 
-    /*menu display - control*/
+    /*menu control*/
     menu(argc, argv);
 
     sensor.useCalibrationCurve(m, q);
@@ -74,7 +66,7 @@ int main(int argc, char *argv[])
 
     /*files to write, setup*/
     CsvLogger data_test("test_closed_loop/data_test.csv");
-    data_test.write("time,reference,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
+    data_test.write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
 
     /*time variables setup*/
     uint64_t t0, start;
@@ -128,6 +120,7 @@ int main(int argc, char *argv[])
 
                 data_test << current_time;
                 data_test << reference_distance;
+                data_test << robot.get_position();
                 data_test << d;
                 data_test << 0;
                 data_test << 0;
@@ -179,10 +172,11 @@ int main(int argc, char *argv[])
         robot.move_lin_vel_wrf(velocity);
 
         /*if take_date requested*/
-        // data_test.write("time,reference,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
+        // data_test.write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
 
         data_test << current_time;
         data_test << reference_distance;
+        data_test << robot.get_position();
         data_test << d;
         data_test << u_k;
         data_test << y_k;
@@ -198,22 +192,44 @@ int main(int argc, char *argv[])
     }
 }
 
-/*
-    cmmd line ->
-    R
-    R distance
-    R distance take_data(1-0)
-*/
+
 void menu(int n_par, char *par[])
 {
+    /*
+        cmmd line ->
+        regolatore 
+        regolatore distance
+        regolatore distance m q 
+    */
+
     /* if distance_reference is passed and correct, so set, else default*/
     if (n_par >= 2)
     {
         reference_user = -atof(par[1]);
     }
+
+    /* if calibration parameters are passed and correct, so set, else default*/
     if (n_par >= 4)
     {
         m = -atof(par[2]);
         q = -atof(par[3]);
+    }
+}
+
+uint64_t getCurrentTimeMicros()
+{
+    return std::chrono::duration_cast<std::chrono::microseconds>(
+               std::chrono::system_clock::now().time_since_epoch())
+        .count();
+}
+
+void delayMicroseconds(uint64_t microseconds)
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    auto end = start + std::chrono::microseconds(microseconds);
+
+    while (std::chrono::high_resolution_clock::now() < end)
+    {
+        // Busy-wait loop
     }
 }
