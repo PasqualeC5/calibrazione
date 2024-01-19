@@ -27,7 +27,7 @@ using namespace std;
 
 /*global*/
 float reference_distance = DEFAULTREFERENCE_mm; // 5 cm default
-bool reference_initialised = false;
+bool interpolate = true;
 float reference_user = DEFAULTREFERENCE_mm;
 
 DistanceSensor sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
@@ -90,30 +90,48 @@ int main(int argc, char *argv[])
     float u_k; // u[k]
     float y_k; // y[k]
 
+    bool out_of_range = false;
+
     t0 = getCurrentTimeMicros(); // time to start analysing response
     t = 0;
     /*process*/
     while (true)
     {
         start = getCurrentTimeMicros();
-        if (!reference_initialised)
-        {
-            // sigmoid starter curve
-            reference_distance = slope * t + starting_reference;
-            if (abs(reference_distance - reference_user) <= 0.1)
-            {
-                reference_distance = reference_user;
-                reference_initialised = true;
-            }
-        }
 
         /*compute*/
         d = -sensor.getDistanceInMillimeters();
 
-        if(abs(d) >= 254){
+        if (abs(d) >= 254)
+        {
             cout << "Sensor out of range" << endl;
             cout << "Stopping robot" << endl;
             robot.move_lin_vel_wrf(0);
+            
+            y_k1 = 0;
+            u_k1 = 0;
+
+            interpolate = true;
+            out_of_range = true;
+            continue;
+        }
+
+        if (out_of_range)
+        {
+            out_of_range = false;
+            starting_reference = d;
+            t = 0;
+        }
+
+        if (interpolate)
+        {
+
+            reference_distance = slope * t + starting_reference;
+            if (abs(reference_distance - reference_user) <= 0.1)
+            {
+                reference_distance = reference_user;
+                interpolate = false;
+            }
         }
 
         u_k = reference_distance - d;
@@ -151,8 +169,8 @@ int main(int argc, char *argv[])
         y_k1 = y_k;
 
         delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
-        delayMicroseconds(delay_time); //delay by time remaining
-        t += Tc_s; // increse time by Tc_s for reference smoothing
+        delayMicroseconds(delay_time); // delay by time remaining
+        t += Tc_s;                     // increse time by Tc_s for reference smoothing
     }
 }
 
