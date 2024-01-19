@@ -118,9 +118,8 @@ int main(int argc, char *argv[])
             u_k1 = 0;
 
             
-            /*stop */
+            /*wait for to reveal obstacle.*/
             interpolate = true;
-            
 
             while (d < -200)
             {
