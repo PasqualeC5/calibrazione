@@ -123,10 +123,11 @@ int main(int argc, char *argv[])
             u_k1 = 0;
 
             
-            /*wait untile reveal obstacle.*/
+            /*wait for obstacle.*/
     
             while (d < -200)
             {
+                start = getCurrentTimeMicros();
                 d = -sensor.getDistanceInMillimeters();
 
                 /*export data*/
@@ -140,7 +141,7 @@ int main(int argc, char *argv[])
 
                 /*compute dalay*/
                 delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
-                delayMicroseconds(Tc_s * 1e6);
+                delayMicroseconds(delay_time);
                 current_time += Tc_s;
             }
 

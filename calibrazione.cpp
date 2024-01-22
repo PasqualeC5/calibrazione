@@ -72,6 +72,8 @@ float min_measurement = 0,                                                // min
     step_size = 5,                                                        // step interval between measurements
     current_measurement;                                                  // current distance to be measured
 
+ 
+
 int main(int argc, char *argv[])
 {
     /*INITIAL SETUP*/
