@@ -1,7 +1,6 @@
 .vscode
 CMakeFiles
 CMakeCache.txt
-measurements
 build
 cmake_install.cmake
 Makefile

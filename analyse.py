@@ -15,6 +15,9 @@ marker_size = 2
 def is_analysed(path):
     return os.path.exists(path+"/.analysed")
 
+def has_to_ignore(path):
+    return os.path.exists(path+"/.ignore")
+
 
 def create_folder(folder_path):
     # Check if the folder exists
@@ -91,7 +94,7 @@ def analyse_files(folder_path):
     for surface_name in surface_folders:
 
         sub_folder_path = folder_path + "/" + surface_name
-        if (is_analysed(sub_folder_path)):
+        if (is_analysed(sub_folder_path) or has_to_ignore(sub_folder_path)):
            continue
 
         # initializing stats file
