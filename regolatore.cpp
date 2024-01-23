@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
     /*menu control and sensor initialisation*/
     menu(argc, argv);
     /*sensor setup*/
-    InfraredSensor sensor(InfraredSensor::USER_INPUT);
     sensor.useCalibrationCurve(m, q);
 
     /*robot, setup*/
