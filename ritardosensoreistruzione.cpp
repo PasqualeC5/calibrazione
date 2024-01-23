@@ -28,7 +28,7 @@ int main()
 {
     float distance;
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
-    sensor.useCalibrationCurve(1, 50);
+    //sensor.useCalibrationCurve(1, 50);
 
     uint64_t currentTime, t;
     /*files to write, setup*/
@@ -44,7 +44,7 @@ int main()
         // output_logger.end_row();
         cout << distance << endl;
         //delayMicroseconds(0.05*1e6);
-        delayMicroseconds(500000);
+        delayMicroseconds(0.5*1e6);
     }
 
     // output_logger.close();
