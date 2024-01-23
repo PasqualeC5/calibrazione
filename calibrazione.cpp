@@ -241,7 +241,7 @@ int setup_options(map<string, string> options)
             if (value == INFRARED_SENSOR_VALUE)
             {
                 sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
-                //sensor->useCalibrationCurve(1.0,13.01);
+                sensor->useCalibrationCurve(1.0,13.01);
             }
 
             else if (value == ULTRASONIC_SENSOR_VALUE)

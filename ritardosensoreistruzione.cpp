@@ -26,24 +26,28 @@ void delayMicroseconds(uint64_t microseconds)
 
 int main()
 {
+    float distance;
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
+    sensor.useCalibrationCurve(1, 50);
 
     uint64_t currentTime, t;
     /*files to write, setup*/
-    CsvLogger output_logger("delay/ritardo_istruzione");
-    output_logger.write("value\n");
+    // CsvLogger output_logger("delay/ritardo_istruzione");
+    // output_logger.write("value\n");
 
     for (int i = 0; i < 100; i++)
     {
         currentTime = getCurrentTimeMicros();
-        sensor.getDistanceInMillimeters();
+        distance = sensor.getDistanceInMillimeters();
         t = getCurrentTimeMicros() - currentTime;
-        output_logger << t;
-        output_logger.end_row();
-        delayMicroseconds(0.05*1e6);
+        // output_logger << t;
+        // output_logger.end_row();
+        cout << distance << endl;
+        //delayMicroseconds(0.05*1e6);
+        delayMicroseconds(500000);
     }
 
-    output_logger.close();
+    // output_logger.close();
 
     return 0;
 }
