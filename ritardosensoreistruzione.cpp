@@ -24,11 +24,15 @@ void delayMicroseconds(uint64_t microseconds)
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     float distance;
     InfraredSensor sensor(InfraredSensor::USER_INPUT);
-    //sensor.useCalibrationCurve(1, 50);
+    if (argc >= 3)
+    {
+        
+        sensor.useCalibrationCurve(stoi(argv[1]), stoi(argv[2]));
+    }
 
     uint64_t currentTime, t;
     /*files to write, setup*/
@@ -43,8 +47,8 @@ int main()
         // output_logger << t;
         // output_logger.end_row();
         cout << distance << endl;
-        //delayMicroseconds(0.05*1e6);
-        delayMicroseconds(0.5*1e6);
+        // delayMicroseconds(0.05*1e6);
+        delayMicroseconds(0.5 * 1e6);
     }
 
     // output_logger.close();
