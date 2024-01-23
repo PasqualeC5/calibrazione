@@ -27,11 +27,12 @@ void delayMicroseconds(uint64_t microseconds)
 int main(int argc, char *argv[])
 {
     float distance;
-    InfraredSensor sensor(InfraredSensor::USER_INPUT);
+    DistanceSensor *sensor = nullptr;
+    sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
     if (argc >= 3)
     {
-        
-        sensor.useCalibrationCurve(stoi(argv[1]), stoi(argv[2]));
+
+        sensor->useCalibrationCurve(stoi(argv[1]), stoi(argv[2]));
     }
 
     uint64_t currentTime, t;
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 100; i++)
     {
         currentTime = getCurrentTimeMicros();
-        distance = sensor.getDistanceInMillimeters();
+        distance = sensor->getDistanceInMillimeters();
         t = getCurrentTimeMicros() - currentTime;
         // output_logger << t;
         // output_logger.end_row();
