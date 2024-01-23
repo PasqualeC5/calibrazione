@@ -24,35 +24,26 @@ void delayMicroseconds(uint64_t microseconds)
     }
 }
 
-int main(int argc, char *argv[])
+int main()
 {
-    float distance;
-    DistanceSensor *sensor = nullptr;
-    sensor = new InfraredSensor(InfraredSensor::USER_INPUT);
-    if (argc >= 3)
-    {
-
-        sensor->useCalibrationCurve(stoi(argv[1]), stoi(argv[2]));
-    }
+    InfraredSensor sensor(InfraredSensor::USER_INPUT);
 
     uint64_t currentTime, t;
     /*files to write, setup*/
-    // CsvLogger output_logger("delay/ritardo_istruzione");
-    // output_logger.write("value\n");
+    CsvLogger output_logger("delay/ritardo_istruzione");
+    output_logger.write("value\n");
 
     for (int i = 0; i < 100; i++)
     {
         currentTime = getCurrentTimeMicros();
-        distance = sensor->getDistanceInMillimeters();
+        sensor.getDistanceInMillimeters();
         t = getCurrentTimeMicros() - currentTime;
-        // output_logger << t;
-        // output_logger.end_row();
-        cout << distance << endl;
-        // delayMicroseconds(0.05*1e6);
-        delayMicroseconds(0.5 * 1e6);
+        output_logger << t;
+        output_logger.end_row();
+        delayMicroseconds(0.05*1e6);
     }
 
-    // output_logger.close();
+    output_logger.close();
 
     return 0;
 }
