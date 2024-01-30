@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Write path to your file
-csv_file_path = 'measurements/infrared/cartoncinonero_calibrazione_estratto/stats/stats.csv'
+surface = "cartoncinonerocalibratoCopia"
+csv_file_path = 'measurements/infrared/-CARTONCINI/'+ surface + '/stats/stats.csv'
 
 # Read the CSV file into a pandas DataFrame
 df = pd.read_csv(csv_file_path)
@@ -19,5 +20,5 @@ plt.xlabel('Valore atteso[mm]')
 plt.ylabel('Dev_std')
 
 # Show the plot
-plt.savefig('dev_std.png')
+plt.savefig('dev_std_' + surface + '.png')
 plt.show()
